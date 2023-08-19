@@ -1,0 +1,9 @@
+[profile.default]
+libs = ['lib']
+remappings = [
+    '@openzeppelin/contracts/=lib/openzeppelin/contracts/',
+    '@uniswap/v3-core/=lib/uniswap/v3-core/',
+    '@uniswap/v3-periphery/=lib/uniswap/v3-periphery/',
+]
+optimizer=true
+optimizer_runs=999999999
