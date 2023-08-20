@@ -1,10 +1,10 @@
-import "openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "./IERC20Metadata.sol";
+pragma solidity =0.7.6;
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 
-contract MockERC20 is ERC20, IERC20Metadata {
+contract MockERC20 is ERC20 {
 
-    constructor(string name, string symbol, uint8 decimals)
+    constructor(string memory name, string memory symbol, uint8 decimals)
     ERC20(name, symbol)
     {
         _setupDecimals(decimals);
