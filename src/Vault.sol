@@ -18,14 +18,23 @@ contract Vault {
         owner = owner_;
     }
 
-    function transfer(address payable recipient, uint256 amount) public {
-        require(msg.sender == owner);
-        recipient.transfer(amount);
+    event DexorderReceived(address, uint256);
+
+    receive() external payable {
+        emit DexorderReceived(msg.sender, msg.value);
     }
 
-    function transfer(uint256 amount) public {
+    function withdraw(uint256 amount) public {
+        _withdrawNative(msg.sender, amount);
+    }
+
+    function withdraw(address payable recipient, uint256 amount) public {
+        _withdrawNative(recipient, amount);
+    }
+
+    function _withdrawNative(address payable reipient, uint256 amount) internal {
         require(msg.sender == owner);
-        msg.sender.transfer(amount);
+        reipient.transfer(amount);
     }
 
     function withdraw(IERC20 token, uint256 amount) public {
