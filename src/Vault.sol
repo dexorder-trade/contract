@@ -5,17 +5,20 @@ pragma abicoder v2;
 import "./Constants.sol";
 import "./interface/IVaultDeployer.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./OrderLib.sol";
 
 
 contract Vault {
+    using OrderLib for OrderLib.OrdersInfo;
+
     uint8 public immutable version;
     address public immutable owner;
+    OrderLib.OrdersInfo public orderList;
 
     constructor()
     {
-        (address owner_) = IVaultDeployer(msg.sender).parameters();
+        owner = IVaultDeployer(msg.sender).parameters();
         version = Constants.VERSION;
-        owner = owner_;
     }
 
     event DexorderReceived(address, uint256);
@@ -28,12 +31,11 @@ contract Vault {
         _withdrawNative(msg.sender, amount);
     }
 
-    function withdraw(address payable recipient, uint256 amount) public {
+    function withdrawTo(address payable recipient, uint256 amount) public {
         _withdrawNative(recipient, amount);
     }
 
-    function _withdrawNative(address payable reipient, uint256 amount) internal {
-        require(msg.sender == owner);
+    function _withdrawNative(address payable reipient, uint256 amount) internal onlyOwner {
         reipient.transfer(amount);
     }
 
@@ -41,13 +43,32 @@ contract Vault {
         _withdraw(token, msg.sender, amount);
     }
 
-    function withdraw(IERC20 token, address recipient, uint256 amount) public {
+    function withdrawTo(IERC20 token, address recipient, uint256 amount) public {
         _withdraw(token, recipient, amount);
     }
 
-    function _withdraw(IERC20 token, address recipient, uint256 amount) internal {
-        require(msg.sender == owner);
+    function _withdraw(IERC20 token, address recipient, uint256 amount) internal onlyOwner {
         token.transfer(recipient, amount);
+    }
+
+
+    function placeOrder(OrderLib.SwapOrder memory order) public onlyOwner {
+        orderList._placeOrder(order);
+    }
+
+    function placeOrders(OrderLib.SwapOrder[] memory orders, OrderLib.OcoMode ocoMode) public onlyOwner {
+        orderList._placeOrders(orders, ocoMode);
+    }
+
+    function execute(uint64 orderIndex, uint8 tranche_index, OrderLib.PriceProof memory proof) public
+    returns (string memory error)
+    {
+        return orderList.execute(orderIndex, tranche_index, proof);
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner);
+        _;
     }
 
 }

@@ -3,6 +3,7 @@ pragma solidity =0.7.6;
 
 import "forge-std/Script.sol";
 import "../src/VaultDeployer.sol";
+import "forge-std/console2.sol";
 
 contract Deploy is Script {
     function run() external {
@@ -10,5 +11,7 @@ contract Deploy is Script {
         vm.startBroadcast(deployerPrivateKey);
         VaultDeployer deployer = new VaultDeployer{salt:keccak256(abi.encode(1))}();
         vm.stopBroadcast();
+        console2.log('VaultDeployer');
+        console2.log(address(deployer));
     }
 }

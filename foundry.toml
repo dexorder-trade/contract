@@ -6,12 +6,21 @@ remappings = [
     '@uniswap/v3-core/=lib/v3-core/',
     '@uniswap/v3-periphery/=lib/v3-periphery/',
 ]
-optimizer=true
-optimizer_runs=999999999
 sizes = true
-via_ir = false
 gas_reports = ['*']
 gas_reports_ignore = []
+via_ir = false
+optimizer=true
+optimizer_runs=999999999
+
+[profile.default.optimizer_details]
+constantOptimizer = true
+yul = true
+
+[profile.default.optimizer_details.yulDetails]
+stackAllocation = true
+#optimizerSteps = 'dhfoDgvulfnTUtnIf'
+optimizerSteps = 'dhfoD[xarrscLMcCTU]uljmul'
 
 [profile.default.rpc_endpoints]
 # todo put these into a secrets file

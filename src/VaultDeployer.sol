@@ -14,7 +14,7 @@ contract VaultDeployer {
 
     Parameters public parameters;
 
-    function deployVault(address owner) public returns (address vault) {
+    function deployVault(address owner) public returns (address payable vault) {
         parameters = Parameters(owner);
         vault = address(new Vault{salt: keccak256(abi.encode(owner))}());
         delete parameters;
