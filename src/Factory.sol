@@ -5,6 +5,12 @@ import "v3-core/contracts/UniswapV3Factory.sol";
 import "./VaultDeployer.sol";
 pragma abicoder v2;
 
+
 contract Factory is VaultDeployer {
-    // todo owner
+    address public admin;
+
+
+    constructor() {
+        admin = msg.sender;
+    }
 }

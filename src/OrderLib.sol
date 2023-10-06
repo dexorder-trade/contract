@@ -15,18 +15,29 @@ library OrderLib {
 
     event DexorderSwapFilled (uint64 orderIndex, uint8 trancheIndex, uint256 amountIn, uint256 amountOut);
 
-    event DexorderCompleted (uint64 orderIndex);
+    event DexorderCompleted (uint64 orderIndex); // todo remove?
 
     event DexorderError (uint64 orderIndex, string reason);
 
+    // todo If a tranche fails to fill, an order can stay Open forever without any active tranches. maybe replace state with a simple canceled flag
     enum SwapOrderState {
         Open, Canceled, Filled, Template
+    }
+
+    enum Exchange {
+        UniswapV2,
+        UniswapV3
+    }
+
+    struct Route {
+        Exchange exchange;
+        uint24 fee;
     }
 
     struct SwapOrder {
         address tokenIn;
         address tokenOut;
-        uint24 fee;
+        Route route;
         uint256 amount;
         bool amountIsInput;
         bool outputDirectlyToOwner;
@@ -138,6 +149,8 @@ library OrderLib {
             revert('OCOM');
         for( uint8 o = 0; o < orders.length; o++ ) {
             SwapOrder memory order = orders[o];
+            require(order.route.exchange == Exchange.UniswapV3, 'UR');
+            // todo more order validation
             // we must explicitly copy into storage because Solidity doesn't implement copying the double-nested
             // tranches constraints array :(
             uint orderIndex = self.orders.length;
@@ -147,7 +160,7 @@ library OrderLib {
             status.order.amountIsInput = order.amountIsInput;
             status.order.tokenIn = order.tokenIn;
             status.order.tokenOut = order.tokenOut;
-            status.order.fee = order.fee;
+            status.order.route = order.route;
             status.order.chainOrder = order.chainOrder;
             status.order.outputDirectlyToOwner = order.outputDirectlyToOwner;
             for( uint t=0; t<order.tranches.length; t++ ) {
@@ -185,7 +198,8 @@ library OrderLib {
         Tranche storage tranche = status.order.tranches[tranche_index];
         uint160 sqrtPriceX96 = 0;
         uint160 sqrtPriceLimitX96 = 0;
-        address pool = Constants.uniswapV3Factory.getPool(status.order.tokenIn, status.order.tokenOut, status.order.fee);
+        // todo other routes
+        address pool = Constants.uniswapV3Factory.getPool(status.order.tokenIn, status.order.tokenOut, status.order.route.fee);
         for (uint8 c = 0; c < tranche.constraints.length; c++) {
             Constraint storage constraint = tranche.constraints[c];
             if (constraint.mode == ConstraintMode.Time) {
@@ -227,7 +241,11 @@ library OrderLib {
             amount = remaining;
         uint256 amountIn;
         uint256 amountOut;
-        (error, amountIn, amountOut) = _do_execute_univ3(status.order, pool, amount, sqrtPriceLimitX96);
+        if( status.order.route.exchange == Exchange.UniswapV3 )
+            (error, amountIn, amountOut) = _do_execute_univ3(status.order, pool, amount, sqrtPriceLimitX96);
+        //  todo other routes
+        else
+            error = 'UR'; // unknown route
         if( bytes(error).length == 0 ) {
             status.filledIn += amountIn;
             status.filledOut += amountOut;
@@ -248,12 +266,12 @@ library OrderLib {
         if (order.amountIsInput) {
             amountIn = amount;
             (error, amountOut) = UniswapSwapper.swapExactInput(UniswapSwapper.SwapParams(
-                    pool, order.tokenIn, order.tokenOut, order.fee, amount, sqrtPriceLimitX96));
+                    pool, order.tokenIn, order.tokenOut, order.route.fee, amount, sqrtPriceLimitX96));
         }
         else {
             amountOut = amount;
             (error, amountIn) = UniswapSwapper.swapExactOutput(UniswapSwapper.SwapParams(
-                    pool, order.tokenIn, order.tokenOut, order.fee, amount, sqrtPriceLimitX96));
+                    pool, order.tokenIn, order.tokenOut, order.route.fee, amount, sqrtPriceLimitX96));
         }
     }
 

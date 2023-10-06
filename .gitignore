@@ -1,5 +1,6 @@
-cache/
-out/
-.idea/
-.env
-gen/
+/cache
+/out
+/.idea
+/.env
+/gen
+/lib

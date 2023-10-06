@@ -4,9 +4,10 @@ pragma solidity =0.7.6;
 import "forge-std/console2.sol";
 import "../src/Factory.sol";
 import "../src/VaultAddress.sol";
+import "forge-std/Test.sol";
 pragma abicoder v2;
 
-contract TestVault {
+contract TestVault is Test{
 
     Factory public factory;
     Vault public vault;

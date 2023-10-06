@@ -21,19 +21,22 @@ contract MockEnv {
     uint24 public fee;
     MockERC20 public COIN;
     MockERC20 public USD;
-    address public token0; // either WETH or USDC depending on the order in the pool
+    address public token0; // either COIN or USD depending on the order in the pool
     address public token1;
     bool public inverted;
 
-
-    function init() public {
+    // sets up two mock coins COIN and USD, plus a uniswap v3 pool.
+    // the initial price is 1.000000, but since COIN has 18 decimals and USD only has 6, the raw pool price is 1e-12
+    // therefore the sqrt price is 1e-6
+    // 1000e12 liquidity is put into the pool at each tick spacing for 10 tick spacings to either side of $1
+    function init() internal {
         COIN = new MockERC20('Mock Coin', 'MOCK', 18);
         USD = new MockERC20('Universally Supported Dollars', 'USD', 6);
         fee = 500;
         inverted = address(COIN) > address(USD);
         token0 = inverted ? address(USD) : address(COIN);
         token1 = inverted ? address(COIN) : address(USD);
-        uint160 initialPrice = 1 * 2**96;
+        uint160 initialPrice = uint160(79228162514264337593543); // price 1e-12 = sqrt price 1e-6 = 2**96 / 10**6
         // if this reverts here make sure Anvil is started and you are running forge with --rpc-url
         pool = IUniswapV3Pool(nfpm.createAndInitializePoolIfNecessary(token0, token1, fee, initialPrice));
         int24 ts = pool.tickSpacing();
@@ -42,7 +45,7 @@ contract MockEnv {
         for (int8 i = 0; i < 10; i++) {
             lower -= ts;
             upper += ts;
-            stake(1 * 10 ** COIN.decimals(), 1000 * 10 ** USD.decimals(), lower, upper);
+            stake(1000 * 10**12, lower, upper);
         }
     }
 

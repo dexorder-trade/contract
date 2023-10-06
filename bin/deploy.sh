@@ -1,2 +1,3 @@
 #!/usr/bin/env bash
-forge script script/Deploy.sol --fork-url http://localhost:8545 --broadcast
+./bin/build.sh
+forge script script/Deploy.sol -vvvv --fork-url http://localhost:8545 --broadcast
