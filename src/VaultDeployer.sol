@@ -32,7 +32,7 @@ contract VaultDeployer {
 
     function _deployVault(address owner, uint8 num) internal returns (address payable vault) {
         parameters = Parameters(owner);
-        vault = address(new Vault{salt: keccak256(abi.encode(owner,num))}());
+        vault = address(new Vault{salt: keccak256(abi.encodePacked(owner,num))}());
         delete parameters;
         emit VaultCreated( owner, num );
     }

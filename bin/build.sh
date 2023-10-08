@@ -2,7 +2,7 @@
 # this script requires the jq command $(sudo apt install jq)
 
 # first-pass build
-forge build
+forge build "$@"
 
 # calculate the Vault init code hash using the bytecode generated for Vault
 # shellcheck disable=SC2046
@@ -16,4 +16,4 @@ mkdir gen &> /dev/null
 echo "export const VAULT_INIT_CODE_HASH='$VAULT_INIT_CODE_HASH';" > gen/vaultHash.js
 
 # final build after hash values are set
-forge build
+forge build "$@"

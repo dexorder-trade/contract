@@ -4,20 +4,22 @@ pragma abicoder v2;
 
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "./UniswapSwapper.sol";
+import "forge-std/console2.sol";
 
 
 library OrderLib {
+    // todo safe math and/or bounds checking
 
     uint64 internal constant NO_CHAIN = type(uint64).max;
     uint64 internal constant NO_OCO = type(uint64).max;
 
-    event DexorderPlaced (uint64 startOrderIndex, uint8 numOrders);
+    event DexorderSwapPlaced (uint64 startOrderIndex, uint8 numOrders);
 
     event DexorderSwapFilled (uint64 orderIndex, uint8 trancheIndex, uint256 amountIn, uint256 amountOut);
 
-    event DexorderCompleted (uint64 orderIndex); // todo remove?
+    event DexorderSwapCompleted (uint64 orderIndex); // todo remove?
 
-    event DexorderError (uint64 orderIndex, string reason);
+    event DexorderSwapError (uint64 orderIndex, string reason);
 
     // todo If a tranche fails to fill, an order can stay Open forever without any active tranches. maybe replace state with a simple canceled flag
     enum SwapOrderState {
@@ -127,7 +129,6 @@ library OrderLib {
         OcoGroup[] ocoGroups; // each indexed OCO group is an array of orderIndexes of orders in the oco group.
     }
 
-
     function _placeOrder(OrdersInfo storage self, SwapOrder memory order) internal {
         SwapOrder[] memory orders = new SwapOrder[](1);
         orders[0] = order;
@@ -175,7 +176,7 @@ library OrderLib {
             status.start = uint32(block.timestamp);
             status.ocoGroup = ocoGroup;
         }
-        emit DexorderPlaced(startIndex,uint8(orders.length));
+        emit DexorderSwapPlaced(startIndex,uint8(orders.length));
     }
 
 
@@ -279,7 +280,7 @@ library OrderLib {
         uint256 remaining = status.order.amount - (status.order.amountIsInput ? status.filledIn : status.filledOut);
         if( remaining == 0 )  { // todo dust leeway?
             status.state = SwapOrderState.Filled;
-            emit DexorderCompleted(orderIndex);
+            emit DexorderSwapCompleted(orderIndex);
             if( status.ocoGroup != NO_OCO )
                 _cancelOco(self, status.ocoGroup);
         }
@@ -298,7 +299,7 @@ library OrderLib {
         SwapOrderState state = self.orders[orderIndex].state;
         if( state == SwapOrderState.Open || state == SwapOrderState.Template ) {
             self.orders[orderIndex].state = SwapOrderState.Canceled;
-            emit DexorderCompleted(orderIndex);
+            emit DexorderSwapCompleted(orderIndex);
         }
     }
 }

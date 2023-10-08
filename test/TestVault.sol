@@ -7,14 +7,18 @@ import "../src/VaultAddress.sol";
 import "forge-std/Test.sol";
 pragma abicoder v2;
 
-contract TestVault is Test{
+contract TestVault is Test {
 
     Factory public factory;
     Vault public vault;
 
     function setUp() public {
         factory = new Factory();
+        console2.log('factory');
+        console2.log(address(factory));
         vault = Vault(factory.deployVault(address(this)));
+        console2.log('vault');
+        console2.log(address(vault));
     }
 
     function testDeterministicAddress() public {

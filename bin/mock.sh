@@ -5,7 +5,7 @@
 #db-migrate up
 #cd ../contract
 
-./bin/build.sh
+#source ./bin/build.sh
 anvil -f arbitrum_ankr --chain-id 1338 &
 # todo check anvil result
 ANVIL_PID=$!
@@ -14,7 +14,7 @@ sleep 2
 forge script script/Deploy.sol -vvvv --fork-url http://localhost:8545 --broadcast
 
 trap_ctrlc() {
-  echo
+  echo exiting anvil
   kill $ANVIL_PID
 }
 

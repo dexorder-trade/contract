@@ -12,6 +12,7 @@ contract TestOrder is MockEnv, Test {
 
     // vault gets 100,000 COIN and 100,000 USD
     function setUp() public {
+        init();
         factory = new Factory();
         vault = Vault(factory.deployVault(address(this)));
         uint256 coinAmount = 100_000 * 10 ** COIN.decimals();
@@ -24,6 +25,5 @@ contract TestOrder is MockEnv, Test {
     function testOrder() public {
 
     }
-
 
 }

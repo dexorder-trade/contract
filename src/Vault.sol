@@ -60,6 +60,10 @@ contract Vault {
         orderList._placeOrders(orders, ocoMode);
     }
 
+    function swapOrderStatus(uint64 orderIndex) public view returns (OrderLib.SwapOrderStatus memory status) {
+        return orderList.orders[orderIndex];
+    }
+
     function execute(uint64 orderIndex, uint8 tranche_index, OrderLib.PriceProof memory proof) public
     returns (string memory error)
     {
