@@ -11,7 +11,13 @@ library OrderLib {
     // todo safe math and/or bounds checking
 
     uint64 internal constant NO_CHAIN = type(uint64).max;
-    uint64 internal constant NO_OCO = type(uint64).max;
+    uint64 internal constant NO_OCO_INDEX = type(uint64).max;
+
+    struct OrdersInfo {
+        bool _ignored; // workaround for Solidity bug where a public struct member cannot start with an array of uncertain size
+        SwapOrderStatus[] orders;
+        OcoGroup[] ocoGroups;
+    }
 
     event DexorderSwapPlaced (uint64 startOrderIndex, uint8 numOrders);
 
@@ -52,8 +58,10 @@ library OrderLib {
         SwapOrderState state;
         uint32 start;
         uint64 ocoGroup;
-        uint256 filledIn;
-        uint256 filledOut;
+        uint256 filledIn;  // total
+        uint256 filledOut; // total
+        uint256[] trancheFilledIn;  // sum(tranchFilledIn) == filledIn
+        uint256[] trancheFilledOut; // sum(tranchFilledOut) == filledOut
     }
 
     enum ConstraintMode {
@@ -65,8 +73,8 @@ library OrderLib {
     }
 
     struct Constraint {
-        ConstraintMode mode;
-        bytes constraint; // abi-encoded constraint struct
+        ConstraintMode mode; // type information
+        bytes constraint;    // abi packed-encoded constraint struct: decode according to mode
     }
 
     struct PriceConstraint {
@@ -123,12 +131,6 @@ library OrderLib {
         uint8 num;        // number of orders in the group
     }
 
-    struct OrdersInfo {
-        bool _ignored; // workaround for Solidity bug where a public struct member cannot start with an array of uncertain size
-        SwapOrderStatus[] orders;
-        OcoGroup[] ocoGroups; // each indexed OCO group is an array of orderIndexes of orders in the oco group.
-    }
-
     function _placeOrder(OrdersInfo storage self, SwapOrder memory order) internal {
         SwapOrder[] memory orders = new SwapOrder[](1);
         orders[0] = order;
@@ -141,7 +143,7 @@ library OrderLib {
         require(startIndex < type(uint64).max);
         uint64 ocoGroup;
         if( ocoMode == OcoMode.NO_OCO )
-            ocoGroup = NO_OCO;
+            ocoGroup = NO_OCO_INDEX;
         else if ( ocoMode == OcoMode.CANCEL_ON_PARTIAL_FILL || ocoMode == OcoMode.CANCEL_ON_COMPLETION ){
             ocoGroup = uint64(self.ocoGroups.length);
             self.ocoGroups.push(OcoGroup(ocoMode, startIndex, uint8(orders.length)));
@@ -171,6 +173,8 @@ library OrderLib {
                 st.fraction = ot.fraction;
                 for( uint c=0; c<ot.constraints.length; c++ )
                     st.constraints.push(ot.constraints[c]);
+                status.trancheFilledIn.push(0);
+                status.trancheFilledOut.push(0);
             }
             status.state = SwapOrderState.Open;
             status.start = uint32(block.timestamp);
@@ -207,10 +211,10 @@ library OrderLib {
                 TimeConstraint memory tc = abi.decode(constraint.constraint, (TimeConstraint));
                 uint32 time = tc.earliest.mode == TimeMode.Timestamp ? tc.earliest.time : status.start + tc.earliest.time;
                 if (time > block.timestamp)
-                    return 'TE';
+                    return 'TE'; // time early
                 time = tc.latest.mode == TimeMode.Timestamp ? tc.latest.time : status.start + tc.latest.time;
                 if (time < block.timestamp)
-                    return 'TL';
+                    return 'TL'; // time late
             }
             else if (constraint.mode == ConstraintMode.Limit) {
                 if( sqrtPriceX96 == 0 ) {
@@ -224,21 +228,23 @@ library OrderLib {
                     return 'L';
             }
             else if (constraint.mode == ConstraintMode.Barrier) {
-                return 'NI';
+                return 'NI'; // not implemented
             }
             else if (constraint.mode == ConstraintMode.Trailing) {
-                return 'NI';
+                return 'NI'; // not implemented
             }
             else if (constraint.mode == ConstraintMode.Line) {
-                return 'NI';
+                return 'NI'; // not implemented
             }
             else
-                return 'NI';
+                return 'NI'; // not implemented
             // unknown constraint
         }
-        uint256 amount = status.order.amount * tranche.fraction / 10 ** 18;
+        uint256 amount = status.order.amount * tranche.fraction / 10 ** 18 // the most this tranche could do
+                         - (status.order.amountIsInput ? status.trancheFilledIn[tranche_index] : status.trancheFilledOut[tranche_index]); // minus tranche fills
+        // order amount remaining
         uint256 remaining = status.order.amount - (status.order.amountIsInput ? status.filledIn : status.filledOut);
-        if (amount > remaining)
+        if (amount > remaining)  // not more than the order's overall remaining amount
             amount = remaining;
         uint256 amountIn;
         uint256 amountOut;
@@ -246,13 +252,16 @@ library OrderLib {
             (error, amountIn, amountOut) = _do_execute_univ3(status.order, pool, amount, sqrtPriceLimitX96);
         //  todo other routes
         else
-            error = 'UR'; // unknown route
+            return 'UR'; // unknown route
         if( bytes(error).length == 0 ) {
             status.filledIn += amountIn;
             status.filledOut += amountOut;
+            status.trancheFilledIn[tranche_index] += amountIn;
+            status.trancheFilledOut[tranche_index] += amountOut;
             emit DexorderSwapFilled(orderIndex, tranche_index, amountIn, amountOut);
             _checkCompleted(self, orderIndex, status);
         }
+        return ''; // success is no error, said no one
     }
 
 
@@ -281,10 +290,10 @@ library OrderLib {
         if( remaining == 0 )  { // todo dust leeway?
             status.state = SwapOrderState.Filled;
             emit DexorderSwapCompleted(orderIndex);
-            if( status.ocoGroup != NO_OCO )
+            if( status.ocoGroup != NO_OCO_INDEX)
                 _cancelOco(self, status.ocoGroup);
         }
-        else if( status.ocoGroup != NO_OCO && self.ocoGroups[status.ocoGroup].mode == OcoMode.CANCEL_ON_PARTIAL_FILL )
+        else if( status.ocoGroup != NO_OCO_INDEX && self.ocoGroups[status.ocoGroup].mode == OcoMode.CANCEL_ON_PARTIAL_FILL )
             _cancelOco(self, status.ocoGroup);
     }
 
