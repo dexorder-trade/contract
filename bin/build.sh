@@ -2,7 +2,7 @@
 # this script requires the jq command $(sudo apt install jq)
 
 # first-pass build
-forge build "$@" || exit 1
+forge build --force "$@" || exit 1
 
 # calculate the Vault init code hash using the bytecode generated for Vault
 # shellcheck disable=SC2046

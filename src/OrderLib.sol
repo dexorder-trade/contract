@@ -109,7 +109,7 @@ library OrderLib {
     }
 
     struct Tranche {
-        uint64 fraction; // 18-decimal fraction of the order amount which is available to this tranche. must be <= 1
+        uint16 fraction; // fraction of the order amount is available to this tranche, where type(uint16).max == 100%
         Constraint[] constraints;
     }
 
@@ -239,7 +239,7 @@ library OrderLib {
                 return 'NI'; // not implemented
             // unknown constraint
         }
-        uint256 amount = status.order.amount * tranche.fraction / 10 ** 18 // the most this tranche could do
+        uint256 amount = status.order.amount * tranche.fraction / type(uint16).max // the most this tranche could do
                          - (status.order.amountIsInput ? status.trancheFilledIn[tranche_index] : status.trancheFilledOut[tranche_index]); // minus tranche fills
         // order amount remaining
         uint256 remaining = status.order.amount - (status.order.amountIsInput ? status.filledIn : status.filledOut);
