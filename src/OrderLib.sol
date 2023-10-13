@@ -21,9 +21,8 @@ library OrderLib {
 
     event DexorderSwapError (uint64 orderIndex, string reason);
 
-    // todo If a tranche fails to fill, an order can stay Open forever without any active tranches. maybe replace state with a simple canceled flag
     enum SwapOrderState {
-        Open, Canceled, Filled, Template
+        Open, Canceled, Filled, Expired // Expired isn't ever shown on-chain. the Expired state is implied by tranche constraints.
     }
 
     enum Exchange {
@@ -297,7 +296,7 @@ library OrderLib {
 
     function _cancelOrder(OrdersInfo storage self, uint64 orderIndex) internal {
         SwapOrderState state = self.orders[orderIndex].state;
-        if( state == SwapOrderState.Open || state == SwapOrderState.Template ) {
+        if( state == SwapOrderState.Open ) {
             self.orders[orderIndex].state = SwapOrderState.Canceled;
             emit DexorderSwapCompleted(orderIndex);
         }

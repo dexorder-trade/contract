@@ -5,7 +5,7 @@
 #db-migrate up
 #cd ../contract
 
-#source ./bin/build.sh
+#./bin/build.sh
 anvil -f arbitrum_ankr --chain-id 1338 &
 # todo check anvil result
 ANVIL_PID=$!
