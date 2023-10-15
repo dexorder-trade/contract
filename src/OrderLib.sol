@@ -59,8 +59,8 @@ library OrderLib {
         uint64 ocoGroup;
         uint256 filledIn;  // total
         uint256 filledOut; // total
-        uint256[] trancheFilledIn;  // sum(tranchFilledIn) == filledIn
-        uint256[] trancheFilledOut; // sum(tranchFilledOut) == filledOut
+        uint256[] trancheFilledIn;  // sum(trancheFilledIn) == filledIn
+        uint256[] trancheFilledOut; // sum(trancheFilledOut) == filledOut
     }
 
     enum ConstraintMode {
@@ -131,15 +131,19 @@ library OrderLib {
     }
 
     function _placeOrder(OrdersInfo storage self, SwapOrder memory order) internal {
+        console2.log('OrderLib._placeOrder()');
         SwapOrder[] memory orders = new SwapOrder[](1);
         orders[0] = order;
         return _placeOrders(self,orders,OcoMode.NO_OCO);
     }
 
     function _placeOrders(OrdersInfo storage self, SwapOrder[] memory orders, OcoMode ocoMode) internal {
+        console2.log('_placeOrders A');
         require(orders.length < type(uint8).max);
+        console2.log('_placeOrders B');
         uint64 startIndex = uint64(self.orders.length);
         require(startIndex < type(uint64).max);
+        console2.log('_placeOrders C');
         uint64 ocoGroup;
         if( ocoMode == OcoMode.NO_OCO )
             ocoGroup = NO_OCO_INDEX;
@@ -149,9 +153,11 @@ library OrderLib {
         }
         else
             revert('OCOM');
+        console2.log('_placeOrders D');
         for( uint8 o = 0; o < orders.length; o++ ) {
             SwapOrder memory order = orders[o];
             require(order.route.exchange == Exchange.UniswapV3, 'UR');
+            console2.log('_placeOrders E');
             // todo more order validation
             // we must explicitly copy into storage because Solidity doesn't implement copying the double-nested
             // tranches constraints array :(
@@ -165,6 +171,7 @@ library OrderLib {
             status.order.route = order.route;
             status.order.chainOrder = order.chainOrder;
             status.order.outputDirectlyToOwner = order.outputDirectlyToOwner;
+            console2.log('_placeOrders F');
             for( uint t=0; t<order.tranches.length; t++ ) {
                 status.order.tranches.push();
                 OrderLib.Tranche memory ot = order.tranches[t]; // order tranche
@@ -172,12 +179,14 @@ library OrderLib {
                 st.fraction = ot.fraction;
                 for( uint c=0; c<ot.constraints.length; c++ )
                     st.constraints.push(ot.constraints[c]);
+                console2.log('_placeOrders G');
                 status.trancheFilledIn.push(0);
                 status.trancheFilledOut.push(0);
             }
             status.state = SwapOrderState.Open;
             status.start = uint32(block.timestamp);
             status.ocoGroup = ocoGroup;
+            console2.log('_placeOrders H');
         }
         emit DexorderSwapPlaced(startIndex,uint8(orders.length));
     }

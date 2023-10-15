@@ -37,8 +37,10 @@ contract MockEnv {
         token0 = inverted ? address(USD) : address(COIN);
         token1 = inverted ? address(COIN) : address(USD);
         uint160 initialPrice = uint160(79228162514264337593543); // price 1e-12 = sqrt price 1e-6 = 2**96 / 10**6
+        console2.log('if this is the last line before a revert then make sure to run forge with --rpc-url');
         // if this reverts here make sure Anvil is started and you are running forge with --rpc-url
         pool = IUniswapV3Pool(nfpm.createAndInitializePoolIfNecessary(token0, token1, fee, initialPrice));
+        console2.log('created v3 pool successfully');
         int24 ts = pool.tickSpacing();
         (, int24 lower, , , , ,) = pool.slot0();
         int24 upper = lower;

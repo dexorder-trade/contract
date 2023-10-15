@@ -6,6 +6,7 @@ import "./Constants.sol";
 import "./interface/IVaultDeployer.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./OrderLib.sol";
+import "forge-std/console2.sol";
 
 
 contract Vault {
@@ -53,6 +54,7 @@ contract Vault {
 
 
     function placeOrder(OrderLib.SwapOrder memory order) public onlyOwner {
+        console2.log('Vault.placeOrder()');
         orderList._placeOrder(order);
     }
 
