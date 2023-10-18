@@ -12,12 +12,13 @@ library UniswapSwapper {
         address pool;
         address tokenIn;
         address tokenOut;
+        address recipient;
         uint24 fee;
         uint256 amount;
         uint160 sqrtPriceLimitX96;
     }
 
-    function swapExactInput(SwapParams memory params) internal returns (string memory error, uint256 amountOut)
+    function swapExactInput(SwapParams memory params) internal returns (uint256 amountOut)
     {
         //     struct ExactInputSingleParams {
         //        address tokenIn;
@@ -29,22 +30,13 @@ library UniswapSwapper {
         //        uint256 amountOutMinimum;
         //        uint160 sqrtPriceLimitX96;
         //    }
-
-        try Constants.uniswapV3SwapRouter.exactInputSingle(ISwapRouter.ExactInputSingleParams({
-            tokenIn: params.tokenIn, tokenOut: params.tokenOut, fee: params.fee, recipient: address(this), // todo return directly to wallet?
+        return Constants.uniswapV3SwapRouter.exactInputSingle(ISwapRouter.ExactInputSingleParams({
+            tokenIn: params.tokenIn, tokenOut: params.tokenOut, fee: params.fee, recipient: params.recipient,
             deadline: block.timestamp, amountIn: params.amount, amountOutMinimum: 0, sqrtPriceLimitX96: params.sqrtPriceLimitX96
-        })) returns (uint256 filledOut) {
-            amountOut = filledOut;
-            error = Constants.SWAP_OK;
-        }
-        catch Error(string memory reason) {
-            amountOut = 0;
-            error = reason;
-        }
+        }));
     }
 
-
-    function swapExactOutput(SwapParams memory params) internal returns (string memory error, uint256 amountIn)
+    function swapExactOutput(SwapParams memory params) internal returns (uint256 amountIn)
     {
         //     struct ExactOutputSingleParams {
         //        address tokenIn;
@@ -60,20 +52,13 @@ library UniswapSwapper {
         uint256 balance = IERC20(params.tokenIn).balanceOf(t);
         if( balance == 0 ) {
             // todo dust?
-            return ('IIA', 0);
+            revert('IIA');
         }
-        try Constants.uniswapV3SwapRouter.exactOutputSingle(ISwapRouter.ExactOutputSingleParams({
-            tokenIn: params.tokenIn, tokenOut: params.tokenOut, fee: params.fee, recipient: t, // todo return directly to wallet?
+        return Constants.uniswapV3SwapRouter.exactOutputSingle(ISwapRouter.ExactOutputSingleParams({
+            tokenIn: params.tokenIn, tokenOut: params.tokenOut, fee: params.fee, recipient: params.recipient,
             deadline: block.timestamp, amountOut: params.amount, amountInMaximum: balance,     // todo use only the committed allocation?
             sqrtPriceLimitX96: params.sqrtPriceLimitX96
-        })) returns (uint256 filledIn) {
-            amountIn = filledIn;
-            error = Constants.SWAP_OK;
-        }
-        catch Error(string memory reason) {
-            amountIn = 0;
-            error = reason;
-        }
+        }));
     }
 
 }

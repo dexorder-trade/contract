@@ -17,6 +17,6 @@ library Constants {
 
 
     // Swap statuses
-    string internal constant SWAP_OK = ''; // fastest comparison
+    bytes32 internal constant SWAP_OK = ''; // fastest comparison
     // other errors may be passed through from Uniswap
 }

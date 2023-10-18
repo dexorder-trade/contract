@@ -10,6 +10,8 @@ import "forge-std/console2.sol";
 
 
 contract Vault {
+    // represents the interests of its owner client
+
     using OrderLib for OrderLib.OrdersInfo;
 
     uint8 public immutable version;
@@ -67,9 +69,8 @@ contract Vault {
     }
 
     function execute(uint64 orderIndex, uint8 tranche_index, OrderLib.PriceProof memory proof) public
-    returns (string memory error)
     {
-        return orderList.execute(orderIndex, tranche_index, proof);
+        orderList.execute(owner, orderIndex, tranche_index, proof);
     }
 
     modifier onlyOwner() {
