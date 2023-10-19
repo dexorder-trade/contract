@@ -23,8 +23,5 @@ stackAllocation = true
 optimizerSteps = 'dhfoD[xarrscLMcCTU]uljmul'
 
 [profile.default.rpc_endpoints]
-# todo put these into a secrets file
-arbitrum_alchemy='https://arb-mainnet.g.alchemy.com/v2/L0eaUwWEoWzszCK9EhqHdl_p7VHStkaC'
-arbitrum_ankr='https://rpc.ankr.com/arbitrum/056ed471570655a3bb77cf31b9e3576658d63d2acb88911f84e7acaf211b55ac'
-arbitrum_publicnode='https://arbitrum-one.publicnode.com'
-arbitrum_quicknode='https://muddy-methodical-sheet.arbitrum-mainnet.discover.quiknode.pro/9e24248720b067953db96d462c8dd131a0a234b0/'
+arbitrum_mock='...'
+arbitrum_test='...'

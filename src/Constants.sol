@@ -16,7 +16,5 @@ library Constants {
         = ISwapRouter(0xE592427A0AEce92De3Edee1F18E0157C05861564);
 
 
-    // Swap statuses
-    bytes32 internal constant SWAP_OK = ''; // fastest comparison
-    // other errors may be passed through from Uniswap
+    bytes32 internal constant SWAP_OK = '';
 }

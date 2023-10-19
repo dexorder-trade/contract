@@ -17,7 +17,7 @@ contract Deploy is Script {
         Dexorder dexorder = new Dexorder();
         MockEnv mock = new MockEnv();
         vm.stopBroadcast();
-        console2.log('VaultDeployer');
+        console2.log('Factory');
         console2.log(address(deployer));
         console2.log('QueryHelper');
         console2.log(address(query));
