@@ -7,7 +7,7 @@ pragma abicoder v2;
 contract Dexorder {
     // represents the Dexorder organization
 
-    event DexorderExecutions(uint128 indexed id, bytes[] errors);
+    event DexorderExecutions(bytes16 indexed id, string[] errors);
 
     struct ExecutionRequest {
         address payable vault;
@@ -17,29 +17,29 @@ contract Dexorder {
     }
 
 
-    function execute( uint128 id, ExecutionRequest memory req ) public returns (bytes memory error) {
+    function execute( bytes16 id, ExecutionRequest memory req ) public returns (string memory error) {
         error = _execute(req);
-        bytes[] memory errors = new bytes[](1);
+        string[] memory errors = new string[](1);
         errors[0] = error;
         emit DexorderExecutions(id, errors);
     }
 
 
-    function execute( uint128 id, ExecutionRequest[] memory reqs ) public returns (bytes[] memory errors) {
-        errors = new bytes[](reqs.length);
+    function execute( bytes16 id, ExecutionRequest[] memory reqs ) public returns (string[] memory errors) {
+        errors = new string[](reqs.length);
         for( uint8 i=0; i<reqs.length; i++ )
             errors[i] = _execute(reqs[i]);
         emit DexorderExecutions(id, errors);
     }
 
 
-    function _execute( ExecutionRequest memory req ) private returns (bytes memory error) {
+    function _execute( ExecutionRequest memory req ) private returns (string memory error) {
         // single tranche execution
         try Vault(req.vault).execute(req.orderIndex, req.trancheIndex, req.proof) {
-            return '';
+            error = '';
         }
-        catch (bytes memory reason) {
-            return reason;
+        catch Error(string memory reason) {
+            error = reason;
         }
     }
 }
