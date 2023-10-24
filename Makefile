@@ -1,4 +1,4 @@
-tests:
+tests: build
 	bin/test.sh
 
 build:
