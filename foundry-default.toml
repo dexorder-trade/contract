@@ -3,15 +3,19 @@ solc_version = '0.7.6'
 libs = ['lib']
 remappings = [
     '@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/',
-    '@uniswap/v3-core/=lib/v3-core/',
-    '@uniswap/v3-periphery/=lib/v3-periphery/',
+    # '@uniswap/v3-core/=lib/v3-core/',
+    '@uniswap/v3-core/=lib_sol8/v3-core/',
+    'v3-core/=lib_sol8/v3-core/',
+    # '@uniswap/v3-periphery/=lib/v3-periphery/',
+    '@uniswap/v3-periphery/=lib_sol8/v3-periphery/',
+    'v3-periphery/libraries/=lib_sol8/v3-periphery/contracts/libraries',
 ]
 sizes = true
 gas_reports = ['*']
 gas_reports_ignore = []
 via_ir = false
-optimizer=true
-optimizer_runs=999999999
+optimizer = true
+optimizer_runs = 999999999
 
 [profile.default.optimizer_details]
 constantOptimizer = true
@@ -23,5 +27,5 @@ stackAllocation = true
 optimizerSteps = 'dhfoD[xarrscLMcCTU]uljmul'
 
 [profile.default.rpc_endpoints]
-arbitrum_mock='...'
-arbitrum_test='...'
+arbitrum_mock = '...'
+arbitrum_test = '...'
