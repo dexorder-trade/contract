@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity =0.7.6;
+//pragma solidity =0.7.6;
+pragma solidity >=0.8.0;
 pragma abicoder v2;
 
 import "./Constants.sol";
@@ -31,7 +32,7 @@ contract Vault {
     }
 
     function withdraw(uint256 amount) public {
-        _withdrawNative(msg.sender, amount);
+        _withdrawNative(payable(msg.sender), amount);
     }
 
     function withdrawTo(address payable recipient, uint256 amount) public {

@@ -32,7 +32,7 @@ library PoolAddress {
     /// @return pool The contract address of the V3 pool
     function computeAddress(address factory, PoolKey memory key) internal pure returns (address pool) {
         require(key.token0 < key.token1);
-        pool = address(
+        pool = address(uint160(
             uint256(
                 keccak256(
                     abi.encodePacked(
@@ -43,6 +43,6 @@ library PoolAddress {
                     )
                 )
             )
-        );
+        ));
     }
 }

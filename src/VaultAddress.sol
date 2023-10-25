@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity =0.7.6;
+//pragma solidity =0.7.6;
+pragma solidity >=0.8.0;
 pragma abicoder v2;
 
 import "./Constants.sol";
@@ -10,7 +11,7 @@ library VaultAddress {
     // keccak-256 hash of the Vault's bytecode (not the deployed bytecode but the initialization bytecode)
     // can paste into:
     // https://emn178.github.io/online-tools/keccak_256.html
-    bytes32 internal constant VAULT_INIT_CODE_HASH = 0xbc5f4b6509a7bbf6d9bcbd2b24c599e63143e9ba77aebe3d9486f1cbfcbda9ea;
+    bytes32 internal constant VAULT_INIT_CODE_HASH = 0x060e1878e07cde3b1fe03b6a8929c62c502510ed5dda30b278951f11dfc03490;
 
     // the contract being constructed must not have any constructor arguments or the determinism will be broken.  instead, use a callback to
     // get construction arguments
@@ -22,7 +23,7 @@ library VaultAddress {
 
     function computeAddress(address factory, address owner, uint8 num) internal pure returns (address vault) {
         bytes32 salt = keccak256(abi.encodePacked(owner,num));
-        vault = address(
+        vault = address(uint160(
             uint256(
                 keccak256(
                     abi.encodePacked(
@@ -33,6 +34,6 @@ library VaultAddress {
                     )
                 )
             )
-        );
+        ));
     }
 }

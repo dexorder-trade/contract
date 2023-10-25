@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity =0.7.6;
+// pragma solidity =0.7.6;
+pragma solidity >=0.8.0;
 import "./OrderLib.sol";
 import "./Vault.sol";
 pragma abicoder v2;

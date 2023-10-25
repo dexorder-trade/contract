@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity =0.7.6;
+//pragma solidity =0.7.6;
+pragma solidity >=0.8.0;
 
 import "./Vault.sol";
 pragma abicoder v2;
@@ -32,7 +33,7 @@ contract VaultDeployer {
 
     function _deployVault(address owner, uint8 num) internal returns (address payable vault) {
         parameters = Parameters(owner);
-        vault = address(new Vault{salt: keccak256(abi.encodePacked(owner,num))}());
+        vault = payable(address(new Vault{salt: keccak256(abi.encodePacked(owner,num))}()));
         delete parameters;
         emit VaultCreated( owner, num );
     }
