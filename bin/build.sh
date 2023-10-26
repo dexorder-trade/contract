@@ -9,7 +9,7 @@ forge build "$@" || exit 1
 VAULT_INIT_CODE_HASH=$(cast keccak $(jq -r .bytecode.object < out/Vault.sol/Vault.json))
 
 # put the hash value into the VaultAddress.sol source file
-sed -i "s/bytes32 internal constant VAULT_INIT_CODE_HASH = .*;/bytes32 internal constant VAULT_INIT_CODE_HASH = $VAULT_INIT_CODE_HASH;/" src/VaultAddress.sol
+sed -i "s/VAULT_INIT_CODE_HASH = .*;/VAULT_INIT_CODE_HASH = $VAULT_INIT_CODE_HASH;/" src/VaultAddress.sol
 
 # generate a javascript file with the constant
 mkdir gen &> /dev/null

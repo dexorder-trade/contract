@@ -10,6 +10,8 @@ import "../src/Factory.sol";
 import "../src/OrderLib.sol";
 
 contract TestOrder is MockEnv, Test {
+    using OrderLib for OrderLib.OrdersInfo;
+
     Factory public factory;
     Vault public vault;
 
@@ -25,7 +27,7 @@ contract TestOrder is MockEnv, Test {
     }
 
 
-    function testOrder() public {
+    function testPlaceOrder() public {
         OrderLib.Tranche[] memory tranches = new OrderLib.Tranche[](3);
         OrderLib.Constraint[] memory constraints1 = new OrderLib.Constraint[](1);
         constraints1[0] = OrderLib.Constraint(OrderLib.ConstraintMode.Time, bytes(hex"0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000046500"));
@@ -43,6 +45,27 @@ contract TestOrder is MockEnv, Test {
         );
         console2.logBytes(abi.encode(order));
         vault.placeOrder(order);
+    }
+
+    function testExecuteOrder() public {
+        OrderLib.Tranche[] memory tranches = new OrderLib.Tranche[](1);
+        OrderLib.Constraint[] memory constraints1 = new OrderLib.Constraint[](1);
+        constraints1[0] = OrderLib.Constraint(OrderLib.ConstraintMode.Time, bytes(hex"0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000046500"));
+        tranches[0] = OrderLib.Tranche(type(uint16).max,constraints1);
+        uint256 amount = 3*10**COIN.decimals() / 10; // 0.3 COIN
+        COIN.mint(address(vault), amount); // create COIN to sell
+        OrderLib.SwapOrder memory order  = OrderLib.SwapOrder(
+            address(COIN), address(USD), // sell COIN for USD
+            OrderLib.Route(OrderLib.Exchange.UniswapV3, 500), amount, true, false,
+            OrderLib.NO_CHAIN, tranches
+        );
+        uint64 orderIndex = vault.numSwapOrders();
+        vault.placeOrder(order);
+        console2.log('placed order');
+        console2.log(uint(orderIndex));
+        string memory result;
+        vault.execute(orderIndex, 0, OrderLib.PriceProof(0));
+        console2.log('executed');
     }
 
 }

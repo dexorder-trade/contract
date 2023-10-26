@@ -6,7 +6,7 @@
 #cd ../contract
 
 #./bin/build.sh
-anvil -f arbitrum_mock --chain-id 1338 &
+anvil -f arbitrum_mock --chain-id 31337 &
 # todo check anvil result
 ANVIL_PID=$!
 sleep 2

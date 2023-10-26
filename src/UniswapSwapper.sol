@@ -6,6 +6,7 @@ pragma abicoder v2;
 import "./Constants.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "v3-periphery/libraries/TransferHelper.sol";
+import "v3-core/contracts/libraries/TickMath.sol";
 import "forge-std/console2.sol";
 
 
@@ -34,12 +35,20 @@ library UniswapSwapper {
         //        uint160 sqrtPriceLimitX96;
         //    }
         console2.log('swapExactInput approve...');
-        TransferHelper.safeApprove(params.tokenIn, address(Constants.uniswapV3SwapRouter), params.amount);
+        console2.log(address(this));
         console2.log(params.tokenIn);
         console2.log(params.tokenOut);
         console2.log(uint(params.fee));
-        console2.log(address(Constants.uniswapV3SwapRouter));
+        console2.log(address(params.recipient));
         console2.log(params.amount);
+        console2.log(uint(params.sqrtPriceLimitX96));
+        console2.log(address(Constants.uniswapV3SwapRouter));
+
+        if (params.sqrtPriceLimitX96 == 0)
+            params.sqrtPriceLimitX96 = params.tokenIn < params.tokenOut ? TickMath.MIN_SQRT_RATIO+1 : TickMath.MAX_SQRT_RATIO-1;
+        TransferHelper.safeApprove(params.tokenIn, address(Constants.uniswapV3SwapRouter), params.amount);
+        console2.log('splx96');
+        console2.log(uint(params.sqrtPriceLimitX96));
         amountOut = Constants.uniswapV3SwapRouter.exactInputSingle(ISwapRouter.ExactInputSingleParams({
             tokenIn: params.tokenIn, tokenOut: params.tokenOut, fee: params.fee, recipient: params.recipient,
             deadline: block.timestamp, amountIn: params.amount, amountOutMinimum: 0, sqrtPriceLimitX96: params.sqrtPriceLimitX96
@@ -51,6 +60,8 @@ library UniswapSwapper {
 
     function swapExactOutput(SwapParams memory params) internal returns (uint256 amountIn)
     {
+        // TODO copy changes over from swapExactInput
+
         //     struct ExactOutputSingleParams {
         //        address tokenIn;
         //        address tokenOut;
