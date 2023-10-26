@@ -191,69 +191,80 @@ library OrderLib {
     // TE current time is too early for this tranche
     // TL current time is too late for this tranche
     //
-    function execute(OrdersInfo storage self, address owner, uint64 orderIndex, uint8 tranche_index, PriceProof memory proof) internal {
+    function execute(OrdersInfo storage self, address owner, uint64 orderIndex, uint8 trancheIndex, PriceProof memory proof) internal {
+        console2.log('execute');
+        console2.log(address(this));
+        console2.log(uint(orderIndex));
+        console2.log(uint(trancheIndex));
         SwapOrderStatus storage status = self.orders[orderIndex];
         if (status.state != SwapOrderState.Open)
             revert('NO'); // Not Open
-        Tranche storage tranche = status.order.tranches[tranche_index];
+        Tranche storage tranche = status.order.tranches[trancheIndex];
         uint160 sqrtPriceX96 = 0;
-        uint160 sqrtPriceLimitX96 = 0;
+        uint160 sqrtPriceLimitX96 = 0; // 0 means "not set yet" and 1 is the minimum value
         // todo other routes
         address pool = Constants.uniswapV3Factory.getPool(status.order.tokenIn, status.order.tokenOut, status.order.route.fee);
-        for (uint8 c = 0; c < tranche.constraints.length; c++) {
-            Constraint storage constraint = tranche.constraints[c];
-            if (constraint.mode == ConstraintMode.Time) {
-                TimeConstraint memory tc = abi.decode(constraint.constraint, (TimeConstraint));
-                uint32 time = tc.earliest.mode == TimeMode.Timestamp ? tc.earliest.time : status.start + tc.earliest.time;
-                if (time > block.timestamp)
-                    revert('TE'); // time early
-                time = tc.latest.mode == TimeMode.Timestamp ? tc.latest.time : status.start + tc.latest.time;
-                if (time < block.timestamp)
-                    revert('TL'); // time late
-            }
-            else if (constraint.mode == ConstraintMode.Limit) {
-                if( sqrtPriceX96 == 0 ) {
-                    (sqrtPriceX96,,,,,,) = IUniswapV3Pool(pool).slot0();
-                }
-                PriceConstraint memory pc = abi.decode(constraint.constraint, (PriceConstraint));
-                uint256 price = sqrtPriceX96;
-                if( pc.isRatio )
-                    pc.valueSqrtX96 = uint160(price * pc.valueSqrtX96 / 2**96); // todo overflow check!
-                if( pc.isAbove && price < pc.valueSqrtX96 || !pc.isAbove && price > pc.valueSqrtX96 )
-                    revert('L');
-            }
-            else if (constraint.mode == ConstraintMode.Barrier) {
-                revert('NI'); // not implemented
-            }
-            else if (constraint.mode == ConstraintMode.Trailing) {
-                revert('NI'); // not implemented
-            }
-            else if (constraint.mode == ConstraintMode.Line) {
-                revert('NI'); // not implemented
-            }
-            else // unknown constraint
-                revert('NI'); // not implemented
-        }
+//        for (uint8 c = 0; c < tranche.constraints.length; c++) {
+//            Constraint storage constraint = tranche.constraints[c];
+//            if (constraint.mode == ConstraintMode.Time) {
+//                TimeConstraint memory tc = abi.decode(constraint.constraint, (TimeConstraint));
+//                uint32 time = tc.earliest.mode == TimeMode.Timestamp ? tc.earliest.time : status.start + tc.earliest.time;
+//                if (time > block.timestamp)
+//                    revert('TE'); // time early
+//                time = tc.latest.mode == TimeMode.Timestamp ? tc.latest.time : status.start + tc.latest.time;
+//                if (time < block.timestamp)
+//                    revert('TL'); // time late
+//            }
+//            else if (constraint.mode == ConstraintMode.Limit) {
+//                if( sqrtPriceX96 == 0 ) {
+//                    (sqrtPriceX96,,,,,,) = IUniswapV3Pool(pool).slot0();
+//                }
+//                PriceConstraint memory pc = abi.decode(constraint.constraint, (PriceConstraint));
+//                uint256 price = sqrtPriceX96;
+//                if( pc.isRatio )
+//                    pc.valueSqrtX96 = uint160(price * pc.valueSqrtX96 / 2**96); // todo overflow check!
+//                if( pc.isAbove && price < pc.valueSqrtX96 || !pc.isAbove && price > pc.valueSqrtX96 )
+//                    revert('L');
+//                if( sqrtPriceLimitX96 == 0 ||
+//                    pc.isAbove && pc.valueSqrtX96 < sqrtPriceLimitX96 ||
+//                    !pc.isAbove && pc.valueSqrtX96 > sqrtPriceLimitX96
+//                )
+//                    sqrtPriceLimitX96 = pc.valueSqrtX96;
+//            }
+//            else if (constraint.mode == ConstraintMode.Barrier) {
+//                revert('NI'); // not implemented
+//            }
+//            else if (constraint.mode == ConstraintMode.Trailing) {
+//                revert('NI'); // not implemented
+//            }
+//            else if (constraint.mode == ConstraintMode.Line) {
+//                revert('NI'); // not implemented
+//            }
+//            else // unknown constraint
+//                revert('NI'); // not implemented
+//        }
         uint256 amount = status.order.amount * tranche.fraction / type(uint16).max // the most this tranche could do
-                         - (status.order.amountIsInput ? status.trancheFilledIn[tranche_index] : status.trancheFilledOut[tranche_index]); // minus tranche fills
+                         - (status.order.amountIsInput ? status.trancheFilledIn[trancheIndex] : status.trancheFilledOut[trancheIndex]); // minus tranche fills
         // order amount remaining
         uint256 remaining = status.order.amount - (status.order.amountIsInput ? status.filledIn : status.filledOut);
         if (amount > remaining)  // not more than the order's overall remaining amount
             amount = remaining;
+        console2.log(amount);
         address recipient = status.order.outputDirectlyToOwner ? owner : address(this);
+        console2.log(recipient);
         uint256 amountIn;
         uint256 amountOut;
-        if( status.order.route.exchange == Exchange.UniswapV3 )
+//        if( status.order.route.exchange == Exchange.UniswapV3 )
             (amountIn, amountOut) = _do_execute_univ3(recipient, status.order, pool, amount, sqrtPriceLimitX96);
         //  todo other routes
-        else
-            revert('UR'); // unknown route
-        status.filledIn += amountIn;
-        status.filledOut += amountOut;
-        status.trancheFilledIn[tranche_index] += amountIn;
-        status.trancheFilledOut[tranche_index] += amountOut;
-        emit DexorderSwapFilled(orderIndex, tranche_index, amountIn, amountOut);
-        _checkCompleted(self, orderIndex, status);
+//        else
+//            revert('UR'); // unknown route
+//        status.filledIn += amountIn;
+//        status.filledOut += amountOut;
+//        status.trancheFilledIn[trancheIndex] += amountIn;
+//        status.trancheFilledOut[trancheIndex] += amountOut;
+//        emit DexorderSwapFilled(orderIndex, trancheIndex, amountIn, amountOut);
+//        _checkCompleted(self, orderIndex, status);
     }
 
 
@@ -261,9 +272,8 @@ library OrderLib {
     returns (uint256 amountIn, uint256 amountOut)
     {
         // todo refactor this signature to be more low-level, taking only the in/out amounts and limit prices.  doesnt need self/status/index
-        if (sqrtPriceLimitX96 == 0)
-        // check pool inversion to see if the price should be high or low
-            sqrtPriceLimitX96 = order.tokenIn < order.tokenOut ? 0 : type(uint160).max;
+        console2.log('price limit');
+        console2.log(uint(sqrtPriceLimitX96));
         if (order.amountIsInput) {
             amountIn = amount;
             amountOut = UniswapSwapper.swapExactInput(UniswapSwapper.SwapParams(

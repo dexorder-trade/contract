@@ -16,7 +16,7 @@ contract Vault {
 
     uint8 public immutable version;
     address public immutable owner;
-    OrderLib.OrdersInfo public orderList;
+    OrderLib.OrdersInfo public ordersInfo;
 
     constructor()
     {
@@ -54,23 +54,26 @@ contract Vault {
         token.transfer(recipient, amount);
     }
 
+    function numSwapOrders() external view returns (uint64 num) {
+        return uint64(ordersInfo.orders.length);
+    }
 
     function placeOrder(OrderLib.SwapOrder memory order) public onlyOwner {
         console2.log('Vault.placeOrder()');
-        orderList._placeOrder(order);
+        ordersInfo._placeOrder(order);
     }
 
     function placeOrders(OrderLib.SwapOrder[] memory orders, OrderLib.OcoMode ocoMode) public onlyOwner {
-        orderList._placeOrders(orders, ocoMode);
+        ordersInfo._placeOrders(orders, ocoMode);
     }
 
-    function swapOrderStatus(uint64 orderIndex) public view returns (OrderLib.SwapOrderStatus memory status) {
-        return orderList.orders[orderIndex];
+    function swapOrderStatus(uint64 orderIndex) external view returns (OrderLib.SwapOrderStatus memory status) {
+        return ordersInfo.orders[orderIndex];
     }
 
     function execute(uint64 orderIndex, uint8 tranche_index, OrderLib.PriceProof memory proof) public
     {
-        orderList.execute(owner, orderIndex, tranche_index, proof);
+        ordersInfo.execute(owner, orderIndex, tranche_index, proof);
     }
 
     modifier onlyOwner() {

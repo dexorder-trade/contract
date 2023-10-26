@@ -8,7 +8,6 @@ pragma abicoder v2;
 contract Factory is VaultDeployer {
     address public admin;
 
-
     constructor() {
         admin = msg.sender;
     }

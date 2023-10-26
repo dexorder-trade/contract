@@ -29,9 +29,13 @@ contract MockEnv {
     // the initial price is 1.000000, but since COIN has 18 decimals and USD only has 6, the raw pool price is 1e-12
     // therefore the sqrt price is 1e-6
     // 1000e12 liquidity is put into the pool at each tick spacing for 10 tick spacings to either side of $1
-    function init() internal {
+    function init() public {
         COIN = new MockERC20('Mock Coin', 'MOCK', 18);
-        USD = new MockERC20('Universally Supported Dollars', 'USD', 6);
+        console2.log('COIN');
+        console2.log(address(COIN));
+        USD = new MockERC20('Universally Stable Denomination', 'USD', 6);
+        console2.log('USD');
+        console2.log(address(USD));
         fee = 500;
         inverted = address(COIN) > address(USD);
         token0 = inverted ? address(USD) : address(COIN);
@@ -40,7 +44,8 @@ contract MockEnv {
         console2.log('if this is the last line before a revert then make sure to run forge with --rpc-url');
         // if this reverts here make sure Anvil is started and you are running forge with --rpc-url
         pool = IUniswapV3Pool(nfpm.createAndInitializePoolIfNecessary(token0, token1, fee, initialPrice));
-        console2.log('created v3 pool successfully');
+        console2.log('v3 pool');
+        console2.log(address(pool));
         int24 ts = pool.tickSpacing();
         (, int24 lower, , , , ,) = pool.slot0();
         int24 upper = lower;

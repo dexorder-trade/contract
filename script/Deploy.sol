@@ -12,7 +12,8 @@ contract Deploy is Script {
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
-        Factory deployer = new Factory{salt:keccak256(abi.encode(1))}();
+//        Factory deployer = new Factory{salt:keccak256(abi.encode(1))}(); // version 1
+        Factory deployer = new Factory(); // hardhat often breaks on the CREATE2 above :(
         QueryHelper query = new QueryHelper();
         Dexorder dexorder = new Dexorder();
         MockEnv mock = new MockEnv();
