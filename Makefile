@@ -5,7 +5,7 @@ build:
 	bin/build.sh
 
 build_force:
-	bin/build_force.sh
+	bin/build.sh --force
 
 dependencies:
 	# foundry
