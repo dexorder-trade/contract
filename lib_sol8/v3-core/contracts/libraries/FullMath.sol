@@ -11,11 +11,12 @@ library FullMath {
     /// @param denominator The divisor
     /// @return result The 256-bit result
     /// @dev Credit to Remco Bloemen under MIT license https://xn--2-umb.com/21/muldiv
+    // mulDiv is unchecked because it uses wrapping, i.e. over/underflow, to work correctly
     function mulDiv(
         uint256 a,
         uint256 b,
         uint256 denominator
-    ) internal pure returns (uint256 result) {
+    ) internal pure returns (uint256 result) {unchecked{
         // 512-bit multiply [prod1 prod0] = a * b
         // Compute the product mod 2**256 and mod 2**256 - 1
         // then use the Chinese Remainder Theorem to reconstruct
@@ -103,7 +104,7 @@ library FullMath {
         // is no longer required.
         result = prod0 * inv;
         return result;
-    }
+    }}
 
     /// @notice Calculates ceil(a×b÷denominator) with full precision. Throws if result overflows a uint256 or denominator == 0
     /// @param a The multiplicand
@@ -114,11 +115,11 @@ library FullMath {
         uint256 a,
         uint256 b,
         uint256 denominator
-    ) internal pure returns (uint256 result) {
+    ) internal pure returns (uint256 result) {unchecked{
         result = mulDiv(a, b, denominator);
         if (mulmod(a, b, denominator) > 0) {
             require(result < type(uint256).max);
             result++;
         }
-    }
+    }}
 }
