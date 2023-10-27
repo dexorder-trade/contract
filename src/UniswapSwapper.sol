@@ -44,18 +44,20 @@ library UniswapSwapper {
         console2.log(uint(params.sqrtPriceLimitX96));
         console2.log(address(Constants.uniswapV3SwapRouter));
 
-        if (params.sqrtPriceLimitX96 == 0)
-            params.sqrtPriceLimitX96 = params.tokenIn < params.tokenOut ? TickMath.MIN_SQRT_RATIO+1 : TickMath.MAX_SQRT_RATIO-1;
         TransferHelper.safeApprove(params.tokenIn, address(Constants.uniswapV3SwapRouter), params.amount);
+//        if (params.sqrtPriceLimitX96 == 0)
+//            params.sqrtPriceLimitX96 = params.tokenIn < params.tokenOut ? TickMath.MIN_SQRT_RATIO+1 : TickMath.MAX_SQRT_RATIO-1;
+
         console2.log('splx96');
         console2.log(uint(params.sqrtPriceLimitX96));
+
         amountOut = Constants.uniswapV3SwapRouter.exactInputSingle(ISwapRouter.ExactInputSingleParams({
             tokenIn: params.tokenIn, tokenOut: params.tokenOut, fee: params.fee, recipient: params.recipient,
-            deadline: block.timestamp, amountIn: params.amount, amountOutMinimum: 0, sqrtPriceLimitX96: params.sqrtPriceLimitX96
+            deadline: block.timestamp, amountIn: params.amount, amountOutMinimum: 1, sqrtPriceLimitX96: params.sqrtPriceLimitX96
         }));
         console2.log('swapped');
         console2.log(amountOut);
-        IERC20(params.tokenIn).approve(address(Constants.uniswapV3SwapRouter), 0);
+        TransferHelper.safeApprove(params.tokenIn, address(Constants.uniswapV3SwapRouter), 0);
     }
 
     function swapExactOutput(SwapParams memory params) internal returns (uint256 amountIn)
@@ -79,19 +81,34 @@ library UniswapSwapper {
             revert('IIA');
         }
         uint256 maxAmountIn = balance;
+
         console2.log('swapExactOutput approve...');
-        TransferHelper.safeApprove(params.tokenIn, address(Constants.uniswapV3SwapRouter), maxAmountIn);
+        console2.log(address(this));
         console2.log(params.tokenIn);
+        console2.log(params.tokenOut);
+        console2.log(uint(params.fee));
+        console2.log(address(params.recipient));
+        console2.log(params.amount);
+        console2.log(uint(params.sqrtPriceLimitX96));
         console2.log(address(Constants.uniswapV3SwapRouter));
+        console2.log('approve');
         console2.log(maxAmountIn);
+
+        TransferHelper.safeApprove(params.tokenIn, address(Constants.uniswapV3SwapRouter), maxAmountIn);
+
+//        if (params.sqrtPriceLimitX96 == 0)
+//            params.sqrtPriceLimitX96 = params.tokenIn < params.tokenOut ? TickMath.MIN_SQRT_RATIO+1 : TickMath.MAX_SQRT_RATIO-1;
+
         amountIn = Constants.uniswapV3SwapRouter.exactOutputSingle(ISwapRouter.ExactOutputSingleParams({
             tokenIn: params.tokenIn, tokenOut: params.tokenOut, fee: params.fee, recipient: params.recipient,
             deadline: block.timestamp, amountOut: params.amount, amountInMaximum: maxAmountIn,
             sqrtPriceLimitX96: params.sqrtPriceLimitX96
         }));
+
         console2.log('swapped');
         console2.log(amountIn);
-        IERC20(params.tokenIn).approve(address(Constants.uniswapV3SwapRouter), 0);
+
+        TransferHelper.safeApprove(params.tokenIn, address(Constants.uniswapV3SwapRouter), 0);
     }
 
 }
