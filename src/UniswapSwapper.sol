@@ -22,7 +22,7 @@ library UniswapSwapper {
         uint160 sqrtPriceLimitX96;
     }
 
-    function swapExactInput(SwapParams memory params) internal returns (uint256 amountOut)
+    function swapExactInput(SwapParams memory params) internal returns (uint256 amountIn, uint256 amountOut)
     {
         //     struct ExactInputSingleParams {
         //        address tokenIn;
@@ -44,23 +44,30 @@ library UniswapSwapper {
         console2.log(uint(params.sqrtPriceLimitX96));
         console2.log(address(Constants.uniswapV3SwapRouter));
 
-        TransferHelper.safeApprove(params.tokenIn, address(Constants.uniswapV3SwapRouter), params.amount);
+        amountIn = params.amount;
+        uint256 balance = IERC20(params.tokenIn).balanceOf(address(this));
+        if( balance == 0 ) {
+            // todo dust?
+            revert('IIA');
+        }
+        if( balance < amountIn )
+            amountIn = balance;
+
+        TransferHelper.safeApprove(params.tokenIn, address(Constants.uniswapV3SwapRouter), amountIn);
 //        if (params.sqrtPriceLimitX96 == 0)
 //            params.sqrtPriceLimitX96 = params.tokenIn < params.tokenOut ? TickMath.MIN_SQRT_RATIO+1 : TickMath.MAX_SQRT_RATIO-1;
 
-        console2.log('splx96');
-        console2.log(uint(params.sqrtPriceLimitX96));
-
+        console2.log('swapping...');
         amountOut = Constants.uniswapV3SwapRouter.exactInputSingle(ISwapRouter.ExactInputSingleParams({
             tokenIn: params.tokenIn, tokenOut: params.tokenOut, fee: params.fee, recipient: params.recipient,
-            deadline: block.timestamp, amountIn: params.amount, amountOutMinimum: 1, sqrtPriceLimitX96: params.sqrtPriceLimitX96
+            deadline: block.timestamp, amountIn: amountIn, amountOutMinimum: 1, sqrtPriceLimitX96: params.sqrtPriceLimitX96
         }));
         console2.log('swapped');
         console2.log(amountOut);
         TransferHelper.safeApprove(params.tokenIn, address(Constants.uniswapV3SwapRouter), 0);
     }
 
-    function swapExactOutput(SwapParams memory params) internal returns (uint256 amountIn)
+    function swapExactOutput(SwapParams memory params) internal returns (uint256 amountIn, uint256 amountOut)
     {
         // TODO copy changes over from swapExactInput
 
@@ -74,8 +81,7 @@ library UniswapSwapper {
         //        uint256 amountInMaximum;
         //        uint160 sqrtPriceLimitX96;
         //    }
-        address t = address(this);
-        uint256 balance = IERC20(params.tokenIn).balanceOf(t);
+        uint256 balance = IERC20(params.tokenIn).balanceOf(address(this));
         if( balance == 0 ) {
             // todo dust?
             revert('IIA');
@@ -99,14 +105,33 @@ library UniswapSwapper {
 //        if (params.sqrtPriceLimitX96 == 0)
 //            params.sqrtPriceLimitX96 = params.tokenIn < params.tokenOut ? TickMath.MIN_SQRT_RATIO+1 : TickMath.MAX_SQRT_RATIO-1;
 
-        amountIn = Constants.uniswapV3SwapRouter.exactOutputSingle(ISwapRouter.ExactOutputSingleParams({
+        console2.log('swapping...');
+        try Constants.uniswapV3SwapRouter.exactOutputSingle(ISwapRouter.ExactOutputSingleParams({
             tokenIn: params.tokenIn, tokenOut: params.tokenOut, fee: params.fee, recipient: params.recipient,
             deadline: block.timestamp, amountOut: params.amount, amountInMaximum: maxAmountIn,
             sqrtPriceLimitX96: params.sqrtPriceLimitX96
-        }));
+        })) returns (uint256 amtIn) {
+            amountIn = amtIn;
+            amountOut = params.amount;
+        }
+        catch Error( string memory reason ) {
+            // todo check reason before trying exactinput
+            // if the input amount was insufficient, use exactInputSingle to spend whatever remains.
+            try Constants.uniswapV3SwapRouter.exactInputSingle(ISwapRouter.ExactInputSingleParams({
+                tokenIn: params.tokenIn, tokenOut: params.tokenOut, fee: params.fee, recipient: params.recipient,
+                deadline: block.timestamp, amountIn: maxAmountIn, amountOutMinimum: 1, sqrtPriceLimitX96: params.sqrtPriceLimitX96
+            })) returns (uint256 amtOut) {
+                amountIn = maxAmountIn;
+                amountOut = amtOut;
+            }
+            catch Error( string memory ) {
+                revert(reason); // revert on the original reason
+            }
+        }
 
         console2.log('swapped');
         console2.log(amountIn);
+        console2.log(amountOut);
 
         TransferHelper.safeApprove(params.tokenIn, address(Constants.uniswapV3SwapRouter), 0);
     }

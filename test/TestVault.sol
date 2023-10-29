@@ -22,7 +22,7 @@ contract TestVault is Test {
         console2.log(address(vault));
     }
 
-    function testDeterministicAddress() public {
+    function testDeterministicAddress() public view {
         console2.log(address(vault));
         address d = VaultAddress.computeAddress(address(factory), address(this));
         console2.log(d);

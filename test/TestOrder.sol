@@ -63,7 +63,6 @@ contract TestOrder is MockEnv, Test {
         vault.placeOrder(order);
         console2.log('placed order');
         console2.log(uint(orderIndex));
-        string memory result;
         vault.execute(orderIndex, 0, OrderLib.PriceProof(0));
         console2.log('executed');
     }
@@ -85,7 +84,6 @@ contract TestOrder is MockEnv, Test {
         vault.placeOrder(order);
         console2.log('placed order');
         console2.log(uint(orderIndex));
-        string memory result;
         vault.execute(orderIndex, 0, OrderLib.PriceProof(0));
         console2.log('executed');
     }

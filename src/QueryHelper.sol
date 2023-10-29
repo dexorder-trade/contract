@@ -50,8 +50,8 @@ contract QueryHelper {
         // here we find the highest liquidity pool for v2 and for v3
         uint24[4] memory fees = [uint24(100),500,3000,10000];
         uint24 uniswapV2Fee = 0;
-        uint128 uniswapV2Liquidity = 0;
-        address uniswapV2Pool = address(0);
+//        uint128 uniswapV2Liquidity = 0;
+//        address uniswapV2Pool = address(0);
         uint24 uniswapV3Fee = 0;
         uint128 uniswapV3Liquidity = 0;
         address uniswapV3Pool = address(0);

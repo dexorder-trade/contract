@@ -17,7 +17,7 @@ contract Deploy is Script {
         Factory deployer = new Factory(); // hardhat often breaks on the CREATE2 above :(
         QueryHelper query = new QueryHelper();
         Dexorder dexorder = new Dexorder();
-        MockEnv mock = new MockEnv();
+//        MockEnv mock = new MockEnv();
         vm.stopBroadcast();
         console2.log('Factory');
         console2.log(address(deployer));
@@ -25,7 +25,7 @@ contract Deploy is Script {
         console2.log(address(query));
         console2.log('Dexorder');
         console2.log(address(dexorder));
-        console2.log('MockEnv'); // todo no mock in production deployment
-        console2.log(address(mock));
+//        console2.log('MockEnv'); // todo no mock in production deployment
+//        console2.log(address(mock));
     }
 }
