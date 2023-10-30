@@ -6,3 +6,4 @@
 /lib
 /foundry.toml
 /broadcast
+/src/VaultAddress.sol
