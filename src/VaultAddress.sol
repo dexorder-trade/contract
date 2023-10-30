@@ -11,7 +11,7 @@ library VaultAddress {
     // keccak-256 hash of the Vault's bytecode (not the deployed bytecode but the initialization bytecode)
     // can paste into:
     // https://emn178.github.io/online-tools/keccak_256.html
-    bytes32 public constant VAULT_INIT_CODE_HASH = 0xe8ec1ead51d2900d63e5e0aa245485e9452d619fceb9ab914ae78cdb11c4ab70;
+    bytes32 public constant VAULT_INIT_CODE_HASH = 0x2d636e2b474d9ffd48b3a184f529f2216824023721f63454590c8cb5d4412e93;
 
     // the contract being constructed must not have any constructor arguments or the determinism will be broken.  instead, use a callback to
     // get construction arguments
