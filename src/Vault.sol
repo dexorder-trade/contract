@@ -31,11 +31,11 @@ contract Vault {
         emit DexorderReceived(msg.sender, msg.value);
     }
 
-    function withdraw(uint256 amount) public {
+    function withdraw(uint256 amount) external {
         _withdrawNative(payable(msg.sender), amount);
     }
 
-    function withdrawTo(address payable recipient, uint256 amount) public {
+    function withdrawTo(address payable recipient, uint256 amount) external {
         _withdrawNative(recipient, amount);
     }
 
@@ -43,11 +43,11 @@ contract Vault {
         reipient.transfer(amount);
     }
 
-    function withdraw(IERC20 token, uint256 amount) public {
+    function withdraw(IERC20 token, uint256 amount) external {
         _withdraw(token, msg.sender, amount);
     }
 
-    function withdrawTo(IERC20 token, address recipient, uint256 amount) public {
+    function withdrawTo(IERC20 token, address recipient, uint256 amount) external {
         _withdraw(token, recipient, amount);
     }
 
@@ -59,12 +59,12 @@ contract Vault {
         return uint64(ordersInfo.orders.length);
     }
 
-    function placeOrder(OrderLib.SwapOrder memory order) public onlyOwner {
+    function placeOrder(OrderLib.SwapOrder memory order) external onlyOwner {
         console2.log('Vault.placeOrder()');
         ordersInfo._placeOrder(order);
     }
 
-    function placeOrders(OrderLib.SwapOrder[] memory orders, OrderLib.OcoMode ocoMode) public onlyOwner {
+    function placeOrders(OrderLib.SwapOrder[] memory orders, OrderLib.OcoMode ocoMode) external onlyOwner {
         ordersInfo._placeOrders(orders, ocoMode);
     }
 
@@ -72,7 +72,7 @@ contract Vault {
         return ordersInfo.orders[orderIndex];
     }
 
-    function execute(uint64 orderIndex, uint8 tranche_index, OrderLib.PriceProof memory proof) public
+    function execute(uint64 orderIndex, uint8 tranche_index, OrderLib.PriceProof memory proof) external
     {
         ordersInfo.execute(owner, orderIndex, tranche_index, proof);
     }
