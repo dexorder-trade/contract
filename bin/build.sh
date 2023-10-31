@@ -2,7 +2,6 @@
 # this script requires the jq command $(sudo apt install jq)
 
 # first-pass build
-cp src/VaultAddress-default.sol src/VaultAddress.sol
 forge build "$@" || exit 1
 
 # calculate the Vault init code hash using the bytecode generated for Vault
