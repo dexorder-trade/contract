@@ -11,7 +11,7 @@ anvil -f arbitrum_mock --chain-id 31337 &
 ANVIL_PID=$!
 sleep 2
 
-forge script script/Deploy.sol -vvvv --fork-url http://localhost:8545 --broadcast
+forge script script/DeployMock.sol -vvvv --fork-url http://localhost:8545 --broadcast
 
 trap_ctrlc() {
   echo exiting anvil

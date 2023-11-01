@@ -142,4 +142,23 @@ contract MockEnv {
         );
         return swapper.exactInputSingle(params);
     }
+
+    function price() public view returns (uint160 sqrtPrice) {
+        (sqrtPrice,,,,,,) = pool.slot0();
+    }
+
+    function swapToPrice(uint160 sqrtPriceLimitX96) public {
+        console2.log('swapToPrice');
+        console2.log(sqrtPriceLimitX96);
+        uint160 curPrice = price();
+        console2.log(curPrice);
+        if( curPrice == sqrtPriceLimitX96 )
+            return;
+        MockERC20 inToken = curPrice > sqrtPriceLimitX96 ? MockERC20(token0) : MockERC20(token1);
+        MockERC20 outToken = curPrice < sqrtPriceLimitX96 ? MockERC20(token0) : MockERC20(token1);
+        // instead of calculating how much we need, we just mint an absurd amount
+        uint256 aLot = 2**100;
+        inToken.mint(address(this), aLot);
+        swap(inToken, outToken, aLot, sqrtPriceLimitX96);
+    }
 }

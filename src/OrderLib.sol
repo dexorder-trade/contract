@@ -66,21 +66,13 @@ library OrderLib {
 
     enum ConstraintMode {
         Time,
-        Limit,
-        Trailing,
-        Barrier,
-        Line
+        Line,
+        Barrier
     }
 
     struct Constraint {
         ConstraintMode mode; // type information
-        bytes constraint;    // abi packed-encoded constraint struct: decode according to mode
-    }
-
-    struct PriceConstraint {
-        bool isAbove;
-        bool isRatio;
-        uint160 valueSqrtX96;
+        bytes constraint;    // abi-encoded constraint struct: decode according to mode
     }
 
     struct LineConstraint {
@@ -217,33 +209,34 @@ library OrderLib {
                 if (time < block.timestamp)
                     revert('TL'); // time late
             }
-            else if (constraint.mode == ConstraintMode.Limit) {
-                console2.log('limit constraint');
-                if( sqrtPriceX96 == 0 ) {
+            else if (constraint.mode == ConstraintMode.Line) {
+                console2.log('line constraint');
+                if( sqrtPriceX96 == 0 )
                     (sqrtPriceX96,,,,,,) = IUniswapV3Pool(pool).slot0();
-                }
-                PriceConstraint memory pc = abi.decode(constraint.constraint, (PriceConstraint));
+                LineConstraint memory lc = abi.decode(constraint.constraint, (LineConstraint));
                 uint256 price = sqrtPriceX96;
-                if( pc.isRatio )
-                    pc.valueSqrtX96 = uint160(price * pc.valueSqrtX96 / 2**96); // todo overflow check!
-                if( pc.isAbove && price < pc.valueSqrtX96 || !pc.isAbove && price > pc.valueSqrtX96 )
+                if( lc.isRatio )
+                    revert('ratio not implemented'); // todo the ratio must be computed when the order is placed
+                    // c.valueSqrtX96 = uint160(price * c.valueSqrtX96 / 2**96);
+                int256 limit256 = int256(uint256(lc.valueSqrtX96));
+                if( lc.slopeSqrtX96 != 0 ) {
+                    limit256 += int256(block.timestamp - lc.time) * lc.slopeSqrtX96 / 2**96;
+                    if( limit256 < 0 )
+                        limit256 = 0;
+                }
+                console2.log(limit256);
+                uint160 limit = uint160(uint256(limit256));
+                // use <= and >= here because trading AT the limit results in 0 volume.  price must exceed the limit.
+                if( lc.isAbove && price <= limit || !lc.isAbove && price >= limit )
                     revert('L');
                 if( sqrtPriceLimitX96 == 0 ||
-                    pc.isAbove && pc.valueSqrtX96 < sqrtPriceLimitX96 ||
-                    !pc.isAbove && pc.valueSqrtX96 > sqrtPriceLimitX96
+                    lc.isAbove && limit < sqrtPriceLimitX96 ||
+                    !lc.isAbove && limit > sqrtPriceLimitX96
                 )
-                    sqrtPriceLimitX96 = pc.valueSqrtX96;
+                    sqrtPriceLimitX96 = limit;
             }
             else if (constraint.mode == ConstraintMode.Barrier) {
                 console2.log('barrier constraint');
-                revert('NI'); // not implemented
-            }
-            else if (constraint.mode == ConstraintMode.Trailing) {
-                console2.log('trailing constraint');
-                revert('NI'); // not implemented
-            }
-            else if (constraint.mode == ConstraintMode.Line) {
-                console2.log('line constraint');
                 revert('NI'); // not implemented
             }
             else // unknown constraint
