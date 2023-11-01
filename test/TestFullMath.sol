@@ -63,15 +63,25 @@ contract TestFullMath is Test {
         q = FullMath.mulDiv(MAXneg, MinusOne, MinusOne);
         require(q == MAXneg, "case 4f failed");
 
+        // Case 5
+        // https://github.com/Uniswap/v3-core/issues/586
+
+        uint256 a;
+        uint256 b;
+        uint256 d;
+        uint256 expected;
+
+        a = 316922101631557355182318461781248010879680643072; // ~2^157
+        b = 2694519998095207227803175883740; // ~2^101
+        d = 79232019085396855395509160680691688; // ~2^116
+        expected = 10777876804631170754249523106393912452806121; // ~2^143 
+        require (FullMath.mulDiv(a, b, d) == expected, "Case 5 failed");
+
         // Case 10 -- various exponents
 
         uint256 aExp;
         uint256 bExp;
         uint256 dExp;
-        uint256 a;
-        uint256 b;
-        uint256 d;
-        uint256 qExpected;
 
         aExp = 255;
         bExp = 255;
@@ -80,10 +90,10 @@ contract TestFullMath is Test {
         a = 2**aExp;
         b = 2**bExp;
         d = 2**dExp;
-        qExpected = 2**(aExp+bExp-dExp);
+        expected = 2**(aExp+bExp-dExp);
 
         q = FullMath.mulDiv(a,b,d); // DUT
-        require(q == qExpected, "case 10 failed"); // check
+        require(q == expected, "case 10 failed"); // check
 
     }
 }
