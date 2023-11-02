@@ -47,14 +47,9 @@ contract MockEnv {
         pool = IUniswapV3Pool(nfpm.createAndInitializePoolIfNecessary(token0, token1, fee, initialPrice));
         console2.log('v3 pool');
         console2.log(address(pool));
-        int24 ts = pool.tickSpacing();
         (, int24 lower, , , , ,) = pool.slot0();
-        int24 upper = lower;
-        for (int8 i = 0; i < 10; i++) {
-            lower -= ts;
-            upper += ts;
-            stake(1000 * 10**12, lower, upper);
-        }
+        // stake a super wide range so we have liquidity everywhere.
+        stake(1_000_000 * 10**12, lower-10000, lower+100000);
     }
 
 

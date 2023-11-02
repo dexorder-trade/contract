@@ -12,19 +12,9 @@ contract DeployMock is Script {
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
-        // hardhat often breaks on the CREATE2 so we disable it for mock
-        //        Factory deployer = new Factory{salt:keccak256(abi.encode(1))}(); // version 1
-        Factory deployer = new Factory();
-        QueryHelper query = new QueryHelper();
-        Dexorder dexorder = new Dexorder();
         MockEnv mock = new MockEnv();
+        mock.init();
         vm.stopBroadcast();
-        console2.log('Factory');
-        console2.log(address(deployer));
-        console2.log('QueryHelper');
-        console2.log(address(query));
-        console2.log('Dexorder');
-        console2.log(address(dexorder));
         console2.log('MockEnv');
         console2.log(address(mock));
     }
