@@ -220,11 +220,14 @@ library OrderLib {
                     // c.valueSqrtX96 = uint160(price * c.valueSqrtX96 / 2**96);
                 int256 limit256 = int256(uint256(lc.valueSqrtX96));
                 if( lc.slopeSqrtX96 != 0 ) {
+                    // todo cannot add square roots.
                     limit256 += int256(block.timestamp - lc.time) * lc.slopeSqrtX96 / 2**96;
                     if( limit256 < 0 )
                         limit256 = 0;
                 }
                 console2.log(limit256);
+                console2.log(price);
+                console2.log(lc.isAbove);
                 uint160 limit = uint160(uint256(limit256));
                 // use <= and >= here because trading AT the limit results in 0 volume.  price must exceed the limit.
                 if( lc.isAbove && price <= limit || !lc.isAbove && price >= limit )
@@ -254,6 +257,10 @@ library OrderLib {
                          - (status.order.amountIsInput ? status.trancheFilledIn[trancheIndex] : status.trancheFilledOut[trancheIndex]); // minus tranche fills
         console2.log('amount');
         console2.log(amount);
+        console2.log('limit');
+        console2.log(sqrtPriceLimitX96);
+        console2.log('price');
+        console2.log(sqrtPriceX96);
         // order amount remaining
         require( (status.order.amountIsInput ? status.filledIn : status.filledOut) <= status.order.amount, 'OVERFILL' );
         uint256 remaining = status.order.amount - (status.order.amountIsInput ? status.filledIn : status.filledOut);

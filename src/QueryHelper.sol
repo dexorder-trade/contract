@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: UNLICENSED
-//pragma solidity =0.7.6;
 pragma solidity >=0.8.0;
 pragma abicoder v2;
 
@@ -9,6 +8,8 @@ import "./OrderLib.sol";
 import "./Vault.sol";
 import "./VaultDeployer.sol";
 import "./Factory.sol";
+import "forge-std/console2.sol";
+
 
 contract QueryHelper {
     uint8 constant public version = 1;
@@ -47,28 +48,40 @@ contract QueryHelper {
     function getRoutes( address tokenA, address tokenB ) public view
     returns(RoutesResult[] memory routes) {
         // todo discover all supported pools
+        console2.log('getRoutes');
+        console2.log(tokenA);
+        console2.log(tokenB);
         // here we find the highest liquidity pool for v2 and for v3
         uint24[4] memory fees = [uint24(100),500,3000,10000];
         uint24 uniswapV2Fee = 0;
 //        uint128 uniswapV2Liquidity = 0;
 //        address uniswapV2Pool = address(0);
         uint24 uniswapV3Fee = 0;
-        uint128 uniswapV3Liquidity = 0;
+        uint256 uniswapV3Liquidity = 0;
         address uniswapV3Pool = address(0);
+        IERC20 ercA = IERC20(tokenA);
         for( uint8 f=0; f<4; f++ ) {
-            IUniswapV3Pool pool = IUniswapV3Pool(Constants.uniswapV3Factory.getPool(tokenA, tokenB, fees[f]));
-            try pool.liquidity() returns (uint128 liquidity) {
-                // todo v2
-                if( liquidity > uniswapV3Liquidity ) {
-                    uniswapV3Fee = fees[f];
-                    uniswapV3Liquidity = liquidity;
-                    uniswapV3Pool = address(pool);
-                }
+            console2.log('getPool..');
+            uint24 fee = fees[f];
+            IUniswapV3Pool pool = IUniswapV3Pool(Constants.uniswapV3Factory.getPool(tokenA, tokenB, fee));
+            if( address(pool) == address(0) ) {
+                console2.log('no pool');
+                continue;
             }
-            catch {
+            console2.log('gotPool.');
+            console2.log(address(pool));
+            // NOTE: pool.liquidity() is only the current tick's liquidity, so we look at the pool's balance
+            // of one of the tokens as a measure of liquidity
+            uint256 liquidity = ercA.balanceOf(address(pool));
+            if( liquidity > uniswapV3Liquidity ) {
+                uniswapV3Fee = fee;
+                uniswapV3Liquidity = liquidity;
+                uniswapV3Pool = address(pool);
             }
         }
         uint8 routesCount = uniswapV3Fee > 0 ? 1 : 0 + uniswapV2Fee > 0 ? 1 : 0;
+        console2.log(uniswapV3Pool);
+        console2.log(uint(routesCount));
         routes = new QueryHelper.RoutesResult[](routesCount);
         uint8 i = 0;
         // todo v2

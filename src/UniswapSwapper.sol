@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: UNLICENSED
-//pragma solidity =0.7.6;
 pragma solidity >=0.8.0;
 pragma abicoder v2;
 
@@ -15,7 +14,7 @@ library UniswapSwapper {
         address pool;
         address tokenIn;
         address tokenOut;
-        address recipient;
+        address recipient; // todo refactor back into bool outputToOwner to save space and constrain the money path
         uint24 fee;
         uint256 amount;
         uint160 sqrtPriceLimitX96;
@@ -133,6 +132,21 @@ library UniswapSwapper {
         console2.log(amountOut);
 
         TransferHelper.safeApprove(params.tokenIn, address(Constants.uniswapV3SwapRouter), 0);
+    }
+
+    // from https://github.com/ethereum/dapp-bin/pull/50/files
+    // the same logic as UniswapV2's version of sqrt
+    function sqrt(uint x) internal pure returns (uint y) {
+        // todo overflow is not possible in this algorithm, correct?  we map wrap it in unchecked {}
+        if (x == 0) return 0;
+        else if (x <= 3) return 1;
+        uint z = (x + 1) / 2;
+        y = x;
+        while (z < y)
+        {
+            y = z;
+            z = (x / z + z) / 2;
+        }
     }
 
 }

@@ -41,7 +41,8 @@ contract MockEnv {
         inverted = address(COIN) > address(USD);
         token0 = inverted ? address(USD) : address(COIN);
         token1 = inverted ? address(COIN) : address(USD);
-        uint160 initialPrice = uint160(79228162514264337593543); // price 1e-12 = sqrt price 1e-6 = 2**96 / 10**6
+//        uint160 initialPrice = uint160(79228162514264337593543); // price 1e-12 = sqrt price 1e-6 = 2**96 / 10**6
+        uint160 initialPrice = uint160(79228162514264337593543950336000000); // $1.00
         console2.log('if this is the last line before a revert then make sure to run forge with --rpc-url');
         // if this reverts here make sure Anvil is started and you are running forge with --rpc-url
         pool = IUniswapV3Pool(nfpm.createAndInitializePoolIfNecessary(token0, token1, fee, initialPrice));
@@ -138,8 +139,8 @@ contract MockEnv {
         return swapper.exactInputSingle(params);
     }
 
-    function price() public view returns (uint160 sqrtPrice) {
-        (sqrtPrice,,,,,,) = pool.slot0();
+    function price() public view returns (uint160 sqrtPriceX96) {
+        (sqrtPriceX96,,,,,,) = pool.slot0();
     }
 
     function swapToPrice(uint160 sqrtPriceLimitX96) public {
