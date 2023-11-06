@@ -41,33 +41,30 @@ contract MockEnv {
         inverted = address(COIN) > address(USD);
         token0 = inverted ? address(USD) : address(COIN);
         token1 = inverted ? address(COIN) : address(USD);
-//        uint160 initialPrice = uint160(79228162514264337593543); // price 1e-12 = sqrt price 1e-6 = 2**96 / 10**6
         uint160 initialPrice = uint160(79228162514264337593543950336000000); // $1.00
         console2.log('if this is the last line before a revert then make sure to run forge with --rpc-url');
         // if this reverts here make sure Anvil is started and you are running forge with --rpc-url
         pool = IUniswapV3Pool(nfpm.createAndInitializePoolIfNecessary(token0, token1, fee, initialPrice));
         console2.log('v3 pool');
         console2.log(address(pool));
-        (, int24 lower, , , , ,) = pool.slot0();
         // stake a super wide range so we have liquidity everywhere.
-        stake(1_000_000 * 10**12, lower-10000, lower+100000);
+        stake(10_000_000, TickMath.MIN_TICK, TickMath.MAX_TICK);
     }
 
 
-    function stake(uint128 liquidity_, int24 lower, int24 upper) public
-    returns (
-        uint256 tokenId,
-        uint128 liquidity,
-        uint256 amount0,
-        uint256 amount1
-    )
-    {
-        uint160 sqrtRatioAX96 = TickMath.getSqrtRatioAtTick(lower);
-        uint160 sqrtRatioBX96 = TickMath.getSqrtRatioAtTick(upper);
-        (uint160 sqrtPriceX96, , , , , ,) = pool.slot0();
-        (amount0, amount1) = LiquidityAmounts.getAmountsForLiquidity(sqrtPriceX96, sqrtRatioAX96, sqrtRatioBX96, liquidity_);
-        return _stake(amount0, amount1, lower, upper);
+    function stake(uint256 amount, int24 width) public {
+        require(width>0);
+        (, int24 tick, , , , ,) = pool.slot0();
+        stake(amount, tick-width, tick+width);
     }
+
+
+    function stake(uint256 amount, int24 lower, int24 upper) public {
+        uint256 coinAmount = amount * 10**18 / 2;
+        uint256 usdAmount = amount * 10**6 / 2;
+        stake(coinAmount, usdAmount, lower, upper);
+    }
+
 
     function stake(uint256 coinAmount, uint256 usdAmount, int24 lower, int24 upper) public
     returns (
@@ -88,10 +85,15 @@ contract MockEnv {
         uint256 amount1
     )
     {
+        console2.log('stake amounts');
+        console2.log(coinAmount);
+        console2.log(usdAmount);
         COIN.mint(address(this), coinAmount);
         COIN.approve(address(nfpm), coinAmount);
+        console2.log('COIN minted');
         USD.mint(address(this), usdAmount);
         USD.approve(address(nfpm), usdAmount);
+        console2.log('USD minted');
         //   struct MintParams {
         //        address token0;
         //        address token1;
@@ -112,7 +114,11 @@ contract MockEnv {
         INonfungiblePositionManager.MintParams memory params = INonfungiblePositionManager.MintParams(
             token0, token1, fee, lower, upper, a0, a1, 0, 0, msg.sender, block.timestamp
         );
-        return nfpm.mint(params);
+        (tokenId, liquidity, amount0, amount1) = nfpm.mint(params);
+        console2.log('minted');
+        console2.log(liquidity);
+        console2.log(amount0);
+        console2.log(amount1);
     }
 
 
