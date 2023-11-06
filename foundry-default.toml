@@ -5,11 +5,11 @@ libs = ['lib']
 remappings = [
     '@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/',
     # '@uniswap/v3-core/=lib/v3-core/',
-    '@uniswap/v3-core/=lib_sol8/v3-core/',
-    'v3-core/=lib_sol8/v3-core/',
+    '@uniswap/v3-core/=lib_uniswap/v3-core/',
+    'v3-core/=lib_uniswap/v3-core/',
     # '@uniswap/v3-periphery/=lib/v3-periphery/',
-    '@uniswap/v3-periphery/=lib_sol8/v3-periphery/',
-    'v3-periphery/libraries/=lib_sol8/v3-periphery/contracts/libraries',
+    '@uniswap/v3-periphery/=lib_uniswap/v3-periphery/',
+    'v3-periphery/libraries/=lib_uniswap/v3-periphery/contracts/libraries',
 ]
 sizes = true
 gas_reports = ['*']
