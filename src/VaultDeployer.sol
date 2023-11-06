@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
 //pragma solidity =0.7.6;
 pragma solidity >=0.8.0;
-
-import "./Vault.sol";
 pragma abicoder v2;
 
-contract VaultDeployer {
+import "./Vault.sol";
+import "./interface/IVaultDeployer.sol";
+contract VaultDeployer is IVaultDeployer {
 
     struct Parameters {
         address owner;
