@@ -1,11 +1,11 @@
-tests: build_force
+tests: build
 	bin/test.sh
 
 build:
 	bin/build.sh
 
-build_force:
-	bin/build.sh --force
+# build_force:
+# 	bin/build.sh --force
 
 dependencies:
 	# foundry
