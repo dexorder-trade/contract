@@ -1,6 +1,6 @@
 [profile.default]
 # solc_version = '0.7.6'
-solc_version = '0.8.19'
+solc_version = '0.8.22'
 libs = ['lib']
 remappings = [
     '@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/',
