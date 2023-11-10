@@ -32,9 +32,9 @@ contract MockEnv {
     // 1000e12 liquidity is put into the pool at each tick spacing for 10 tick spacings to either side of $1
     function init() public {
         COIN = new MockERC20('Mock Ethereum Hardfork', 'MEH', 18);
-        console2.log('COIN');
+        console2.log('MEH');
         console2.log(address(COIN));
-        USD = new MockERC20('Joke Fiat XD', 'USXD', 6);
+        USD = new MockERC20('Joke Currency XD', 'USXD', 6);
         console2.log('USXD');
         console2.log(address(USD));
         fee = 500;
