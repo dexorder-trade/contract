@@ -24,9 +24,7 @@ library OrderLib {
 
     event DexorderSwapFilled (uint64 orderIndex, uint8 trancheIndex, uint256 amountIn, uint256 amountOut);
 
-    event DexorderSwapCompleted (uint64 orderIndex); // todo remove?
-
-    event DexorderSwapError (uint64 orderIndex, string reason);
+    event DexorderSwapCanceled (uint64 orderIndex);
 
     enum SwapOrderState {
         Open, Canceled, Filled, Expired // Expired isn't ever shown on-chain. the Expired state is implied by tranche constraints.
@@ -284,7 +282,7 @@ library OrderLib {
         status.trancheFilledIn[trancheIndex] += amountIn;
         status.trancheFilledOut[trancheIndex] += amountOut;
         emit DexorderSwapFilled(orderIndex, trancheIndex, amountIn, amountOut);
-        _checkCompleted(self, orderIndex, status);
+        _checkCompleted(self, status);
     }
 
 
@@ -304,11 +302,11 @@ library OrderLib {
         }
     }
 
-    function _checkCompleted(OrdersInfo storage self, uint64 orderIndex, SwapOrderStatus storage status) internal {
+    function _checkCompleted(OrdersInfo storage self, SwapOrderStatus storage status) internal {
         uint256 remaining = status.order.amount - (status.order.amountIsInput ? status.filledIn : status.filledOut);
         if( remaining == 0 )  { // todo dust leeway?
             status.state = SwapOrderState.Filled;
-            emit DexorderSwapCompleted(orderIndex);
+            // we already get fill events so completion may be inferred without an extra Completion event
             if( status.ocoGroup != NO_OCO_INDEX)
                 _cancelOco(self, status.ocoGroup);
         }
@@ -327,7 +325,7 @@ library OrderLib {
         SwapOrderState state = self.orders[orderIndex].state;
         if( state == SwapOrderState.Open ) {
             self.orders[orderIndex].state = SwapOrderState.Canceled;
-            emit DexorderSwapCompleted(orderIndex);
+            emit DexorderSwapCanceled(orderIndex);
         }
     }
 }

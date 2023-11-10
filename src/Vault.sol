@@ -59,6 +59,7 @@ contract Vault {
         return uint64(ordersInfo.orders.length);
     }
 
+    // todo rename using dexorder and inform the method hash registries
     function placeOrder(OrderLib.SwapOrder memory order) external onlyOwner {
         console2.log('Vault.placeOrder()');
         ordersInfo._placeOrder(order);
@@ -75,6 +76,12 @@ contract Vault {
     function execute(uint64 orderIndex, uint8 tranche_index, OrderLib.PriceProof memory proof) external
     {
         ordersInfo.execute(owner, orderIndex, tranche_index, proof);
+    }
+
+    function cancelOrder(uint64 orderIndex) external onlyOwner {
+        console2.log('cancelOrder');
+        console2.log(orderIndex);
+        ordersInfo._cancelOrder(orderIndex);
     }
 
     modifier onlyOwner() {
