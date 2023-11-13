@@ -41,7 +41,7 @@ contract MockEnv {
         inverted = address(COIN) > address(USD);
         token0 = inverted ? address(USD) : address(COIN);
         token1 = inverted ? address(COIN) : address(USD);
-        uint160 initialPrice = uint160(79228162514264337593543950336000000); // $1.00
+        uint160 initialPrice = inverted ? uint160(79228162514264337593543950336000000) : uint160(79228162514264337593543); // $1.00
         console2.log('if this is the last line before a revert then make sure to run forge with --rpc-url');
         // if this reverts here make sure Anvil is started and you are running forge with --rpc-url
         pool = IUniswapV3Pool(nfpm.createAndInitializePoolIfNecessary(token0, token1, fee, initialPrice));
@@ -85,15 +85,15 @@ contract MockEnv {
         uint256 amount1
     )
     {
-        console2.log('stake amounts');
-        console2.log(coinAmount);
-        console2.log(usdAmount);
+//        console2.log('stake amounts');
+//        console2.log(coinAmount);
+//        console2.log(usdAmount);
         COIN.mint(address(this), coinAmount);
         COIN.approve(address(nfpm), coinAmount);
-        console2.log('COIN minted');
+//        console2.log('COIN minted');
         USD.mint(address(this), usdAmount);
         USD.approve(address(nfpm), usdAmount);
-        console2.log('USD minted');
+//        console2.log('USD minted');
         //   struct MintParams {
         //        address token0;
         //        address token1;
@@ -110,9 +110,8 @@ contract MockEnv {
         int24 ts = pool.tickSpacing();
         lower = Util.roundTick(lower, ts);
         upper = Util.roundTick(upper, ts);
-        (uint256 a0, uint256 a1) = inverted ? (usdAmount, coinAmount) : (coinAmount, usdAmount);
         INonfungiblePositionManager.MintParams memory params = INonfungiblePositionManager.MintParams(
-            token0, token1, fee, lower, upper, a0, a1, 0, 0, msg.sender, block.timestamp
+            address(COIN), address(USD), fee, lower, upper, coinAmount, usdAmount, 0, 0, msg.sender, block.timestamp
         );
         (tokenId, liquidity, amount0, amount1) = nfpm.mint(params);
         console2.log('minted');
