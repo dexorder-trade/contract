@@ -26,7 +26,7 @@ library IEEE754 {
 
     // Todo rounding
 
-    function float2fixed(uint32 floatingPoint, uint256 fixedBits) internal pure returns (int256 fixedPoint) {unchecked{
+    function float2fixed(uint32 floatingPoint, uint32 fixedBits) internal pure returns (int256 fixedPoint) {unchecked{
 
         // Zero case
 
@@ -46,7 +46,7 @@ library IEEE754 {
         // Compute shift amount
 
         exp = exp - EBIAS; // Remove exponent bias
-        int256 rshft = 23 - int256(fixedBits) - exp; // Zero exp and integer fixedPoint throws away all but MSB
+        int256 rshft = 23 - int32(fixedBits) - exp; // Zero exp and integer fixedPoint throws away all but MSB
 
         // Shift to arrive at fixed point alignment
 
@@ -104,7 +104,30 @@ contract TestIEEE754 is Test {
         i = imin << 1; // Changes sign bit, but should not over/underflow
     }
 
-    function testFloat() external pure {
-        console2.log('Float.testFloat()');
+    struct Item {
+        uint32 floatingPoint;
+        uint32 fixedBits;
+        int256 fixedPoint;
+    }
+
+    function testFloat2fixed() external pure {
+        console2.log('TestIEEE754.testFloat2fixed()');
+
+        Item[6] memory items = [
+            Item(0x3f800000, 0, 1 << 0),      // 1.0
+            Item(0x3f800000, 128, 1 << 128),  // 1.0
+            Item(0x3f800000, 254, 1 << 254),  // 1.0
+            Item(0xbf800000, 128, -1 << 128), // -1.0
+            Item(0x40000000, 128, 2 << 128),  // 1.0
+            Item(0xc0000000, 128, -2 << 128)  // 1.0
+            // ,Item(0xbf800001, 128, -1 << 128) // Failing case for test debugging purposes
+        ];
+
+        for (uint i=0; i<items.length; i++) {
+            require(items[i].fixedPoint == IEEE754.float2fixed(
+                items[i].floatingPoint, items[i].fixedBits
+                ));
+        }
+
     }
 }
