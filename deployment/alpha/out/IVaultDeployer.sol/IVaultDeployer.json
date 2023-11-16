@@ -1,0 +1,226 @@
+{
+  "abi": [
+    {
+      "inputs": [],
+      "name": "parameters",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "parameters()": "89035730"
+  },
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.22+commit.4fc1097e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"parameters\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/interface/IVaultDeployer.sol\":\"IVaultDeployer\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"details\":{\"constantOptimizer\":true,\"cse\":true,\"deduplicate\":true,\"inliner\":true,\"jumpdestRemover\":true,\"orderLiterals\":true,\"peephole\":true,\"simpleCounterForLoopUncheckedIncrement\":true,\"yul\":true,\"yulDetails\":{\"optimizerSteps\":\"dhfoD[xarrscLMcCTU]uljmul:fDnTOcmu\",\"stackAllocation\":true}},\"runs\":999999999},\"remappings\":[\":@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/\",\":@uniswap/v3-core/=lib_uniswap/v3-core/\",\":@uniswap/v3-periphery/=lib_uniswap/v3-periphery/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":openzeppelin-contracts/=lib/openzeppelin-contracts/\",\":v3-core/=lib_uniswap/v3-core/\",\":v3-periphery/libraries/=lib_uniswap/v3-periphery/contracts/libraries/\"]},\"sources\":{\"src/interface/IVaultDeployer.sol\":{\"keccak256\":\"0x2985c864a3b5cf99244cc443871b356b47bb6bfb758bbf89b9cceb2e15c68886\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://2d3df393bad985f53c8a31e9907badd10766891d5951a3ab95acea2cc6d2092a\",\"dweb:/ipfs/QmbE7z2SwfCnCF2XxKM1FEEPaddrS6WNbCJ5yqSP2Zn8d7\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": {
+      "version": "0.8.22+commit.4fc1097e"
+    },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "parameters",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            }
+          ]
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {},
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {},
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
+        "@uniswap/v3-core/=lib_uniswap/v3-core/",
+        "@uniswap/v3-periphery/=lib_uniswap/v3-periphery/",
+        "ds-test/=lib/forge-std/lib/ds-test/src/",
+        "forge-std/=lib/forge-std/src/",
+        "openzeppelin-contracts/=lib/openzeppelin-contracts/",
+        "v3-core/=lib_uniswap/v3-core/",
+        "v3-periphery/libraries/=lib_uniswap/v3-periphery/contracts/libraries/"
+      ],
+      "optimizer": {
+        "runs": 999999999,
+        "details": {
+          "peephole": true,
+          "inliner": true,
+          "jumpdestRemover": true,
+          "orderLiterals": true,
+          "deduplicate": true,
+          "cse": true,
+          "constantOptimizer": true,
+          "yul": true,
+          "yulDetails": {
+            "stackAllocation": true,
+            "optimizerSteps": "dhfoD[xarrscLMcCTU]uljmul:fDnTOcmu"
+          }
+        }
+      },
+      "metadata": {
+        "bytecodeHash": "ipfs"
+      },
+      "compilationTarget": {
+        "src/interface/IVaultDeployer.sol": "IVaultDeployer"
+      },
+      "libraries": {}
+    },
+    "sources": {
+      "src/interface/IVaultDeployer.sol": {
+        "keccak256": "0x2985c864a3b5cf99244cc443871b356b47bb6bfb758bbf89b9cceb2e15c68886",
+        "urls": [
+          "bzz-raw://2d3df393bad985f53c8a31e9907badd10766891d5951a3ab95acea2cc6d2092a",
+          "dweb:/ipfs/QmbE7z2SwfCnCF2XxKM1FEEPaddrS6WNbCJ5yqSP2Zn8d7"
+        ],
+        "license": "UNLICENSED"
+      }
+    },
+    "version": 1
+  },
+  "ast": {
+    "absolutePath": "src/interface/IVaultDeployer.sol",
+    "id": 49446,
+    "exportedSymbols": {
+      "IVaultDeployer": [
+        49445
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "65:140:62",
+    "nodes": [
+      {
+        "id": 49438,
+        "nodeType": "PragmaDirective",
+        "src": "65:24:62",
+        "nodes": [],
+        "literals": [
+          "solidity",
+          ">=",
+          "0.8",
+          ".0"
+        ]
+      },
+      {
+        "id": 49439,
+        "nodeType": "PragmaDirective",
+        "src": "90:19:62",
+        "nodes": [],
+        "literals": [
+          "abicoder",
+          "v2"
+        ]
+      },
+      {
+        "id": 49445,
+        "nodeType": "ContractDefinition",
+        "src": "111:93:62",
+        "nodes": [
+          {
+            "id": 49444,
+            "nodeType": "FunctionDefinition",
+            "src": "142:60:62",
+            "nodes": [],
+            "functionSelector": "89035730",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "parameters",
+            "nameLocation": "151:10:62",
+            "parameters": {
+              "id": 49440,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "161:2:62"
+            },
+            "returnParameters": {
+              "id": 49443,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 49442,
+                  "mutability": "mutable",
+                  "name": "owner",
+                  "nameLocation": "195:5:62",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 49444,
+                  "src": "187:13:62",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 49441,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "187:7:62",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "186:15:62"
+            },
+            "scope": 49445,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "IVaultDeployer",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "linearizedBaseContracts": [
+          49445
+        ],
+        "name": "IVaultDeployer",
+        "nameLocation": "121:14:62",
+        "scope": 49446,
+        "usedErrors": [],
+        "usedEvents": []
+      }
+    ],
+    "license": "UNLICENSED"
+  },
+  "id": 62
+}
