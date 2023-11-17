@@ -20,9 +20,30 @@ def fixedPoint(n, shift) :
     else :
         return Fraction(n) / (1<<-shift)
 
-number = fixedPoint(0xffffff, 127-23) # Largest number
-number = fixedPoint(0x1, -128) # Smallest number
+def print_float_fix(number) :
+    float_int32, float_bytes = to_float_bits(number)
+    print (f"float hex: 0x{float_int32:08x} 0x{int(number*(1<<128)):x}")
+    # print ("float hex:",  float_bytes.hex(), hex(int(number*(1<<128))))
 
-float_int32, float_bytes = to_float_bits(number)
-print ("float hex:",  float_bytes.hex(), hex(int(number*(1<<128))))
-print ("float hex:",  hex(float_int32), hex(int(number*(1<<128))))
+print("Assuming 128.128 fixed point")
+print("largest number:")
+number = fixedPoint(0xffffff, 127-24) # Largest number that converts to FP and fits in 128.128
+assert number < 1<<256
+# print (hex(1<<255))
+# print (hex(int(number)<<128))
+print_float_fix(number)
+print("negative largest number:")
+number = fixedPoint(-0xffffff, 127-24) # Largest number
+print_float_fix(number)
+print("smallest number:")
+number = fixedPoint(0x1, -128) # Smallest number
+print_float_fix(number)
+print("negative smallest number:")
+number = fixedPoint(-0x1, -128)
+print_float_fix(number)
+print()
+
+# number = fixedPoint(0x7fffff, 127-23)
+# print_float_fix(number)
+# number = fixedPoint(0xffffff, 127-23)
+# print_float_fix(number)
