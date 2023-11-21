@@ -132,17 +132,17 @@
   },
   "ast": {
     "absolutePath": "src/Util.sol",
-    "id": 48905,
+    "id": 48902,
     "exportedSymbols": {
       "Util": [
-        48904
+        48901
       ]
     },
     "nodeType": "SourceUnit",
     "src": "65:412:57",
     "nodes": [
       {
-        "id": 48849,
+        "id": 48846,
         "nodeType": "PragmaDirective",
         "src": "65:24:57",
         "nodes": [],
@@ -154,7 +154,7 @@
         ]
       },
       {
-        "id": 48850,
+        "id": 48847,
         "nodeType": "PragmaDirective",
         "src": "90:19:57",
         "nodes": [],
@@ -164,34 +164,34 @@
         ]
       },
       {
-        "id": 48904,
+        "id": 48901,
         "nodeType": "ContractDefinition",
         "src": "111:365:57",
         "nodes": [
           {
-            "id": 48903,
+            "id": 48900,
             "nodeType": "FunctionDefinition",
             "src": "130:344:57",
             "nodes": [],
             "body": {
-              "id": 48902,
+              "id": 48899,
               "nodeType": "Block",
               "src": "203:271:57",
               "nodes": [],
               "statements": [
                 {
                   "assignments": [
-                    48860
+                    48857
                   ],
                   "declarations": [
                     {
                       "constant": false,
-                      "id": 48860,
+                      "id": 48857,
                       "mutability": "mutable",
                       "name": "mod",
                       "nameLocation": "262:3:57",
                       "nodeType": "VariableDeclaration",
-                      "scope": 48902,
+                      "scope": 48899,
                       "src": "256:9:57",
                       "stateVariable": false,
                       "storageLocation": "default",
@@ -200,7 +200,7 @@
                         "typeString": "int24"
                       },
                       "typeName": {
-                        "id": 48859,
+                        "id": 48856,
                         "name": "int24",
                         "nodeType": "ElementaryTypeName",
                         "src": "256:5:57",
@@ -212,23 +212,23 @@
                       "visibility": "internal"
                     }
                   ],
-                  "id": 48864,
+                  "id": 48861,
                   "initialValue": {
                     "commonType": {
                       "typeIdentifier": "t_int24",
                       "typeString": "int24"
                     },
-                    "id": 48863,
+                    "id": 48860,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftExpression": {
-                      "id": 48861,
+                      "id": 48858,
                       "name": "tick",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 48852,
+                      "referencedDeclaration": 48849,
                       "src": "268:4:57",
                       "typeDescriptions": {
                         "typeIdentifier": "t_int24",
@@ -238,11 +238,11 @@
                     "nodeType": "BinaryOperation",
                     "operator": "%",
                     "rightExpression": {
-                      "id": 48862,
+                      "id": 48859,
                       "name": "window",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 48854,
+                      "referencedDeclaration": 48851,
                       "src": "275:6:57",
                       "typeDescriptions": {
                         "typeIdentifier": "t_int24",
@@ -264,17 +264,17 @@
                       "typeIdentifier": "t_int24",
                       "typeString": "int24"
                     },
-                    "id": 48867,
+                    "id": 48864,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftExpression": {
-                      "id": 48865,
+                      "id": 48862,
                       "name": "tick",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 48852,
+                      "referencedDeclaration": 48849,
                       "src": "295:4:57",
                       "typeDescriptions": {
                         "typeIdentifier": "t_int24",
@@ -285,7 +285,7 @@
                     "operator": "<",
                     "rightExpression": {
                       "hexValue": "30",
-                      "id": 48866,
+                      "id": 48863,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -312,17 +312,17 @@
                           "typeIdentifier": "t_int24",
                           "typeString": "int24"
                         },
-                        "id": 48889,
+                        "id": 48886,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
                         "lValueRequested": false,
                         "leftExpression": {
-                          "id": 48885,
+                          "id": 48882,
                           "name": "mod",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 48860,
+                          "referencedDeclaration": 48857,
                           "src": "414:3:57",
                           "typeDescriptions": {
                             "typeIdentifier": "t_int24",
@@ -336,17 +336,17 @@
                             "typeIdentifier": "t_int24",
                             "typeString": "int24"
                           },
-                          "id": 48888,
+                          "id": 48885,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
                           "lValueRequested": false,
                           "leftExpression": {
-                            "id": 48886,
+                            "id": 48883,
                             "name": "window",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 48854,
+                            "referencedDeclaration": 48851,
                             "src": "420:6:57",
                             "typeDescriptions": {
                               "typeIdentifier": "t_int24",
@@ -357,7 +357,7 @@
                           "operator": "/",
                           "rightExpression": {
                             "hexValue": "32",
-                            "id": 48887,
+                            "id": 48884,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": true,
@@ -388,17 +388,17 @@
                           "typeIdentifier": "t_int24",
                           "typeString": "int24"
                         },
-                        "id": 48898,
+                        "id": 48895,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
                         "lValueRequested": false,
                         "leftExpression": {
-                          "id": 48896,
+                          "id": 48893,
                           "name": "tick",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 48852,
+                          "referencedDeclaration": 48849,
                           "src": "457:4:57",
                           "typeDescriptions": {
                             "typeIdentifier": "t_int24",
@@ -408,11 +408,11 @@
                         "nodeType": "BinaryOperation",
                         "operator": "-",
                         "rightExpression": {
-                          "id": 48897,
+                          "id": 48894,
                           "name": "mod",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 48860,
+                          "referencedDeclaration": 48857,
                           "src": "464:3:57",
                           "typeDescriptions": {
                             "typeIdentifier": "t_int24",
@@ -425,7 +425,7 @@
                           "typeString": "int24"
                         }
                       },
-                      "id": 48899,
+                      "id": 48896,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -437,17 +437,17 @@
                           "typeIdentifier": "t_int24",
                           "typeString": "int24"
                         },
-                        "id": 48895,
+                        "id": 48892,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
                         "lValueRequested": false,
                         "leftExpression": {
-                          "id": 48890,
+                          "id": 48887,
                           "name": "tick",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 48852,
+                          "referencedDeclaration": 48849,
                           "src": "433:4:57",
                           "typeDescriptions": {
                             "typeIdentifier": "t_int24",
@@ -463,17 +463,17 @@
                                 "typeIdentifier": "t_int24",
                                 "typeString": "int24"
                               },
-                              "id": 48893,
+                              "id": 48890,
                               "isConstant": false,
                               "isLValue": false,
                               "isPure": false,
                               "lValueRequested": false,
                               "leftExpression": {
-                                "id": 48891,
+                                "id": 48888,
                                 "name": "window",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 48854,
+                                "referencedDeclaration": 48851,
                                 "src": "441:6:57",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_int24",
@@ -483,11 +483,11 @@
                               "nodeType": "BinaryOperation",
                               "operator": "-",
                               "rightExpression": {
-                                "id": 48892,
+                                "id": 48889,
                                 "name": "mod",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 48860,
+                                "referencedDeclaration": 48857,
                                 "src": "450:3:57",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_int24",
@@ -501,7 +501,7 @@
                               }
                             }
                           ],
-                          "id": 48894,
+                          "id": 48891,
                           "isConstant": false,
                           "isInlineArray": false,
                           "isLValue": false,
@@ -525,12 +525,12 @@
                         "typeString": "int24"
                       }
                     },
-                    "functionReturnParameters": 48858,
-                    "id": 48900,
+                    "functionReturnParameters": 48855,
+                    "id": 48897,
                     "nodeType": "Return",
                     "src": "407:60:57"
                   },
-                  "id": 48901,
+                  "id": 48898,
                   "nodeType": "IfStatement",
                   "src": "291:176:57",
                   "trueBody": {
@@ -540,13 +540,13 @@
                           "typeIdentifier": "t_int24",
                           "typeString": "int24"
                         },
-                        "id": 48873,
+                        "id": 48870,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
                         "lValueRequested": false,
                         "leftExpression": {
-                          "id": 48869,
+                          "id": 48866,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -556,11 +556,11 @@
                           "prefix": true,
                           "src": "324:5:57",
                           "subExpression": {
-                            "id": 48868,
+                            "id": 48865,
                             "name": "mod",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 48860,
+                            "referencedDeclaration": 48857,
                             "src": "326:3:57",
                             "typeDescriptions": {
                               "typeIdentifier": "t_int24",
@@ -579,17 +579,17 @@
                             "typeIdentifier": "t_int24",
                             "typeString": "int24"
                           },
-                          "id": 48872,
+                          "id": 48869,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
                           "lValueRequested": false,
                           "leftExpression": {
-                            "id": 48870,
+                            "id": 48867,
                             "name": "window",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 48854,
+                            "referencedDeclaration": 48851,
                             "src": "333:6:57",
                             "typeDescriptions": {
                               "typeIdentifier": "t_int24",
@@ -600,7 +600,7 @@
                           "operator": "/",
                           "rightExpression": {
                             "hexValue": "32",
-                            "id": 48871,
+                            "id": 48868,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": true,
@@ -631,17 +631,17 @@
                           "typeIdentifier": "t_int24",
                           "typeString": "int24"
                         },
-                        "id": 48882,
+                        "id": 48879,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
                         "lValueRequested": false,
                         "leftExpression": {
-                          "id": 48877,
+                          "id": 48874,
                           "name": "tick",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 48852,
+                          "referencedDeclaration": 48849,
                           "src": "359:4:57",
                           "typeDescriptions": {
                             "typeIdentifier": "t_int24",
@@ -657,17 +657,17 @@
                                 "typeIdentifier": "t_int24",
                                 "typeString": "int24"
                               },
-                              "id": 48880,
+                              "id": 48877,
                               "isConstant": false,
                               "isLValue": false,
                               "isPure": false,
                               "lValueRequested": false,
                               "leftExpression": {
-                                "id": 48878,
+                                "id": 48875,
                                 "name": "window",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 48854,
+                                "referencedDeclaration": 48851,
                                 "src": "367:6:57",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_int24",
@@ -677,11 +677,11 @@
                               "nodeType": "BinaryOperation",
                               "operator": "+",
                               "rightExpression": {
-                                "id": 48879,
+                                "id": 48876,
                                 "name": "mod",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 48860,
+                                "referencedDeclaration": 48857,
                                 "src": "376:3:57",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_int24",
@@ -695,7 +695,7 @@
                               }
                             }
                           ],
-                          "id": 48881,
+                          "id": 48878,
                           "isConstant": false,
                           "isInlineArray": false,
                           "isLValue": false,
@@ -714,7 +714,7 @@
                           "typeString": "int24"
                         }
                       },
-                      "id": 48883,
+                      "id": 48880,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -726,17 +726,17 @@
                           "typeIdentifier": "t_int24",
                           "typeString": "int24"
                         },
-                        "id": 48876,
+                        "id": 48873,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
                         "lValueRequested": false,
                         "leftExpression": {
-                          "id": 48874,
+                          "id": 48871,
                           "name": "tick",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 48852,
+                          "referencedDeclaration": 48849,
                           "src": "346:4:57",
                           "typeDescriptions": {
                             "typeIdentifier": "t_int24",
@@ -746,11 +746,11 @@
                         "nodeType": "BinaryOperation",
                         "operator": "-",
                         "rightExpression": {
-                          "id": 48875,
+                          "id": 48872,
                           "name": "mod",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 48860,
+                          "referencedDeclaration": 48857,
                           "src": "353:3:57",
                           "typeDescriptions": {
                             "typeIdentifier": "t_int24",
@@ -768,8 +768,8 @@
                         "typeString": "int24"
                       }
                     },
-                    "functionReturnParameters": 48858,
-                    "id": 48884,
+                    "functionReturnParameters": 48855,
+                    "id": 48881,
                     "nodeType": "Return",
                     "src": "317:63:57"
                   }
@@ -783,17 +783,17 @@
             "name": "roundTick",
             "nameLocation": "139:9:57",
             "parameters": {
-              "id": 48855,
+              "id": 48852,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 48852,
+                  "id": 48849,
                   "mutability": "mutable",
                   "name": "tick",
                   "nameLocation": "155:4:57",
                   "nodeType": "VariableDeclaration",
-                  "scope": 48903,
+                  "scope": 48900,
                   "src": "149:10:57",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -802,7 +802,7 @@
                     "typeString": "int24"
                   },
                   "typeName": {
-                    "id": 48851,
+                    "id": 48848,
                     "name": "int24",
                     "nodeType": "ElementaryTypeName",
                     "src": "149:5:57",
@@ -815,12 +815,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 48854,
+                  "id": 48851,
                   "mutability": "mutable",
                   "name": "window",
                   "nameLocation": "167:6:57",
                   "nodeType": "VariableDeclaration",
-                  "scope": 48903,
+                  "scope": 48900,
                   "src": "161:12:57",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -829,7 +829,7 @@
                     "typeString": "int24"
                   },
                   "typeName": {
-                    "id": 48853,
+                    "id": 48850,
                     "name": "int24",
                     "nodeType": "ElementaryTypeName",
                     "src": "161:5:57",
@@ -844,17 +844,17 @@
               "src": "148:26:57"
             },
             "returnParameters": {
-              "id": 48858,
+              "id": 48855,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 48857,
+                  "id": 48854,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 48903,
+                  "scope": 48900,
                   "src": "196:5:57",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -863,7 +863,7 @@
                     "typeString": "int24"
                   },
                   "typeName": {
-                    "id": 48856,
+                    "id": 48853,
                     "name": "int24",
                     "nodeType": "ElementaryTypeName",
                     "src": "196:5:57",
@@ -877,7 +877,7 @@
               ],
               "src": "195:7:57"
             },
-            "scope": 48904,
+            "scope": 48901,
             "stateMutability": "pure",
             "virtual": false,
             "visibility": "public"
@@ -890,11 +890,11 @@
         "contractKind": "library",
         "fullyImplemented": true,
         "linearizedBaseContracts": [
-          48904
+          48901
         ],
         "name": "Util",
         "nameLocation": "119:4:57",
-        "scope": 48905,
+        "scope": 48902,
         "usedErrors": [],
         "usedEvents": []
       }

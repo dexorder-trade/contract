@@ -110,17 +110,17 @@
   },
   "ast": {
     "absolutePath": "src/interface/IVaultDeployer.sol",
-    "id": 49446,
+    "id": 49443,
     "exportedSymbols": {
       "IVaultDeployer": [
-        49445
+        49442
       ]
     },
     "nodeType": "SourceUnit",
     "src": "65:140:62",
     "nodes": [
       {
-        "id": 49438,
+        "id": 49435,
         "nodeType": "PragmaDirective",
         "src": "65:24:62",
         "nodes": [],
@@ -132,7 +132,7 @@
         ]
       },
       {
-        "id": 49439,
+        "id": 49436,
         "nodeType": "PragmaDirective",
         "src": "90:19:62",
         "nodes": [],
@@ -142,12 +142,12 @@
         ]
       },
       {
-        "id": 49445,
+        "id": 49442,
         "nodeType": "ContractDefinition",
         "src": "111:93:62",
         "nodes": [
           {
-            "id": 49444,
+            "id": 49441,
             "nodeType": "FunctionDefinition",
             "src": "142:60:62",
             "nodes": [],
@@ -158,23 +158,23 @@
             "name": "parameters",
             "nameLocation": "151:10:62",
             "parameters": {
-              "id": 49440,
+              "id": 49437,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "161:2:62"
             },
             "returnParameters": {
-              "id": 49443,
+              "id": 49440,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 49442,
+                  "id": 49439,
                   "mutability": "mutable",
                   "name": "owner",
                   "nameLocation": "195:5:62",
                   "nodeType": "VariableDeclaration",
-                  "scope": 49444,
+                  "scope": 49441,
                   "src": "187:13:62",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -183,7 +183,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 49441,
+                    "id": 49438,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "187:7:62",
@@ -198,7 +198,7 @@
               ],
               "src": "186:15:62"
             },
-            "scope": 49445,
+            "scope": 49442,
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -211,11 +211,11 @@
         "contractKind": "interface",
         "fullyImplemented": false,
         "linearizedBaseContracts": [
-          49445
+          49442
         ],
         "name": "IVaultDeployer",
         "nameLocation": "121:14:62",
-        "scope": 49446,
+        "scope": 49443,
         "usedErrors": [],
         "usedEvents": []
       }
