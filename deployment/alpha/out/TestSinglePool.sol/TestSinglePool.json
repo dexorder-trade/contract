@@ -2202,7 +2202,7 @@
   },
   "ast": {
     "absolutePath": "test/TestSinglePool.sol",
-    "id": 51669,
+    "id": 51760,
     "exportedSymbols": {
       "Constants": [
         46264
@@ -2325,7 +2325,7 @@
         2357
       ],
       "TestSinglePool": [
-        51668
+        51759
       ],
       "TickMath": [
         45059
@@ -2362,7 +2362,7 @@
     "src": "65:396:67",
     "nodes": [
       {
-        "id": 51616,
+        "id": 51707,
         "nodeType": "PragmaDirective",
         "src": "65:24:67",
         "nodes": [],
@@ -2374,7 +2374,7 @@
         ]
       },
       {
-        "id": 51617,
+        "id": 51708,
         "nodeType": "PragmaDirective",
         "src": "90:19:67",
         "nodes": [],
@@ -2384,56 +2384,56 @@
         ]
       },
       {
-        "id": 51618,
+        "id": 51709,
         "nodeType": "ImportDirective",
         "src": "111:32:67",
         "nodes": [],
         "absolutePath": "lib/forge-std/src/console2.sol",
         "file": "forge-std/console2.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 51669,
+        "scope": 51760,
         "sourceUnit": 29654,
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
-        "id": 51619,
+        "id": 51710,
         "nodeType": "ImportDirective",
         "src": "144:28:67",
         "nodes": [],
         "absolutePath": "lib/forge-std/src/Test.sol",
         "file": "forge-std/Test.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 51669,
+        "scope": 51760,
         "sourceUnit": 11938,
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
-        "id": 51620,
+        "id": 51711,
         "nodeType": "ImportDirective",
         "src": "173:23:67",
         "nodes": [],
         "absolutePath": "test/MockEnv.sol",
         "file": "./MockEnv.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 51669,
+        "scope": 51760,
         "sourceUnit": 50070,
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
-        "id": 51668,
+        "id": 51759,
         "nodeType": "ContractDefinition",
         "src": "199:261:67",
         "nodes": [
           {
-            "id": 51631,
+            "id": 51722,
             "nodeType": "FunctionDefinition",
             "src": "246:47:67",
             "nodes": [],
             "body": {
-              "id": 51630,
+              "id": 51721,
               "nodeType": "Block",
               "src": "270:23:67",
               "nodes": [],
@@ -2443,7 +2443,7 @@
                     "arguments": [],
                     "expression": {
                       "argumentTypes": [],
-                      "id": 51627,
+                      "id": 51718,
                       "name": "init",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
@@ -2454,7 +2454,7 @@
                         "typeString": "function ()"
                       }
                     },
-                    "id": 51628,
+                    "id": 51719,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -2470,7 +2470,7 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 51629,
+                  "id": 51720,
                   "nodeType": "ExpressionStatement",
                   "src": "280:6:67"
                 }
@@ -2483,29 +2483,29 @@
             "name": "setUp",
             "nameLocation": "255:5:67",
             "parameters": {
-              "id": 51625,
+              "id": 51716,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "260:2:67"
             },
             "returnParameters": {
-              "id": 51626,
+              "id": 51717,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "270:0:67"
             },
-            "scope": 51668,
+            "scope": 51759,
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "public"
           },
           {
-            "id": 51667,
+            "id": 51758,
             "nodeType": "FunctionDefinition",
             "src": "300:158:67",
             "nodes": [],
             "body": {
-              "id": 51666,
+              "id": 51757,
               "nodeType": "Block",
               "src": "327:131:67",
               "nodes": [],
@@ -2516,14 +2516,14 @@
                       {
                         "arguments": [
                           {
-                            "id": 51639,
+                            "id": 51730,
                             "name": "this",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": -28,
                             "src": "355:4:67",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_contract$_TestSinglePool_$51668",
+                              "typeIdentifier": "t_contract$_TestSinglePool_$51759",
                               "typeString": "contract TestSinglePool"
                             }
                           }
@@ -2531,11 +2531,11 @@
                         "expression": {
                           "argumentTypes": [
                             {
-                              "typeIdentifier": "t_contract$_TestSinglePool_$51668",
+                              "typeIdentifier": "t_contract$_TestSinglePool_$51759",
                               "typeString": "contract TestSinglePool"
                             }
                           ],
-                          "id": 51638,
+                          "id": 51729,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -2547,14 +2547,14 @@
                             "typeString": "type(address)"
                           },
                           "typeName": {
-                            "id": 51637,
+                            "id": 51728,
                             "name": "address",
                             "nodeType": "ElementaryTypeName",
                             "src": "347:7:67",
                             "typeDescriptions": {}
                           }
                         },
-                        "id": 51640,
+                        "id": 51731,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -2575,14 +2575,14 @@
                           "typeIdentifier": "t_rational_1000000000000000000_by_1",
                           "typeString": "int_const 1000000000000000000"
                         },
-                        "id": 51645,
+                        "id": 51736,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
                         "lValueRequested": false,
                         "leftExpression": {
                           "hexValue": "31",
-                          "id": 51641,
+                          "id": 51732,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -2603,14 +2603,14 @@
                             "typeIdentifier": "t_rational_1000000000000000000_by_1",
                             "typeString": "int_const 1000000000000000000"
                           },
-                          "id": 51644,
+                          "id": 51735,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
                           "lValueRequested": false,
                           "leftExpression": {
                             "hexValue": "3130",
-                            "id": 51642,
+                            "id": 51733,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": true,
@@ -2628,7 +2628,7 @@
                           "operator": "**",
                           "rightExpression": {
                             "hexValue": "3138",
-                            "id": 51643,
+                            "id": 51734,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": true,
@@ -2667,7 +2667,7 @@
                         }
                       ],
                       "expression": {
-                        "id": 51634,
+                        "id": 51725,
                         "name": "COIN",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
@@ -2678,7 +2678,7 @@
                           "typeString": "contract MockERC20"
                         }
                       },
-                      "id": 51636,
+                      "id": 51727,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -2693,7 +2693,7 @@
                         "typeString": "function (address,uint256) external"
                       }
                     },
-                    "id": 51646,
+                    "id": 51737,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -2709,23 +2709,23 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 51647,
+                  "id": 51738,
                   "nodeType": "ExpressionStatement",
                   "src": "337:36:67"
                 },
                 {
                   "assignments": [
-                    51649
+                    51740
                   ],
                   "declarations": [
                     {
                       "constant": false,
-                      "id": 51649,
+                      "id": 51740,
                       "mutability": "mutable",
                       "name": "usd",
                       "nameLocation": "391:3:67",
                       "nodeType": "VariableDeclaration",
-                      "scope": 51666,
+                      "scope": 51757,
                       "src": "383:11:67",
                       "stateVariable": false,
                       "storageLocation": "default",
@@ -2734,7 +2734,7 @@
                         "typeString": "uint256"
                       },
                       "typeName": {
-                        "id": 51648,
+                        "id": 51739,
                         "name": "uint256",
                         "nodeType": "ElementaryTypeName",
                         "src": "383:7:67",
@@ -2746,11 +2746,11 @@
                       "visibility": "internal"
                     }
                   ],
-                  "id": 51659,
+                  "id": 51750,
                   "initialValue": {
                     "arguments": [
                       {
-                        "id": 51651,
+                        "id": 51742,
                         "name": "COIN",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
@@ -2762,7 +2762,7 @@
                         }
                       },
                       {
-                        "id": 51652,
+                        "id": 51743,
                         "name": "USD",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
@@ -2778,14 +2778,14 @@
                           "typeIdentifier": "t_rational_1000000000000000000_by_1",
                           "typeString": "int_const 1000000000000000000"
                         },
-                        "id": 51657,
+                        "id": 51748,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
                         "lValueRequested": false,
                         "leftExpression": {
                           "hexValue": "31",
-                          "id": 51653,
+                          "id": 51744,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -2806,14 +2806,14 @@
                             "typeIdentifier": "t_rational_1000000000000000000_by_1",
                             "typeString": "int_const 1000000000000000000"
                           },
-                          "id": 51656,
+                          "id": 51747,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
                           "lValueRequested": false,
                           "leftExpression": {
                             "hexValue": "3130",
-                            "id": 51654,
+                            "id": 51745,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": true,
@@ -2831,7 +2831,7 @@
                           "operator": "**",
                           "rightExpression": {
                             "hexValue": "3138",
-                            "id": 51655,
+                            "id": 51746,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": true,
@@ -2873,7 +2873,7 @@
                           "typeString": "int_const 1000000000000000000"
                         }
                       ],
-                      "id": 51650,
+                      "id": 51741,
                       "name": "swap",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
@@ -2887,7 +2887,7 @@
                         "typeString": "function (contract MockERC20,contract MockERC20,uint256) returns (uint256)"
                       }
                     },
-                    "id": 51658,
+                    "id": 51749,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -2910,11 +2910,11 @@
                   "expression": {
                     "arguments": [
                       {
-                        "id": 51663,
+                        "id": 51754,
                         "name": "usd",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 51649,
+                        "referencedDeclaration": 51740,
                         "src": "447:3:67",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
@@ -2930,7 +2930,7 @@
                         }
                       ],
                       "expression": {
-                        "id": 51660,
+                        "id": 51751,
                         "name": "console2",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
@@ -2941,7 +2941,7 @@
                           "typeString": "type(library console2)"
                         }
                       },
-                      "id": 51662,
+                      "id": 51753,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -2956,7 +2956,7 @@
                         "typeString": "function (uint256) pure"
                       }
                     },
-                    "id": 51664,
+                    "id": 51755,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -2972,7 +2972,7 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 51665,
+                  "id": 51756,
                   "nodeType": "ExpressionStatement",
                   "src": "434:17:67"
                 }
@@ -2985,18 +2985,18 @@
             "name": "testSwap",
             "nameLocation": "309:8:67",
             "parameters": {
-              "id": 51632,
+              "id": 51723,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "317:2:67"
             },
             "returnParameters": {
-              "id": 51633,
+              "id": 51724,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "327:0:67"
             },
-            "scope": 51668,
+            "scope": 51759,
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "public"
@@ -3006,7 +3006,7 @@
         "baseContracts": [
           {
             "baseName": {
-              "id": 51621,
+              "id": 51712,
               "name": "MockEnv",
               "nameLocations": [
                 "226:7:67"
@@ -3015,13 +3015,13 @@
               "referencedDeclaration": 50069,
               "src": "226:7:67"
             },
-            "id": 51622,
+            "id": 51713,
             "nodeType": "InheritanceSpecifier",
             "src": "226:7:67"
           },
           {
             "baseName": {
-              "id": 51623,
+              "id": 51714,
               "name": "Test",
               "nameLocations": [
                 "235:4:67"
@@ -3030,7 +3030,7 @@
               "referencedDeclaration": 11937,
               "src": "235:4:67"
             },
-            "id": 51624,
+            "id": 51715,
             "nodeType": "InheritanceSpecifier",
             "src": "235:4:67"
           }
@@ -3045,7 +3045,7 @@
           "21582": 1
         },
         "linearizedBaseContracts": [
-          51668,
+          51759,
           11937,
           2357,
           2354,
@@ -3060,7 +3060,7 @@
         ],
         "name": "TestSinglePool",
         "nameLocation": "208:14:67",
-        "scope": 51669,
+        "scope": 51760,
         "usedErrors": [],
         "usedEvents": [
           5,

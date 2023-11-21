@@ -1595,7 +1595,7 @@
   },
   "ast": {
     "absolutePath": "test/TestVault.sol",
-    "id": 51780,
+    "id": 51871,
     "exportedSymbols": {
       "Constants": [
         46264
@@ -1703,7 +1703,7 @@
         2357
       ],
       "TestVault": [
-        51779
+        51870
       ],
       "TransferHelper": [
         46063
@@ -1749,7 +1749,7 @@
     "src": "39:796:68",
     "nodes": [
       {
-        "id": 51670,
+        "id": 51761,
         "nodeType": "PragmaDirective",
         "src": "39:24:68",
         "nodes": [],
@@ -1761,59 +1761,59 @@
         ]
       },
       {
-        "id": 51671,
+        "id": 51762,
         "nodeType": "ImportDirective",
         "src": "91:32:68",
         "nodes": [],
         "absolutePath": "lib/forge-std/src/console2.sol",
         "file": "forge-std/console2.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 51780,
+        "scope": 51871,
         "sourceUnit": 29654,
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
-        "id": 51672,
+        "id": 51763,
         "nodeType": "ImportDirective",
         "src": "124:28:68",
         "nodes": [],
         "absolutePath": "src/Factory.sol",
         "file": "../src/Factory.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 51780,
+        "scope": 51871,
         "sourceUnit": 46431,
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
-        "id": 51673,
+        "id": 51764,
         "nodeType": "ImportDirective",
         "src": "153:33:68",
         "nodes": [],
         "absolutePath": "src/VaultAddress.sol",
         "file": "../src/VaultAddress.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 51780,
+        "scope": 51871,
         "sourceUnit": 49318,
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
-        "id": 51674,
+        "id": 51765,
         "nodeType": "ImportDirective",
         "src": "187:28:68",
         "nodes": [],
         "absolutePath": "lib/forge-std/src/Test.sol",
         "file": "forge-std/Test.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 51780,
+        "scope": 51871,
         "sourceUnit": 11938,
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
-        "id": 51675,
+        "id": 51766,
         "nodeType": "PragmaDirective",
         "src": "216:19:68",
         "nodes": [],
@@ -1823,12 +1823,12 @@
         ]
       },
       {
-        "id": 51779,
+        "id": 51870,
         "nodeType": "ContractDefinition",
         "src": "237:597:68",
         "nodes": [
           {
-            "id": 51680,
+            "id": 51771,
             "nodeType": "VariableDeclaration",
             "src": "271:22:68",
             "nodes": [],
@@ -1837,7 +1837,7 @@
             "mutability": "mutable",
             "name": "factory",
             "nameLocation": "286:7:68",
-            "scope": 51779,
+            "scope": 51870,
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -1845,10 +1845,10 @@
               "typeString": "contract Factory"
             },
             "typeName": {
-              "id": 51679,
+              "id": 51770,
               "nodeType": "UserDefinedTypeName",
               "pathNode": {
-                "id": 51678,
+                "id": 51769,
                 "name": "Factory",
                 "nameLocations": [
                   "271:7:68"
@@ -1867,7 +1867,7 @@
             "visibility": "public"
           },
           {
-            "id": 51683,
+            "id": 51774,
             "nodeType": "VariableDeclaration",
             "src": "299:18:68",
             "nodes": [],
@@ -1876,7 +1876,7 @@
             "mutability": "mutable",
             "name": "vault",
             "nameLocation": "312:5:68",
-            "scope": 51779,
+            "scope": 51870,
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -1884,10 +1884,10 @@
               "typeString": "contract Vault"
             },
             "typeName": {
-              "id": 51682,
+              "id": 51773,
               "nodeType": "UserDefinedTypeName",
               "pathNode": {
-                "id": 51681,
+                "id": 51772,
                 "name": "Vault",
                 "nameLocations": [
                   "299:5:68"
@@ -1906,29 +1906,29 @@
             "visibility": "public"
           },
           {
-            "id": 51736,
+            "id": 51827,
             "nodeType": "FunctionDefinition",
             "src": "324:265:68",
             "nodes": [],
             "body": {
-              "id": 51735,
+              "id": 51826,
               "nodeType": "Block",
               "src": "348:241:68",
               "nodes": [],
               "statements": [
                 {
                   "expression": {
-                    "id": 51691,
+                    "id": 51782,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftHandSide": {
-                      "id": 51686,
+                      "id": 51777,
                       "name": "factory",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 51680,
+                      "referencedDeclaration": 51771,
                       "src": "358:7:68",
                       "typeDescriptions": {
                         "typeIdentifier": "t_contract$_Factory_$46430",
@@ -1941,7 +1941,7 @@
                       "arguments": [],
                       "expression": {
                         "argumentTypes": [],
-                        "id": 51689,
+                        "id": 51780,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -1953,10 +1953,10 @@
                           "typeString": "function () returns (contract Factory)"
                         },
                         "typeName": {
-                          "id": 51688,
+                          "id": 51779,
                           "nodeType": "UserDefinedTypeName",
                           "pathNode": {
-                            "id": 51687,
+                            "id": 51778,
                             "name": "Factory",
                             "nameLocations": [
                               "372:7:68"
@@ -1973,7 +1973,7 @@
                           }
                         }
                       },
-                      "id": 51690,
+                      "id": 51781,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -1995,7 +1995,7 @@
                       "typeString": "contract Factory"
                     }
                   },
-                  "id": 51692,
+                  "id": 51783,
                   "nodeType": "ExpressionStatement",
                   "src": "358:23:68"
                 },
@@ -2004,7 +2004,7 @@
                     "arguments": [
                       {
                         "hexValue": "666163746f7279",
-                        "id": 51696,
+                        "id": 51787,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -2027,7 +2027,7 @@
                         }
                       ],
                       "expression": {
-                        "id": 51693,
+                        "id": 51784,
                         "name": "console2",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
@@ -2038,7 +2038,7 @@
                           "typeString": "type(library console2)"
                         }
                       },
-                      "id": 51695,
+                      "id": 51786,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -2053,7 +2053,7 @@
                         "typeString": "function (string memory) pure"
                       }
                     },
-                    "id": 51697,
+                    "id": 51788,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -2069,7 +2069,7 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 51698,
+                  "id": 51789,
                   "nodeType": "ExpressionStatement",
                   "src": "391:23:68"
                 },
@@ -2079,11 +2079,11 @@
                       {
                         "arguments": [
                           {
-                            "id": 51704,
+                            "id": 51795,
                             "name": "factory",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 51680,
+                            "referencedDeclaration": 51771,
                             "src": "445:7:68",
                             "typeDescriptions": {
                               "typeIdentifier": "t_contract$_Factory_$46430",
@@ -2098,7 +2098,7 @@
                               "typeString": "contract Factory"
                             }
                           ],
-                          "id": 51703,
+                          "id": 51794,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -2110,14 +2110,14 @@
                             "typeString": "type(address)"
                           },
                           "typeName": {
-                            "id": 51702,
+                            "id": 51793,
                             "name": "address",
                             "nodeType": "ElementaryTypeName",
                             "src": "437:7:68",
                             "typeDescriptions": {}
                           }
                         },
-                        "id": 51705,
+                        "id": 51796,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -2142,7 +2142,7 @@
                         }
                       ],
                       "expression": {
-                        "id": 51699,
+                        "id": 51790,
                         "name": "console2",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
@@ -2153,7 +2153,7 @@
                           "typeString": "type(library console2)"
                         }
                       },
-                      "id": 51701,
+                      "id": 51792,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -2168,7 +2168,7 @@
                         "typeString": "function (address) pure"
                       }
                     },
-                    "id": 51706,
+                    "id": 51797,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -2184,23 +2184,23 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 51707,
+                  "id": 51798,
                   "nodeType": "ExpressionStatement",
                   "src": "424:30:68"
                 },
                 {
                   "expression": {
-                    "id": 51718,
+                    "id": 51809,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftHandSide": {
-                      "id": 51708,
+                      "id": 51799,
                       "name": "vault",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 51683,
+                      "referencedDeclaration": 51774,
                       "src": "464:5:68",
                       "typeDescriptions": {
                         "typeIdentifier": "t_contract$_Vault_$49181",
@@ -2216,14 +2216,14 @@
                             {
                               "arguments": [
                                 {
-                                  "id": 51714,
+                                  "id": 51805,
                                   "name": "this",
                                   "nodeType": "Identifier",
                                   "overloadedDeclarations": [],
                                   "referencedDeclaration": -28,
                                   "src": "506:4:68",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_contract$_TestVault_$51779",
+                                    "typeIdentifier": "t_contract$_TestVault_$51870",
                                     "typeString": "contract TestVault"
                                   }
                                 }
@@ -2231,11 +2231,11 @@
                               "expression": {
                                 "argumentTypes": [
                                   {
-                                    "typeIdentifier": "t_contract$_TestVault_$51779",
+                                    "typeIdentifier": "t_contract$_TestVault_$51870",
                                     "typeString": "contract TestVault"
                                   }
                                 ],
-                                "id": 51713,
+                                "id": 51804,
                                 "isConstant": false,
                                 "isLValue": false,
                                 "isPure": true,
@@ -2247,14 +2247,14 @@
                                   "typeString": "type(address)"
                                 },
                                 "typeName": {
-                                  "id": 51712,
+                                  "id": 51803,
                                   "name": "address",
                                   "nodeType": "ElementaryTypeName",
                                   "src": "498:7:68",
                                   "typeDescriptions": {}
                                 }
                               },
-                              "id": 51715,
+                              "id": 51806,
                               "isConstant": false,
                               "isLValue": false,
                               "isPure": false,
@@ -2279,18 +2279,18 @@
                               }
                             ],
                             "expression": {
-                              "id": 51710,
+                              "id": 51801,
                               "name": "factory",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 51680,
+                              "referencedDeclaration": 51771,
                               "src": "478:7:68",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_contract$_Factory_$46430",
                                 "typeString": "contract Factory"
                               }
                             },
-                            "id": 51711,
+                            "id": 51802,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": false,
@@ -2305,7 +2305,7 @@
                               "typeString": "function (address) external returns (address payable)"
                             }
                           },
-                          "id": 51716,
+                          "id": 51807,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -2329,7 +2329,7 @@
                             "typeString": "address payable"
                           }
                         ],
-                        "id": 51709,
+                        "id": 51800,
                         "name": "Vault",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
@@ -2340,7 +2340,7 @@
                           "typeString": "type(contract Vault)"
                         }
                       },
-                      "id": 51717,
+                      "id": 51808,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -2362,7 +2362,7 @@
                       "typeString": "contract Vault"
                     }
                   },
-                  "id": 51719,
+                  "id": 51810,
                   "nodeType": "ExpressionStatement",
                   "src": "464:49:68"
                 },
@@ -2371,7 +2371,7 @@
                     "arguments": [
                       {
                         "hexValue": "7661756c74",
-                        "id": 51723,
+                        "id": 51814,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -2394,7 +2394,7 @@
                         }
                       ],
                       "expression": {
-                        "id": 51720,
+                        "id": 51811,
                         "name": "console2",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
@@ -2405,7 +2405,7 @@
                           "typeString": "type(library console2)"
                         }
                       },
-                      "id": 51722,
+                      "id": 51813,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -2420,7 +2420,7 @@
                         "typeString": "function (string memory) pure"
                       }
                     },
-                    "id": 51724,
+                    "id": 51815,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -2436,7 +2436,7 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 51725,
+                  "id": 51816,
                   "nodeType": "ExpressionStatement",
                   "src": "523:21:68"
                 },
@@ -2446,11 +2446,11 @@
                       {
                         "arguments": [
                           {
-                            "id": 51731,
+                            "id": 51822,
                             "name": "vault",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 51683,
+                            "referencedDeclaration": 51774,
                             "src": "575:5:68",
                             "typeDescriptions": {
                               "typeIdentifier": "t_contract$_Vault_$49181",
@@ -2465,7 +2465,7 @@
                               "typeString": "contract Vault"
                             }
                           ],
-                          "id": 51730,
+                          "id": 51821,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -2477,14 +2477,14 @@
                             "typeString": "type(address)"
                           },
                           "typeName": {
-                            "id": 51729,
+                            "id": 51820,
                             "name": "address",
                             "nodeType": "ElementaryTypeName",
                             "src": "567:7:68",
                             "typeDescriptions": {}
                           }
                         },
-                        "id": 51732,
+                        "id": 51823,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -2509,7 +2509,7 @@
                         }
                       ],
                       "expression": {
-                        "id": 51726,
+                        "id": 51817,
                         "name": "console2",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
@@ -2520,7 +2520,7 @@
                           "typeString": "type(library console2)"
                         }
                       },
-                      "id": 51728,
+                      "id": 51819,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -2535,7 +2535,7 @@
                         "typeString": "function (address) pure"
                       }
                     },
-                    "id": 51733,
+                    "id": 51824,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -2551,7 +2551,7 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 51734,
+                  "id": 51825,
                   "nodeType": "ExpressionStatement",
                   "src": "554:28:68"
                 }
@@ -2564,29 +2564,29 @@
             "name": "setUp",
             "nameLocation": "333:5:68",
             "parameters": {
-              "id": 51684,
+              "id": 51775,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "338:2:68"
             },
             "returnParameters": {
-              "id": 51685,
+              "id": 51776,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "348:0:68"
             },
-            "scope": 51779,
+            "scope": 51870,
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "public"
           },
           {
-            "id": 51778,
+            "id": 51869,
             "nodeType": "FunctionDefinition",
             "src": "595:237:68",
             "nodes": [],
             "body": {
-              "id": 51777,
+              "id": 51868,
               "nodeType": "Block",
               "src": "643:189:68",
               "nodes": [],
@@ -2597,11 +2597,11 @@
                       {
                         "arguments": [
                           {
-                            "id": 51744,
+                            "id": 51835,
                             "name": "vault",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 51683,
+                            "referencedDeclaration": 51774,
                             "src": "674:5:68",
                             "typeDescriptions": {
                               "typeIdentifier": "t_contract$_Vault_$49181",
@@ -2616,7 +2616,7 @@
                               "typeString": "contract Vault"
                             }
                           ],
-                          "id": 51743,
+                          "id": 51834,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -2628,14 +2628,14 @@
                             "typeString": "type(address)"
                           },
                           "typeName": {
-                            "id": 51742,
+                            "id": 51833,
                             "name": "address",
                             "nodeType": "ElementaryTypeName",
                             "src": "666:7:68",
                             "typeDescriptions": {}
                           }
                         },
-                        "id": 51745,
+                        "id": 51836,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -2660,7 +2660,7 @@
                         }
                       ],
                       "expression": {
-                        "id": 51739,
+                        "id": 51830,
                         "name": "console2",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
@@ -2671,7 +2671,7 @@
                           "typeString": "type(library console2)"
                         }
                       },
-                      "id": 51741,
+                      "id": 51832,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -2686,7 +2686,7 @@
                         "typeString": "function (address) pure"
                       }
                     },
-                    "id": 51746,
+                    "id": 51837,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -2702,23 +2702,23 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 51747,
+                  "id": 51838,
                   "nodeType": "ExpressionStatement",
                   "src": "653:28:68"
                 },
                 {
                   "assignments": [
-                    51749
+                    51840
                   ],
                   "declarations": [
                     {
                       "constant": false,
-                      "id": 51749,
+                      "id": 51840,
                       "mutability": "mutable",
                       "name": "d",
                       "nameLocation": "699:1:68",
                       "nodeType": "VariableDeclaration",
-                      "scope": 51777,
+                      "scope": 51868,
                       "src": "691:9:68",
                       "stateVariable": false,
                       "storageLocation": "default",
@@ -2727,7 +2727,7 @@
                         "typeString": "address"
                       },
                       "typeName": {
-                        "id": 51748,
+                        "id": 51839,
                         "name": "address",
                         "nodeType": "ElementaryTypeName",
                         "src": "691:7:68",
@@ -2740,17 +2740,17 @@
                       "visibility": "internal"
                     }
                   ],
-                  "id": 51761,
+                  "id": 51852,
                   "initialValue": {
                     "arguments": [
                       {
                         "arguments": [
                           {
-                            "id": 51754,
+                            "id": 51845,
                             "name": "factory",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 51680,
+                            "referencedDeclaration": 51771,
                             "src": "739:7:68",
                             "typeDescriptions": {
                               "typeIdentifier": "t_contract$_Factory_$46430",
@@ -2765,7 +2765,7 @@
                               "typeString": "contract Factory"
                             }
                           ],
-                          "id": 51753,
+                          "id": 51844,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -2777,14 +2777,14 @@
                             "typeString": "type(address)"
                           },
                           "typeName": {
-                            "id": 51752,
+                            "id": 51843,
                             "name": "address",
                             "nodeType": "ElementaryTypeName",
                             "src": "731:7:68",
                             "typeDescriptions": {}
                           }
                         },
-                        "id": 51755,
+                        "id": 51846,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -2803,14 +2803,14 @@
                       {
                         "arguments": [
                           {
-                            "id": 51758,
+                            "id": 51849,
                             "name": "this",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": -28,
                             "src": "757:4:68",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_contract$_TestVault_$51779",
+                              "typeIdentifier": "t_contract$_TestVault_$51870",
                               "typeString": "contract TestVault"
                             }
                           }
@@ -2818,11 +2818,11 @@
                         "expression": {
                           "argumentTypes": [
                             {
-                              "typeIdentifier": "t_contract$_TestVault_$51779",
+                              "typeIdentifier": "t_contract$_TestVault_$51870",
                               "typeString": "contract TestVault"
                             }
                           ],
-                          "id": 51757,
+                          "id": 51848,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -2834,14 +2834,14 @@
                             "typeString": "type(address)"
                           },
                           "typeName": {
-                            "id": 51756,
+                            "id": 51847,
                             "name": "address",
                             "nodeType": "ElementaryTypeName",
                             "src": "749:7:68",
                             "typeDescriptions": {}
                           }
                         },
-                        "id": 51759,
+                        "id": 51850,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -2870,7 +2870,7 @@
                         }
                       ],
                       "expression": {
-                        "id": 51750,
+                        "id": 51841,
                         "name": "VaultAddress",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
@@ -2881,7 +2881,7 @@
                           "typeString": "type(library VaultAddress)"
                         }
                       },
-                      "id": 51751,
+                      "id": 51842,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -2896,7 +2896,7 @@
                         "typeString": "function (address,address) pure returns (address)"
                       }
                     },
-                    "id": 51760,
+                    "id": 51851,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -2919,11 +2919,11 @@
                   "expression": {
                     "arguments": [
                       {
-                        "id": 51765,
+                        "id": 51856,
                         "name": "d",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 51749,
+                        "referencedDeclaration": 51840,
                         "src": "786:1:68",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -2939,7 +2939,7 @@
                         }
                       ],
                       "expression": {
-                        "id": 51762,
+                        "id": 51853,
                         "name": "console2",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
@@ -2950,7 +2950,7 @@
                           "typeString": "type(library console2)"
                         }
                       },
-                      "id": 51764,
+                      "id": 51855,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -2965,7 +2965,7 @@
                         "typeString": "function (address) pure"
                       }
                     },
-                    "id": 51766,
+                    "id": 51857,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -2981,7 +2981,7 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 51767,
+                  "id": 51858,
                   "nodeType": "ExpressionStatement",
                   "src": "773:15:68"
                 },
@@ -2993,7 +2993,7 @@
                           "typeIdentifier": "t_address",
                           "typeString": "address"
                         },
-                        "id": 51774,
+                        "id": 51865,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -3001,11 +3001,11 @@
                         "leftExpression": {
                           "arguments": [
                             {
-                              "id": 51771,
+                              "id": 51862,
                               "name": "vault",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 51683,
+                              "referencedDeclaration": 51774,
                               "src": "813:5:68",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_contract$_Vault_$49181",
@@ -3020,7 +3020,7 @@
                                 "typeString": "contract Vault"
                               }
                             ],
-                            "id": 51770,
+                            "id": 51861,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": true,
@@ -3032,14 +3032,14 @@
                               "typeString": "type(address)"
                             },
                             "typeName": {
-                              "id": 51769,
+                              "id": 51860,
                               "name": "address",
                               "nodeType": "ElementaryTypeName",
                               "src": "805:7:68",
                               "typeDescriptions": {}
                             }
                           },
-                          "id": 51772,
+                          "id": 51863,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -3058,11 +3058,11 @@
                         "nodeType": "BinaryOperation",
                         "operator": "==",
                         "rightExpression": {
-                          "id": 51773,
+                          "id": 51864,
                           "name": "d",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 51749,
+                          "referencedDeclaration": 51840,
                           "src": "823:1:68",
                           "typeDescriptions": {
                             "typeIdentifier": "t_address",
@@ -3083,7 +3083,7 @@
                           "typeString": "bool"
                         }
                       ],
-                      "id": 51768,
+                      "id": 51859,
                       "name": "assert",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
@@ -3094,7 +3094,7 @@
                         "typeString": "function (bool) pure"
                       }
                     },
-                    "id": 51775,
+                    "id": 51866,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -3110,7 +3110,7 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 51776,
+                  "id": 51867,
                   "nodeType": "ExpressionStatement",
                   "src": "798:27:68"
                 }
@@ -3123,18 +3123,18 @@
             "name": "testDeterministicAddress",
             "nameLocation": "604:24:68",
             "parameters": {
-              "id": 51737,
+              "id": 51828,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "628:2:68"
             },
             "returnParameters": {
-              "id": 51738,
+              "id": 51829,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "643:0:68"
             },
-            "scope": 51779,
+            "scope": 51870,
             "stateMutability": "view",
             "virtual": false,
             "visibility": "public"
@@ -3144,7 +3144,7 @@
         "baseContracts": [
           {
             "baseName": {
-              "id": 51676,
+              "id": 51767,
               "name": "Test",
               "nameLocations": [
                 "259:4:68"
@@ -3153,7 +3153,7 @@
               "referencedDeclaration": 11937,
               "src": "259:4:68"
             },
-            "id": 51677,
+            "id": 51768,
             "nodeType": "InheritanceSpecifier",
             "src": "259:4:68"
           }
@@ -3168,7 +3168,7 @@
           "21582": 1
         },
         "linearizedBaseContracts": [
-          51779,
+          51870,
           11937,
           2357,
           2354,
@@ -3182,7 +3182,7 @@
         ],
         "name": "TestVault",
         "nameLocation": "246:9:68",
-        "scope": 51780,
+        "scope": 51871,
         "usedErrors": [],
         "usedEvents": [
           5,
