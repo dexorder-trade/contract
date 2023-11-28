@@ -110,8 +110,10 @@ contract MockEnv {
         int24 ts = pool.tickSpacing();
         lower = Util.roundTick(lower, ts);
         upper = Util.roundTick(upper, ts);
+        uint256 amount0 = inverted ? usdAmount : coinAmount;
+        uint256 amount1 = inverted ? coinAmount : usdAmount;
         INonfungiblePositionManager.MintParams memory params = INonfungiblePositionManager.MintParams(
-            address(COIN), address(USD), fee, lower, upper, coinAmount, usdAmount, 0, 0, msg.sender, block.timestamp
+            token0, token1, fee, lower, upper, amount0, amount1, 0, 0, msg.sender, block.timestamp
         );
         (tokenId, liquidity, amount0, amount1) = nfpm.mint(params);
         console2.log('minted');
