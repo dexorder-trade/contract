@@ -1,0 +1,13 @@
+{
+  "version": "alpha",
+  "revision": "fbfef44",
+  "chainInfo": {
+    "1337": {
+      "id": 1337,
+      "name": "Dexorder Alpha Testnet",
+      "vaultInitCodeHash": "0xeb601262c33e4d5f5dc9efb47c59a34810216b9d0ef14c144bbaf822b64acbbd",
+      "factory": "0xbdfdd000de3104c347786f3d16Aaa12104ecA029",
+      "helper": "0xA57d494e6162ca32610Ab5CCdf0AF3D149e4B43a"
+    }
+  }
+}
