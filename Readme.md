@@ -105,7 +105,7 @@ basically an instantiation of the OrderLib. This tremendously reduces the size o
 allows for a smoother user experience when upgrading to new versions. Any change to a vault's delegate contract
 will require an approval signature from the vault owner, but this process is not implemented yet. We are receptive to a
 non-upgradable model where assets must be explicitly transferred from an old vault to a new one, but currently do not
-believe that would really presents a significant security improvement over an explicit upgrade signature from every 
+believe that would really present a significant security improvement over an explicit upgrade signature from every 
 user.
 
 Overflow checking is now built-in to Solidity 0.8.x. We have *copied* Uniswap dependencies into our
