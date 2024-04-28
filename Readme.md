@@ -100,14 +100,22 @@ interface. Withdrawl transactions must be signed by the vault's owner.
 These contracts are not feature complete and are works in progress. No audit has yet been performed, not even the
 running of static analysis scripts. Please report any discovered problems as a public issue here in the GitHub project.
 
-Overflow checking is now built-in to Solidity 0.8.x. We have *copied* Uniswap and Open Zeppelin dependencies into our
+The Vault itself is a proxy contract that points its external methods to a shared VaultLogic contract, which is
+basically an instantiation of the OrderLib. This tremendously reduces the size of the deployed vault instances and also
+allows for a smoother user experience when upgrading to new versions. Any change to a vault's delegate contract
+will require an approval signature from the vault owner, but this process is not implemented yet. We are receptive to a
+non-upgradable model where assets must be explicitly transferred from an old vault to a new one, but currently do not
+believe that would really presents a significant security improvement over an explicit upgrade signature from every 
+user.
+
+Overflow checking is now built-in to Solidity 0.8.x. We have *copied* Uniswap dependencies into our
 repository and modified them to build with 0.8.
 
 A re-entrancy lock has been implemented but not tested.
 
 `onlyOwner` modifiers guard order interactions and withdrawls.
 
-The `execute()` method is intentionally public.
+The `execute()` method is intentionally public. It is expected to revert if any test of the order conditions fails. 
 
 # Support
 
