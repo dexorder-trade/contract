@@ -1,6 +1,6 @@
 # Overview
 
-These contracts power &#129093;[dexorder](https://dexorder.trade).
+These contracts power [⬆dexorder](https://dexorder.trade).
 
 There are two "init" contracts which are pre-deployed to supported chains: `Factory`, and `Dexorder`. The `Factory`
 contract is the main contract, and it creates a `Vault`s for any account address. The `Dexorder` contract represents the Dexorder organization and 
