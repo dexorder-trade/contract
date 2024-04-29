@@ -11,11 +11,21 @@ CHAINID=$(c chain-id)
 
 FILE_TAG=${TAG:-mock}
 
+# find script directory
+SOURCE=${BASH_SOURCE[0]}
+while [ -L "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+  DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+  SOURCE=$(readlink "$SOURCE")
+  [[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+done
+DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )/..
+
+
 if [ "$FILE_TAG" == "mock" ]; then
-  BROADCAST=broadcast
+  BROADCAST=$DIR/broadcast
   FILE_TAG=latest
 else
-  BROADCAST=deployment/$TAG/broadcast
+  BROADCAST=$DIR/deployment/$TAG/broadcast
 fi
 
 MOCKENV=$(jq -r '.transactions[] | select(.contractName=="MockEnv") | select(.function==null).contractAddress' "$BROADCAST/DeployMock.sol/$CHAINID/run-latest.json") || echo WARNING no MockEnv detected
@@ -27,7 +37,7 @@ export FACTORY
 HELPER=$(jq -r '.transactions[] | select(.contractName=="QueryHelper") | select(.function==null).contractAddress' "$BROADCAST/Deploy.sol/$CHAINID/run-latest.json") || exit 1
 export HELPER
 
-VAULT_INIT_CODE_HASH=$(cast keccak $(jq -r .bytecode.object < out/Vault.sol/Vault.json)) || exit 1
+VAULT_INIT_CODE_HASH=$(cast keccak $(jq -r .bytecode.object < $DIR/out/Vault.sol/Vault.json)) || exit 1
 export VAULT_INIT_CODE_HASH
 
 POOL=$(c call $MOCKENV "pool()" | cast parse-bytes32-address) || exit 1
