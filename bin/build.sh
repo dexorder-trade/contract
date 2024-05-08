@@ -24,6 +24,7 @@ echo Full build, not incremental...
 rm -rf out/ broadcast/ cache/ gen/
 
 # first-pass build
+cp src/VaultAddress-default.sol src/VaultAddress.sol
 forge build $build_args || exit 1
 
 # Debug print
