@@ -26,13 +26,16 @@ cp -r out deployment/"$TAG"/
 cpbroadcast Deploy.sol
 
 if [ "$2" == "mock" ]; then
+  sleep 1
   forge script script/DeployMock.sol -vvvv --fork-url "$RPC" --broadcast --private-key $PRIVKEY
   cpbroadcast DeployMock.sol
 fi
 
 if [ "$2" == "mirror" ]; then
+  sleep 1
   forge script script/DeployMock.sol -vvvv --fork-url "$RPC" --broadcast --private-key $PRIVKEY
   cpbroadcast DeployMock.sol
+  sleep 1
   forge script script/DeployMirror.sol -vvvv --fork-url "$RPC" --broadcast --private-key $PRIVKEY
   cpbroadcast DeployMirror.sol
 fi
