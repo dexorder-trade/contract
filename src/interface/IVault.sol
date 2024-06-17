@@ -3,36 +3,22 @@ pragma solidity 0.8.22;
 pragma abicoder v2;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {OrderLib} from "../OrderLib.sol";
-import {Dexorder} from "../Dexorder.sol";
+import {OrderLib} from "../core/OrderLib.sol";
+import {IFeeManager} from "./IFeeManager.sol";
+import {IVaultFactory} from "./IVaultFactory.sol";
 
-// Actually Proxy for VaultLogic
-
-interface IVaultProxy {
-
-    event DexorderReceived(address, uint256);
-
-    function owner() external view returns (address);
-    function dexorder() external view returns (Dexorder);
-
-    function withdraw(uint256 amount) external;
-
-    function withdrawTo(address payable recipient, uint256 amount) external;
-
-    function withdraw(IERC20 token, uint256 amount) external;
-
-    function withdrawTo(IERC20 token, address recipient, uint256 amount) external;
-}
 
 interface IVaultLogic {
 
-    function version() external pure returns (uint8);
+    function version() external pure returns (uint256);
+
+    function feeManager() external view returns (IFeeManager);
 
     function numSwapOrders() external view returns (uint64 num);
 
-    function placeDexorder(OrderLib.SwapOrder memory order) external;
+    function placeDexorder(OrderLib.SwapOrder memory order) external payable;
 
-    function placeDexorders(OrderLib.SwapOrder[] memory orders, OrderLib.OcoMode ocoMode) external;
+    function placeDexorders(OrderLib.SwapOrder[] memory orders, OrderLib.OcoMode ocoMode) external payable;
 
     function swapOrderStatus(uint64 orderIndex) external view returns (OrderLib.SwapOrderStatus memory status);
 
@@ -44,6 +30,35 @@ interface IVaultLogic {
 
     function orderCanceled(uint64 orderIndex) external view returns (bool);
 
+}
+
+interface IVaultProxy {
+
+    // we emit this event for native deposits and withdrawls
+    event VaultCreated( address indexed owner, uint8 num );
+    event Transfer(address, address, uint256);
+    event VaultLogicProposed(address logic, uint32 activationTime);
+    event VaultLogicChanged(address logic);
+
+    function factory() external view returns (IVaultFactory);
+
+    function owner() external view returns (address);
+
+    function num() external view returns (uint8);
+
+    function logic() external view returns (address);
+
+    function upgrade(address logic) external;
+
+    receive() external payable;
+
+    function withdraw(uint256 amount) external;
+
+    function withdrawTo(address payable recipient, uint256 amount) external;
+
+    function withdraw(IERC20 token, uint256 amount) external;
+
+    function withdrawTo(IERC20 token, address recipient, uint256 amount) external;
 }
 
 interface IVault is IVaultProxy, IVaultLogic {}

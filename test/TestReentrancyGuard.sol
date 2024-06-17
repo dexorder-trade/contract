@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.22;
+pragma abicoder v2;
 
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "forge-std/console2.sol";
 import "forge-std/Script.sol";
-import "../src/Factory.sol";
 import "forge-std/Test.sol";
+import "../src/core/VaultFactory.sol";
 import "../src/interface/IVault.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-pragma abicoder v2;
+import {MockEnv} from "./MockEnv.sol";
 
 // Evilcoin is reentrant. Call to transfer will perform reentrant call to vault.execute()
 
@@ -38,9 +40,8 @@ contract EvilCoin is ERC20, Script {
     }
 }
 
-contract TestReentrancyGuard is Test {
+contract TestReentrancyGuard is Test, MockEnv {
 
-    Factory public factory;
     Vault public vault;
     address payable owner = payable(address(this)); // this contract owns vault
 
@@ -55,8 +56,6 @@ contract TestReentrancyGuard is Test {
         assert (owner == address(this));
         assert (owner.balance == runnerGib);
 
-        factory = new Factory(new Dexorder());
-        assert(address(factory) == factory.admin.address); // ???
         console2.log("factory, balance     ", address(factory), address(factory).balance);
 
         vault = Vault(factory.deployVault(owner));

@@ -2,13 +2,13 @@
 pragma solidity 0.8.22;
 pragma abicoder v2;
 
-import "./Constants.sol";
+import "../core/Constants.sol";
 import "forge-std/console2.sol";
 
 
 library VaultAddress {
     // keccak-256 hash of the Vault's bytecode (not the deployed bytecode but the initialization bytecode)
-    bytes32 public constant VAULT_INIT_CODE_HASH = 0x0000000000000000000000000000000000000000000000000000000000000000;
+    bytes32 public constant VAULT_INIT_CODE_HASH = 0x31bcbd6a8c3bde13da544307f1390978233227983eb13e3230ac4cb8e5bcfe89;
 
     // the contract being constructed must not have any constructor arguments or the determinism will be broken.
     // instead, use a callback to get construction arguments

@@ -6,23 +6,32 @@ import "forge-std/console2.sol";
 import {IUniswapV3Pool} from "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import {UniswapSwapper, Constants} from "./UniswapSwapper.sol";
 import {Util} from "./Util.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IEEE754, float} from "./IEEE754.sol";
+import {IFeeManager} from "../interface/IFeeManager.sol";
 
 
 library OrderLib {
 
-    uint64 internal constant NO_CHAIN = type(uint64).max;
+    uint64 internal constant NO_CONDITIONAL_ORDER = type(uint64).max;
     uint64 internal constant NO_OCO_INDEX = type(uint64).max;
 
     struct OrdersInfo {
         uint64 cancelAllIndex;
         SwapOrderStatus[] orders;
         OcoGroup[] ocoGroups;
+        // additional slots for future expansion
+        mapping(uint256=>uint256) extra1;
+        mapping(uint256=>uint256) extra2;
+        mapping(uint256=>uint256) extra3;
     }
 
-    event DexorderSwapPlaced (uint64 startOrderIndex, uint8 numOrders);
+    event DexorderSwapPlaced (uint64 indexed startOrderIndex, uint8 numOrders);
 
-    event DexorderSwapFilled (uint64 orderIndex, uint8 trancheIndex, uint256 amountIn, uint256 amountOut);
+    event DexorderSwapFilled (
+        uint64 indexed orderIndex, uint8 indexed trancheIndex,
+        uint256 amountIn, uint256 amountOut, uint256 fillFee // fill fee is taken from the out token
+    );
 
     event DexorderSwapCanceled (uint64 orderIndex);
 
@@ -33,12 +42,13 @@ library OrderLib {
         UniswapV3   // 1
     }
 
+    // todo does embedding Route into SwapOrder take a full word?
     struct Route {
         Exchange exchange;
         uint24 fee;
     }
 
-    // Primary data structure for order specification
+    // Primary data structure for order specification. These fields are immutable after order placement.
     struct SwapOrder {
         address tokenIn;
         address tokenOut;
@@ -47,21 +57,24 @@ library OrderLib {
         uint256 minFillAmount;  // if a tranche has less than this amount available to fill, it is considered completed
         bool amountIsInput;
         bool outputDirectlyToOwner;
-        uint64 chainOrder; // use NO_CHAIN for no chaining. chainOrder index must be < than this order's index for safety (written first) and chainOrder state must be Template
+        uint64 conditionalOrder; // use NO_CONDITIONAL_ORDER for no chaining. conditionalOrder index must be < than this order's index for safety (written first) and conditionalOrder state must be Template
         Tranche[] tranches;
         // we have 94 bits remaining in the last word
     }
 
-    // "Status" includes dynamic information about the trade in addition to its static specification.
+    // "Status" includes dynamic information about the trade in addition to its static SwapOrder specification.
     struct SwapOrderStatus {
         SwapOrder order;
-        uint8 fillFeeBP; // 1/100 basis points
+        // the fill fee is remembered from the active fee schedule at order creation time.
+        // 1/20_000 "half bps" means the maximum representable value is 1.275%
+        uint8 fillFeeHalfBps;
         bool canceled;
         uint32 start;
-        // todo startPrice (rename start to startTime as well)
+        // todo startPrice (rename start to startTime as well)  TODO adjust lines on order creation instead.
         uint64 ocoGroup;
         uint256 filled;  // total
         uint256[] trancheFilled;  // sum(trancheFilled) == filled
+        uint32[] trancheActivationTime;  // related to rate limit: the earliest time at which each tranche can execute.
     }
 
     uint16 constant MAX_FRACTION = type(uint16).max;
@@ -77,11 +90,11 @@ library OrderLib {
         bool   minIsBarrier;
         bool   maxIsBarrier;
         bool   marketOrder;  // if true, both min and max lines are ignored, and minIntercept is treated as a maximum slippage value (use positive numbers)
-        bool   _reserved5;   // todo price isRatio: recalculate intercept
-        bool   _reserved6;
+        bool   minIsRatio;   // todo price isRatio: recalculate intercept
+        bool   maxIsRatio;
         bool   _reserved7;
-        uint8  _reserved8;
-        uint32 _reserved16;
+        uint16 rateLimitFraction;  // max fraction of this tranche's amount per rate-limited execution
+        uint24 rateLimitPeriod;  // seconds between rate limit resets
 
         uint32 startTime;  // use DISTANT_PAST to effectively disable
         uint32 endTime;    // use DISTANT_FUTURE to effectively disable
@@ -110,13 +123,44 @@ library OrderLib {
         uint8 num;        // number of orders in the group
     }
 
-    function _placeOrder(OrdersInfo storage self, SwapOrder memory order, uint8 fillFeeBP) internal {
-        SwapOrder[] memory orders = new SwapOrder[](1);
-        orders[0] = order;
-        return _placeOrders(self,orders,fillFeeBP,OcoMode.NO_OCO);
+    function _placementFee(SwapOrder memory order, IFeeManager.FeeSchedule memory sched) internal pure
+    returns (uint256 orderFee, uint256 executionFee) {
+        console2.log('computing fee');
+        console2.log(sched.orderFee);
+        console2.log(sched.orderExp);
+        console2.log(sched.gasFee);
+        console2.log(sched.gasExp);
+        console2.log(sched.fillFeeHalfBps);
+        orderFee = uint256(sched.orderFee) << sched.orderExp;
+        console2.log(orderFee);
+        uint256 numExecutions = 0;
+        for( uint i=0; i<order.tranches.length; i++ ) {
+            uint16 rate = order.tranches[i].rateLimitFraction;
+            uint256 exes;
+            if (rate == 0)
+                exes = 1;
+            else {
+                exes =  MAX_FRACTION / rate;
+                // ceil
+                if( exes * rate < MAX_FRACTION)
+                    exes += 1;
+            }
+            console2.log(exes);
+            numExecutions += exes;
+        }
+        executionFee = numExecutions * (uint256(sched.gasFee) << sched.gasExp);
+        console2.log(executionFee);
+        console2.log('total fee');
+        console2.log(orderFee+executionFee);
     }
 
-    function _placeOrders(OrdersInfo storage self, SwapOrder[] memory orders, uint8 fillFeeBP, OcoMode ocoMode) internal {
+    function _placeOrder(OrdersInfo storage self, SwapOrder memory order, uint8 fillFeeHalfBps) internal {
+        SwapOrder[] memory orders = new SwapOrder[](1);
+        orders[0] = order;
+        return _placeOrders(self,orders,fillFeeHalfBps,OcoMode.NO_OCO);
+    }
+
+    function _placeOrders(OrdersInfo storage self, SwapOrder[] memory orders, uint8 fillFeeHalfBps, OcoMode ocoMode) internal {
         require(orders.length < type(uint8).max);
         uint64 startIndex = uint64(self.orders.length);
         require(startIndex < type(uint64).max);
@@ -129,11 +173,16 @@ library OrderLib {
         }
         else
             revert('OCOM');
+        // todo get fee structure
         console2.log('copying orders');
         // solc can't automatically generate the code to copy from memory to storage :( so we explicitly code it here
         for( uint8 o = 0; o < orders.length; o++ ) {
             SwapOrder memory order = orders[o];
-            require(order.route.exchange == Exchange.UniswapV3, 'UR');
+            require(order.route.exchange == Exchange.UniswapV3, 'UR');  // UR = Unknown Route
+            require(  // conditional order must be declared prior to this order, to prevent loops
+                order.conditionalOrder == NO_CONDITIONAL_ORDER ||
+                order.conditionalOrder < startIndex+o
+            );
             console2.log('exchange ok');
             // todo more order validation
             uint orderIndex = self.orders.length;
@@ -147,14 +196,15 @@ library OrderLib {
             status.order.minFillAmount = order.minFillAmount;
             status.order.amountIsInput = order.amountIsInput;
             status.order.outputDirectlyToOwner = order.outputDirectlyToOwner;
-            status.order.chainOrder = order.chainOrder;
+            status.order.conditionalOrder = order.conditionalOrder;
             console2.log('setting tranches');
             for( uint t=0; t<order.tranches.length; t++ ) {
                 status.order.tranches.push(order.tranches[t]);
                 status.trancheFilled.push(0);
+                status.trancheActivationTime.push(0);
             }
             console2.log('fee/oco');
-            status.fillFeeBP = fillFeeBP;
+            status.fillFeeHalfBps = fillFeeHalfBps;
             status.start = uint32(block.timestamp);
             // todo start price?
             status.ocoGroup = ocoGroup;
@@ -164,7 +214,10 @@ library OrderLib {
     }
 
 
-    function execute(OrdersInfo storage self, address owner, uint64 orderIndex, uint8 trancheIndex, PriceProof memory ) internal returns(uint256 amountOut) {
+    function execute(
+        OrdersInfo storage self, address owner, uint64 orderIndex, uint8 trancheIndex,
+        PriceProof memory, IFeeManager feeManager ) internal
+    returns(uint256 amountOut) {
         console2.log('execute');
         console2.log(address(this));
         console2.log(uint(orderIndex));
@@ -172,6 +225,7 @@ library OrderLib {
         SwapOrderStatus storage status = self.orders[orderIndex];
         if (_isCanceled(self, orderIndex))
             revert('NO'); // Not Open
+        // todo check rate limit
         Tranche storage tranche = status.order.tranches[trancheIndex];
 
         // limit is passed to routes for slippage control. it is derived from the slippage variable if marketOrder is
@@ -261,7 +315,10 @@ library OrderLib {
         amount = status.order.amountIsInput ? amountIn : amountOut;
         status.filled += amount;
         status.trancheFilled[trancheIndex] += amount;
-        emit DexorderSwapFilled(orderIndex, trancheIndex, amountIn, amountOut);
+        // todo compute next rate limit
+        uint256 fillFee = amountOut * status.fillFeeHalfBps / 20_000;
+        IERC20(status.order.tokenOut).transfer(feeManager.fillFeeAccount(), fillFee);
+        emit DexorderSwapFilled(orderIndex, trancheIndex, amountIn, amountOut, fillFee);
         console2.log('emitted DexorderSwapFilled event');
         _checkCompleted(self, status);
         console2.log('orderlib execute completed');
@@ -293,6 +350,7 @@ library OrderLib {
         (pool,price) = _getUniswapV3Price(order);
     }
 
+    // todo extract into route adapter
     function _getUniswapV3Price( SwapOrder storage order ) internal view returns (address pool, uint256 price) {
         pool = Constants.uniswapV3Factory.getPool(order.tokenIn, order.tokenOut, order.route.fee);
         (uint160 sqrtPriceX96,,,,,,) = IUniswapV3Pool(pool).slot0();
@@ -313,6 +371,7 @@ library OrderLib {
     }
 
 
+    // todo extract into route adapter
     function _do_execute_univ3( address recipient, SwapOrder storage order, address pool, uint256 amount, uint256 limit) private
     returns (uint256 amountIn, uint256 amountOut)
     {

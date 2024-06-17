@@ -6,7 +6,7 @@ import "./Constants.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "v3-periphery/libraries/TransferHelper.sol";
 import "forge-std/console2.sol";
-import {IUniswapV3Pool} from "../lib_uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
+import {IUniswapV3Pool} from "v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 
 
 library UniswapSwapper {

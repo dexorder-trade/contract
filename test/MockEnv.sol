@@ -3,16 +3,21 @@ pragma solidity 0.8.22;
 pragma abicoder v2;
 
 import "forge-std/console2.sol";
-import "../src/MockERC20.sol";
-import "../src/Util.sol";
-import "../src/Constants.sol";
+import "../src/more/MockERC20.sol";
+import "../src/core/Util.sol";
+import "../src/core/Constants.sol";
 import "./MockUtil.sol";
 import "../lib_uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "../lib_uniswap/v3-periphery/contracts/libraries/LiquidityAmounts.sol";
 import "../lib_uniswap/v3-periphery/contracts/interfaces/INonfungiblePositionManager.sol";
+import "../src/core/FeeManager.sol";
+import "../src/core/VaultLogic.sol";
+import "../src/core/VaultFactory.sol";
 
 
 contract MockEnv {
+
+    IVaultFactory public factory;
 
     INonfungiblePositionManager private nfpm = Constants.uniswapV3NonfungiblePositionManager;
 
@@ -26,6 +31,22 @@ contract MockEnv {
 
     // sets up two mock coins COIN and USD, plus a uniswap v3 pool.
     function init() public {
+        initNoFees();
+    }
+
+    function initDebugFees() public {
+        return init(FeeManagerLib.debugFeeManager());
+    }
+
+    function initNoFees() public {
+        return init(FeeManagerLib.freeFeeManager());
+    }
+
+    function init(FeeManager feeManager) public {
+
+        VaultLogic logic = new VaultLogic(feeManager);
+        factory = new VaultFactory(msg.sender, address(logic));
+
         console2.log('MockEnv: msg.sender:', msg.sender);
 //        console2.log('MockEnv: tx.origin:' , tx.origin);
         COIN = new MockERC20('Mock Ethereum Hardfork', 'MEH', 18);

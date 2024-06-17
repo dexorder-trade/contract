@@ -3,7 +3,7 @@ pragma solidity 0.8.22;
 pragma abicoder v2;
 
 import "forge-std/Test.sol";
-import {IEEE754, float} from "../src/IEEE754.sol";
+import {IEEE754, float} from "../src/core/IEEE754.sol";
 
 contract TestIEEE754 is Test {
 

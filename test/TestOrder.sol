@@ -5,21 +5,19 @@ pragma abicoder v2;
 import "forge-std/Test.sol";
 import "forge-std/console2.sol";
 import {MockEnv, MockERC20} from "./MockEnv.sol";
-import {Factory} from "../src/Factory.sol";
-import {Dexorder} from "../src/Dexorder.sol";
+import {VaultFactory} from "../src/core/VaultFactory.sol";
+import {Dexorder} from "../src/more/Dexorder.sol";
 import {IVault} from "../src/interface/IVault.sol";
-import {OrderLib} from "../src/OrderLib.sol";
-import {float} from "../src/IEEE754.sol";
+import {OrderLib} from "../src/core/OrderLib.sol";
+import {float} from "../src/core/IEEE754.sol";
 
 contract TestOrder is MockEnv, Test {
 
-    Factory public factory;
     IVault public vault;
 
     // vault gets 100,000 COIN and 100,000 USD
     function setUp() public {
-        init();
-        factory = new Factory(new Dexorder());
+        initNoFees();
         vault = IVault(factory.deployVault(address(this)));
         vm.deal(payable(address(vault)), 1 ether); // native for fees
         uint256 coinAmount = 100_000 * 10 ** COIN.decimals();
@@ -44,7 +42,7 @@ contract TestOrder is MockEnv, Test {
         OrderLib.SwapOrder memory order  = OrderLib.SwapOrder(
             0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9, 0x82aF49447D8a07e3bd95BD0d56f35241523fBab1,
             OrderLib.Route(OrderLib.Exchange.UniswapV3, 500), amount, amount/100, true, false,
-            OrderLib.NO_CHAIN, tranches
+            OrderLib.NO_CONDITIONAL_ORDER, tranches
         );
         console2.logBytes(abi.encode(order));
         // console2.log("testPlaceOrder: calling vault.numSwapOrders");
@@ -64,7 +62,7 @@ contract TestOrder is MockEnv, Test {
         OrderLib.SwapOrder memory order  = OrderLib.SwapOrder(
             address(COIN), address(USD), // sell COIN for USD
             OrderLib.Route(OrderLib.Exchange.UniswapV3, 500), amount, amount/100, false, false,
-            OrderLib.NO_CHAIN, tranches
+            OrderLib.NO_CONDITIONAL_ORDER, tranches
         );
         uint64 orderIndex = vault.numSwapOrders();
         vault.placeDexorder(order);
@@ -85,7 +83,7 @@ contract TestOrder is MockEnv, Test {
         OrderLib.SwapOrder memory order  = OrderLib.SwapOrder(
             address(COIN), address(USD), // sell COIN for USD
             OrderLib.Route(OrderLib.Exchange.UniswapV3, fee), amount, amount/100, true, false,
-            OrderLib.NO_CHAIN, tranches
+            OrderLib.NO_CONDITIONAL_ORDER, tranches
         );
         uint64 orderIndex = vault.numSwapOrders();
         vault.placeDexorder(order);
@@ -108,7 +106,7 @@ contract TestOrder is MockEnv, Test {
         OrderLib.SwapOrder memory order  = OrderLib.SwapOrder(
             token0, token1, // sell
             OrderLib.Route(OrderLib.Exchange.UniswapV3, fee), amount, amount/100, true, false,
-            OrderLib.NO_CHAIN, tranches
+            OrderLib.NO_CONDITIONAL_ORDER, tranches
         );
         uint64 orderIndex = vault.numSwapOrders();
         vault.placeDexorder(order);

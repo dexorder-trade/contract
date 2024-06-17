@@ -5,11 +5,11 @@ pragma abicoder v2;
 import "forge-std/console2.sol";
 import "@uniswap/v3-core/contracts/libraries/TickMath.sol";
 import {IUniswapV3Pool} from "../lib_uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
-import {MockERC20} from "../src/MockERC20.sol";
+import {MockERC20} from "../src/more/MockERC20.sol";
 import "../lib_uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "../lib_uniswap/v3-periphery/contracts/interfaces/INonfungiblePositionManager.sol";
-import "../src/Constants.sol";
-import "../src/Util.sol";
+import "../src/core/Constants.sol";
+import "../src/core/Util.sol";
 
 
 library MockUtil {

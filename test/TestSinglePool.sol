@@ -9,7 +9,7 @@ import "./MockEnv.sol";
 
 contract TestSinglePool is MockEnv, Test {
     function setUp() public {
-        init();
+        initNoFees();
     }
 
      function testSwap() public {

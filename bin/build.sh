@@ -1,30 +1,15 @@
 #!/bin/bash
 # this script requires the jq command $(sudo apt install jq)
 
-# # Check OrderLib dependencies and rebuild them if forge fails due to bug
-# # Search for files that import OrderLib -- imperfect criteria may get too many, for example comments
-# ORDERLIB_DEPENDENCIES=$(grep -rl "/OrderLib.sol" | grep -E '(^test|^src)' | awk -F/ '{print $NF}')
-# # ORDERLIB_DEPENDENCIES="OrderLib Dexorder QueryHelper Vault VaultLogic IVault TestOrder TestCancelOrder"
-# dated_flist() {
-#     find $1 -type f -print0 | xargs -0 stat -c '%y %n' | sort;
-# }
-# OrderLib_deps() {
-#     (
-#     dated_flist ./src/OrderLib.sol
-#     dated_flist "./out/OrderLib.sol/*.json"
-#     for item in $ORDERLIB_DEPENDENCIES; do dated_flist "./out/$item/*.json"; done
-#     ) | sort
-# }
-
 # build_args=$(echo "$@" | sed 's/--debug//')
 build_args=$(echo "$@")
 
-# force full rebuild
-echo Full build, not incremental...
-rm -rf out/ broadcast/ cache/ gen/
+## force full rebuild
+#echo Full build, not incremental...
+#rm -rf out/ broadcast/ cache/ gen/
 
 # first-pass build
-cp src/VaultAddress-default.sol src/VaultAddress.sol
+echo Building...
 forge build $build_args || exit 1
 
 # Debug print
@@ -46,10 +31,10 @@ forge build $build_args || exit 1
 VAULT_INIT_CODE_HASH=$(cast keccak $(jq -r .bytecode.object < out/Vault.sol/Vault.json))
 
 # put the hash value into the VaultAddress.sol source file
-sed -i "s/VAULT_INIT_CODE_HASH = .*;/VAULT_INIT_CODE_HASH = $VAULT_INIT_CODE_HASH;/" src/VaultAddress.sol
+sed -i "s/VAULT_INIT_CODE_HASH = .*;/VAULT_INIT_CODE_HASH = $VAULT_INIT_CODE_HASH;/" src/more/VaultAddress.sol
 
-# final build after hash values are set
-echo Rebuild VaultAddress.sol if needed...
+# final build after init code hash is set
+echo Build VaultAddress.sol...
 forge build $build_args  || exit 1
 
 # Debug print
@@ -59,3 +44,5 @@ forge build $build_args  || exit 1
 #     dated_flist "./out/*/*.json"
 #     dated_flist ./src/OrderLib.sol
 # fi
+
+echo Contracts built successfully.

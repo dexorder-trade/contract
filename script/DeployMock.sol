@@ -9,7 +9,7 @@ contract DeployMock is Script {
     function run() external {
         vm.startBroadcast();
         MockEnv mock = new MockEnv();
-        mock.init();
+        mock.initDebugFees();
         vm.stopBroadcast();
         console2.log('MockEnv');
         console2.log(address(mock));

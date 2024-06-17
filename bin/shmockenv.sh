@@ -32,7 +32,7 @@ MOCKENV=$(jq -r '.transactions[] | select(.contractName=="MockEnv") | select(.fu
 export MOCKENV
 MIRRORENV=$(jq -r '.transactions[] | select(.contractName=="MirrorEnv") | select(.function==null).contractAddress' "$BROADCAST/DeployMirror.sol/$CHAINID/run-latest.json") || echo WARNING no MirrorEnv detected
 export MIRRORENV
-FACTORY=$(jq -r '.transactions[] | select(.contractName=="Factory") | select(.function==null).contractAddress' "$BROADCAST/Deploy.sol/$CHAINID/run-latest.json") || exit 1
+FACTORY=$(jq -r '.transactions[] | select(.contractName=="VaultFactory") | select(.function==null).contractAddress' "$BROADCAST/Deploy.sol/$CHAINID/run-latest.json") || exit 1
 export FACTORY
 HELPER=$(jq -r '.transactions[] | select(.contractName=="QueryHelper") | select(.function==null).contractAddress' "$BROADCAST/Deploy.sol/$CHAINID/run-latest.json") || exit 1
 export HELPER
@@ -66,8 +66,8 @@ USXD_INT=$(cast to-dec $USXD)
 INVERTED=$(echo $MEH_INT '>' $USXD_INT | bc)
 export INVERTED
 
-#echo "\$MOCKENV    $MOCKENV"
-#echo "\$MIRRORENV  $MIRRORENV"
-#echo "\$MEH        $MEH"
-#echo "\$USXD       $USXD"
-#echo "\$POOL       $POOL"
+echo "\$MOCKENV    $MOCKENV"
+echo "\$MIRRORENV  $MIRRORENV"
+echo "\$MEH        $MEH"
+echo "\$USXD       $USXD"
+echo "\$POOL       $POOL"

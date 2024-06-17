@@ -2,10 +2,11 @@
 pragma solidity 0.8.22;
 pragma abicoder v2;
 
+import "forge-std/console2.sol";
 import "v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "./OrderLib.sol";
-import "forge-std/console2.sol";
+import "../core/OrderLib.sol";
+import {IVault} from "../interface/IVault.sol";
 
 
 contract QueryHelper {

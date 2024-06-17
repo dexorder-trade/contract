@@ -2,11 +2,8 @@
 
 These contracts power [⬆dexorder](https://dexorder.trade).
 
-There are two "init" contracts which are pre-deployed to supported chains: `Factory`, and `Dexorder`. The `Factory`
-contract is the main contract, and it creates a `Vault`s for any account address. The `Dexorder` contract represents the Dexorder organization and 
-associated fees.
-
-The heart of the system is contained in `OrderLib.sol`, particularly the  `OrderLib.execute()` method. `Vaults` are basically thin wrappers around the `OrderLib`.
+The heart of the system is contained in `OrderLib.sol`, particularly the  `OrderLib.execute()` method. `Vaults` are 
+basically thin wrappers around the `OrderLib`.
 
 # Quickstart
 
@@ -66,9 +63,9 @@ To deploy a new Vault, use the `IVaultDeployer` interface, which is a superclass
 address in `contract/deployment/<tag>/broadcast/Deploy.sol/<chainId>/run-latest.json`.
 
 ```solidity
-IVaultDeployer deployer = IVaultDeployer(factoryAddress);
-IVault myVault = deployer.deployVault(); // deploy a vault owned by this smart contract
-IVault yourVault = deployer.deployVault(myAddress);  // deploy a vault for any address
+IVaultFactory factory = IVaultFactory(factoryAddress);
+IVault myVault = factory.deployVault(); // deploy a vault owned by this smart contract
+IVault yourVault = factory.deployVault(myAddress);  // deploy a vault for any address
 ```
 
 Only a single vault per account address, vault number 0, is currently supported. Do not use vault numbers other than 0

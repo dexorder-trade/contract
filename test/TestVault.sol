@@ -2,11 +2,12 @@
 pragma solidity 0.8.22;
 
 import "forge-std/console2.sol";
-import "../src/Factory.sol";
-import "../src/VaultAddress.sol";
+import "../src/core/VaultFactory.sol";
+import "../src/more/VaultAddress.sol";
 import "forge-std/Test.sol";
 import "../src/interface/IVault.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {MockEnv} from "./MockEnv.sol";
 pragma abicoder v2;
 
 contract TestCoin is ERC20 {
@@ -19,9 +20,8 @@ contract TestCoin is ERC20 {
     }
 }
 
-contract TestVault is Test {
+contract TestVault is Test, MockEnv {
 
-    Factory public factory;
     Vault public vault;
     address payable owner = payable(address(this)); // this contract owns vault
 
@@ -36,8 +36,6 @@ contract TestVault is Test {
         assert (owner == address(this));
         assert (owner.balance == runnerGib);
 
-        factory = new Factory(new Dexorder());
-        assert(address(factory) == factory.admin.address); // ???
         console2.log("factory, balance     ", address(factory), address(factory).balance);
 
         vault = Vault(factory.deployVault(owner));

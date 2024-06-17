@@ -3,9 +3,9 @@ pragma solidity 0.8.22;
 pragma abicoder v2;
 
 import "forge-std/console2.sol";
-import "../src/MockERC20.sol";
-import "../src/Util.sol";
-import "../src/Constants.sol";
+import "../src/more/MockERC20.sol";
+import "../src/core/Util.sol";
+import "../src/core/Constants.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/INonfungiblePositionManager.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
