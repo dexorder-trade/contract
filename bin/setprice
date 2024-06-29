@@ -8,7 +8,7 @@ if [ "$INVERTED" == "1" ]; then
 else
   INV=
 fi
-#echo INV $INV
+echo INV $INVERTED
 FORMULA='scale=100; big='"$INV""$1"'*10^('"$T1DEC"'-'"$T0DEC"')*2^(96*2); scale=0; sqrt(big)'
 #echo $FORMULA
 #echo "$FORMULA" | bc

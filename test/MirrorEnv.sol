@@ -5,7 +5,6 @@ pragma abicoder v2;
 import "forge-std/console2.sol";
 import "../src/more/MockERC20.sol";
 import "../src/core/Util.sol";
-import "../src/core/Constants.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/INonfungiblePositionManager.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
@@ -26,6 +25,11 @@ contract MirrorEnv {
     // map original pool addresses to their mock counterparts
     mapping(IUniswapV3Pool=>MockPool) public pools;
 
+    INonfungiblePositionManager immutable public nfpm;
+
+    constructor (INonfungiblePositionManager nfpm_) {
+        nfpm = nfpm_;
+    }
 
     struct TokenInfo {
         IERC20Metadata addr;
@@ -44,7 +48,9 @@ contract MirrorEnv {
             console2.log(info.symbol);
             console2.log(info.decimals);
             mock = new MockERC20(info.name, info.symbol, info.decimals);
+            console2.log('setting tokens[]');
             tokens[info.addr] = mock;
+            console2.log('set tokens[]');
         }
         console2.log(address(mock));
         console2.log('mirrorToken complete');
@@ -65,17 +71,16 @@ contract MirrorEnv {
     function mirrorPool( PoolInfo memory info ) public returns (MockPool memory mock) {
         console2.log('MirrorEnv.mirrorPool()');
         console2.log(address(info.pool));
-        INonfungiblePositionManager nfpm = Constants.uniswapV3NonfungiblePositionManager;
         mock = pools[info.pool];
         console2.log(address(mock.pool));
         if ( address(mock.pool) == address(0) ) {
             console2.log('creating mirror pool');
             MockERC20 token0 = tokens[info.token0];
             MockERC20 token1 = tokens[info.token1];
-//            console2.log(address(info.token0));
-//            console2.log(address(token0));
-//            console2.log(address(info.token1));
-//            console2.log(address(token1));
+            console2.log(address(info.token0));
+            console2.log(address(token0));
+            console2.log(address(info.token1));
+            console2.log(address(token1));
             require(address(token0)!=address(0), 'token0 not mirrored');
             require(address(token1)!=address(0), 'token1 not mirrored');
             // put 100th of the total liquidity on each of the 1774545 ticks
@@ -83,27 +88,27 @@ contract MirrorEnv {
             uint256 amount1 = info.amount1 * 1774545 / 100;
             uint160 initialPrice = info.sqrtPriceX96;
             bool inverted = token0 > token1;
-//            console2.log('got tokens.  inverted?');
+            console2.log('got tokens.  inverted?');
             if( inverted ) {
                 (token0, token1) = (token1, token0);
                 (amount0, amount1) = (amount1, amount0);
                 initialPrice = uint160(2**96 * 2**96 / uint256(initialPrice));
             }
-//            console2.log(inverted);
-//            console2.log(address(token0));
-//            console2.log(address(token1));
-//            console2.log(info.fee);
-//            console2.log(initialPrice);
+            console2.log(inverted);
+            console2.log(address(token0));
+            console2.log(address(token1));
+            console2.log(info.fee);
+            console2.log(initialPrice);
             IUniswapV3Pool mockPool = IUniswapV3Pool(nfpm.createAndInitializePoolIfNecessary(
                 address(token0), address(token1), info.fee, initialPrice));
             mock = MockPool(mockPool, inverted);
-//            console2.log('mirror pool / inverted');
-//            console2.log(address(mockPool));
-//            console2.log(inverted);
+            console2.log('mirror pool / inverted');
+            console2.log(address(mockPool));
+            console2.log(inverted);
             pools[info.pool] = mock;
             console2.log('staking');
             MockUtil.stakeWide( mockPool, amount0, amount1);
-//            console2.log('staked');
+            console2.log('staked');
         }
         console2.log('mirrored pool');
     }

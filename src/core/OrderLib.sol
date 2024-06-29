@@ -4,11 +4,11 @@ pragma abicoder v2;
 
 import "forge-std/console2.sol";
 import {IUniswapV3Pool} from "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
-import {UniswapSwapper, Constants} from "./UniswapSwapper.sol";
 import {Util} from "./Util.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IEEE754, float} from "./IEEE754.sol";
 import {IFeeManager} from "../interface/IFeeManager.sol";
+import {IRouter} from "./IRouter.sol";
 
 
 library OrderLib {
@@ -20,10 +20,6 @@ library OrderLib {
         uint64 cancelAllIndex;
         SwapOrderStatus[] orders;
         OcoGroup[] ocoGroups;
-        // additional slots for future expansion
-        mapping(uint256=>uint256) extra1;
-        mapping(uint256=>uint256) extra2;
-        mapping(uint256=>uint256) extra3;
     }
 
     event DexorderSwapPlaced (uint64 indexed startOrderIndex, uint8 numOrders);
@@ -100,6 +96,8 @@ library OrderLib {
         uint32 endTime;    // use DISTANT_FUTURE to effectively disable
 
         // if intercept and slope are both 0, the line is disabled
+        // limit prices are always in terms of outputToken as the quote currency: prices are the expected output amount
+        // per input amount
         float  minIntercept; // if marketOrder==true, this is the (positive) max slippage amount
         float  minSlope;
         float  maxIntercept;
@@ -216,7 +214,7 @@ library OrderLib {
 
     function execute(
         OrdersInfo storage self, address owner, uint64 orderIndex, uint8 trancheIndex,
-        PriceProof memory, IFeeManager feeManager ) internal
+        PriceProof memory, IRouter router, IFeeManager feeManager ) internal
     returns(uint256 amountOut) {
         console2.log('execute');
         console2.log(address(this));
@@ -247,12 +245,9 @@ library OrderLib {
             revert('TL'); // time late
 
         // line constraints
-        address pool;
-        uint256 price;  // fixed-point format with 96 decimal bits
-        (pool, price) = _getPoolAndPrice(status.order); // always init price since this is the first time it could possibly be used
+        uint256 price;
         if( tranche.marketOrder ) {
             // todo slippage needs to be relative to the oracle mark not the current price
-            limit = 0; // disable
             /*
             console2.log('slippage');
             // minIntercept is interpreted as the slippage ratio
@@ -261,23 +256,34 @@ library OrderLib {
             uint256 delta = (price * slippage) >> 96;
             limit = status.order.tokenIn > status.order.tokenOut ? price + delta : price - delta; // todo is this correct?
             */
+            console2.log('market order');
         }
-        // check min line
-        else if( float.unwrap(tranche.minIntercept) != 0 || float.unwrap(tranche.minSlope) != 0 ) {
-            limit = _linePrice(tranche.minIntercept, tranche.minSlope);
-            console2.log('min line limit');
-            console2.log(limit);
-            require( price > limit, 'LL' );
-        }
-        // check max line
-        if( float.unwrap(tranche.maxIntercept) != 0 || float.unwrap(tranche.maxSlope) != 0 ) {
-            // price may have been already initialized by the min line
-            if( price == 0 )
-                (pool, price) = _getPoolAndPrice(status.order);
-            uint256 maxPrice = _linePrice(tranche.maxIntercept, tranche.maxSlope);
-            console2.log('max line limit');
-            console2.log(limit);
-            require( price < maxPrice, 'LU' );
+        else {
+            // check min line
+            if( float.unwrap(tranche.minIntercept) != 0 || float.unwrap(tranche.minSlope) != 0 ) {
+                price = router.price(status.order.route.exchange, status.order.tokenIn,
+                    status.order.tokenOut, status.order.route.fee);
+                console2.log('price');
+                console2.log(price);
+                limit = _linePrice(tranche.minIntercept, tranche.minSlope);
+                console2.log('min line limit');
+                console2.log(limit);
+                require( price > limit, 'LL' );
+            }
+            // check max line
+            if( float.unwrap(tranche.maxIntercept) != 0 || float.unwrap(tranche.maxSlope) != 0 ) {
+                // price may have been already initialized by the min line
+                if( price == 0 ) {
+                    price = router.price(status.order.route.exchange, status.order.tokenIn,
+                        status.order.tokenOut, status.order.route.fee);
+                    console2.log('price');
+                    console2.log(price);
+                }
+                uint256 maxPrice = _linePrice(tranche.maxIntercept, tranche.maxSlope);
+                console2.log('max line limit');
+                console2.log(limit);
+                require( price < maxPrice, 'LU' );
+            }
         }
 
 //        console2.log('computing amount');
@@ -306,18 +312,39 @@ library OrderLib {
         address recipient = status.order.outputDirectlyToOwner ? owner : address(this);
         console2.log(recipient);
         uint256 amountIn;
-        // uint256 amountOut;
-        if( status.order.route.exchange == Exchange.UniswapV3 )
-            (amountIn, amountOut) = _do_execute_univ3(recipient, status.order, pool, amount, limit);
-        //  todo other routes
-        else
-            revert('UR'); // unknown route
+
+        // Order has been approved. Send to router for swap execution.
+        IRouter.SwapParams memory swapParams = IRouter.SwapParams(
+            status.order.tokenIn, status.order.tokenOut, recipient,
+            amount, status.order.minFillAmount, status.order.amountIsInput, limit, status.order.route.fee);
+        // DELEGATECALL
+        (bool success, bytes memory result) = address(router).delegatecall(
+            abi.encodeWithSelector(IRouter.swap.selector, status.order.route.exchange, swapParams)
+        );
+        if (!success) {
+            if (result.length > 0) { // if there was a reason given, forward it
+                assembly {
+                    let size := mload(result)
+                    revert(add(32, result), size)
+                }
+            }
+            else
+                revert();
+        }
+        // delegatecall succeeded
+        (amountIn, amountOut) = abi.decode(result, (uint256, uint256));
+
+        // Update filled amounts
         amount = status.order.amountIsInput ? amountIn : amountOut;
         status.filled += amount;
         status.trancheFilled[trancheIndex] += amount;
+
         // todo compute next rate limit
+
+        // fill fee
         uint256 fillFee = amountOut * status.fillFeeHalfBps / 20_000;
         IERC20(status.order.tokenOut).transfer(feeManager.fillFeeAccount(), fillFee);
+
         emit DexorderSwapFilled(orderIndex, trancheIndex, amountIn, amountOut, fillFee);
         console2.log('emitted DexorderSwapFilled event');
         _checkCompleted(self, status);
@@ -342,50 +369,6 @@ library OrderLib {
             else // overflow
                 price = IEEE754.isPositive(slope) ? type(uint256).max : 0;
         }
-    }
-
-
-    function _getPoolAndPrice( SwapOrder storage order ) internal view returns (address pool, uint256 price) {
-        // todo other routes
-        (pool,price) = _getUniswapV3Price(order);
-    }
-
-    // todo extract into route adapter
-    function _getUniswapV3Price( SwapOrder storage order ) internal view returns (address pool, uint256 price) {
-        pool = Constants.uniswapV3Factory.getPool(order.tokenIn, order.tokenOut, order.route.fee);
-        (uint160 sqrtPriceX96,,,,,,) = IUniswapV3Pool(pool).slot0();
-        uint256 price256 = uint256(sqrtPriceX96);
-        price = price256 * price256 / 2**96; // still X96 format
-        address t0 = IUniswapV3Pool(pool).token0();
-        //        uint8 t0dec = IERC20(t0).decimals();
-        //        uint8 t1dec = IERC20(pool.token1()).decimals();
-        //        if( t1dec > t0dec )
-        //            price *= 10 ** (t1dec-t0dec);
-        //        else if( t0dec > t1dec )
-        //            price /= 10 ** (t0dec-t1dec);
-        if( t0 != order.tokenIn )
-        // invert pool price to be outToken / inToken
-            price = 2**96 / price;
-        console2.log('current price X96');
-        console2.log(price);
-    }
-
-
-    // todo extract into route adapter
-    function _do_execute_univ3( address recipient, SwapOrder storage order, address pool, uint256 amount, uint256 limit) private
-    returns (uint256 amountIn, uint256 amountOut)
-    {
-        uint160 sqrtPriceLimitX96 = uint160(Util.sqrt(limit) * 2**48); // todo how to prevent precision loss in the least significant 48 bits?
-        console2.log('sqrt price limit x96');
-        console2.log(uint(sqrtPriceLimitX96));
-        if( pool == address(0) )
-            pool = Constants.uniswapV3Factory.getPool(order.tokenIn, order.tokenOut, order.route.fee);
-        if (order.amountIsInput)
-            (amountIn, amountOut) = UniswapSwapper.swapExactInput(UniswapSwapper.SwapParams(
-                    pool, order.tokenIn, order.tokenOut, recipient, order.route.fee, amount, sqrtPriceLimitX96));
-        else
-            (amountIn, amountOut) = UniswapSwapper.swapExactOutput(UniswapSwapper.SwapParams(
-                    pool, order.tokenIn, order.tokenOut, recipient, order.route.fee, amount, sqrtPriceLimitX96));
     }
 
 

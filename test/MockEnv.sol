@@ -5,7 +5,6 @@ pragma abicoder v2;
 import "forge-std/console2.sol";
 import "../src/more/MockERC20.sol";
 import "../src/core/Util.sol";
-import "../src/core/Constants.sol";
 import "./MockUtil.sol";
 import "../lib_uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "../lib_uniswap/v3-periphery/contracts/libraries/LiquidityAmounts.sol";
@@ -13,13 +12,15 @@ import "../lib_uniswap/v3-periphery/contracts/interfaces/INonfungiblePositionMan
 import "../src/core/FeeManager.sol";
 import "../src/core/VaultLogic.sol";
 import "../src/core/VaultFactory.sol";
+import {ArbitrumRouter} from "../src/core/Router.sol";
 
 
 contract MockEnv {
 
     IVaultFactory public factory;
 
-    INonfungiblePositionManager private nfpm = Constants.uniswapV3NonfungiblePositionManager;
+    INonfungiblePositionManager private nfpm =
+        INonfungiblePositionManager(0xC36442b4a4522E871399CD717aBDD847Ab11FE88); // Arbitrum
 
     IUniswapV3Pool public pool;
     uint24 public fee;
@@ -35,17 +36,17 @@ contract MockEnv {
     }
 
     function initDebugFees() public {
-        return init(FeeManagerLib.debugFeeManager());
+        return init(new ArbitrumRouter(), FeeManagerLib.debugFeeManager());
     }
 
     function initNoFees() public {
-        return init(FeeManagerLib.freeFeeManager());
+        return init(new ArbitrumRouter(), FeeManagerLib.freeFeeManager());
     }
 
-    function init(FeeManager feeManager) public {
-
-        VaultLogic logic = new VaultLogic(feeManager);
-        factory = new VaultFactory(msg.sender, address(logic));
+    function init(IRouter router, FeeManager feeManager) public {
+//        console2.log('init MockEnv...');
+        VaultLogic logic = new VaultLogic(router, feeManager);
+        factory = new VaultFactory(msg.sender, address(logic), 2*60); // 2 minutes upgrade notice
 
         console2.log('MockEnv: msg.sender:', msg.sender);
 //        console2.log('MockEnv: tx.origin:' , tx.origin);
@@ -59,15 +60,24 @@ contract MockEnv {
         inverted = address(COIN) > address(USD);
         token0 = inverted ? address(USD) : address(COIN);
         token1 = inverted ? address(COIN) : address(USD);
-        uint160 initialPrice = inverted ? uint160(79228162514264337593543950336000000) : uint160(79228162514264337593543); // $1.00
         console2.log('if this is the last line before a revert then make sure to run forge with --rpc-url');
         // if this reverts here make sure Anvil is started and you are running forge with --rpc-url
-        pool = IUniswapV3Pool(nfpm.createAndInitializePoolIfNecessary(token0, token1, fee, initialPrice));
+        pool = IUniswapV3Pool(nfpm.createAndInitializePoolIfNecessary(token0, token1, fee, oneSqrtX96()));
         console2.log('v3 pool');
         console2.log(address(pool));
         // stake a super wide range so we have liquidity everywhere.
-        uint256 amount = 10_000*1774545; // 1774545 is the number of ticks so this is $10k liquidity per 0.1%
+        uint256 amount = 10_000*1774545 * 10**12; // 1774545 is the number of ticks so this is $10k liquidity per 0.1%
         stake(amount, amount, TickMath.MIN_TICK, TickMath.MAX_TICK);
+    }
+
+
+    function oneSqrtX96() public view returns (uint160) {
+        return inverted ? uint160(79228162514264337593543950336000000) : uint160(79228162514264337593543); // $1.00 * 2^96 * 10^±12
+    }
+
+
+    function swapTo1() public {
+        swapToPrice(oneSqrtX96());
     }
 
 

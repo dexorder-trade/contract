@@ -7,11 +7,21 @@ import "v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../core/OrderLib.sol";
 import {IVault} from "../interface/IVault.sol";
+import "../../lib_uniswap/v3-periphery/contracts/libraries/PoolAddress.sol";
+import "../../lib_uniswap/v3-core/contracts/interfaces/IUniswapV3Factory.sol";
+import "../core/UniswapV3.sol";
+import "../../lib_uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 
 
 contract QueryHelper {
     uint8 constant public version = 1;
     uint8 constant public UNKNOWN_DECIMALS = type(uint8).max;
+
+    IUniswapV3Factory public immutable factory;
+
+    constructor( IUniswapV3Factory factory_ ) {
+        factory = factory_;
+    }
 
     function getBalances( address vault, address[] memory tokens ) public view
     returns (
@@ -61,7 +71,8 @@ contract QueryHelper {
         for( uint8 f=0; f<4; f++ ) {
             console2.log('getPool...');
             uint24 fee = fees[f];
-            IUniswapV3Pool pool = IUniswapV3Pool(Constants.uniswapV3Factory.getPool(tokenA, tokenB, fee));
+            IUniswapV3Pool pool = IUniswapV3Pool(PoolAddress.computeAddress(
+                address(UniswapV3Arbitrum.factory), PoolAddress.PoolKey(tokenA, tokenB, fee)));
             if( address(pool) == address(0) ) {
                 console2.log('no pool');
                 continue;

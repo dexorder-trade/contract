@@ -6,6 +6,7 @@ import "forge-std/console2.sol";
 import {IWETH9} from "../lib_uniswap/v3-periphery/contracts/interfaces/external/IWETH9.sol";
 import "../src/interface/IVaultFactory.sol";
 import "../src/core/VaultLogic.sol";
+import {ArbitrumRouter} from "../src/core/Router.sol";
 
 contract Upgrade is Script {
     function run() external {
@@ -26,8 +27,10 @@ contract Upgrade is Script {
         console2.log('fee manager');
         console2.log(address(feeManager));
         vm.startBroadcast();
+        console2.log('deploy new router (Arbitrum)');
+        IRouter router = new ArbitrumRouter();
         console2.log('deploy new logic');
-        VaultLogic logic = new VaultLogic(feeManager);
+        VaultLogic logic = new VaultLogic(router, feeManager);
         console2.log('invoke upgrade');
         factory.upgradeLogic(address(logic));
         console2.log('logic upgrade proposed');

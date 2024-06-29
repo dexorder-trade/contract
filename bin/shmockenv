@@ -28,13 +28,13 @@ else
   BROADCAST=$DIR/deployment/$TAG/broadcast
 fi
 
-MOCKENV=$(jq -r '.transactions[] | select(.contractName=="MockEnv") | select(.function==null).contractAddress' "$BROADCAST/DeployMock.sol/$CHAINID/run-latest.json") || echo WARNING no MockEnv detected
+MOCKENV=$(jq -r '.transactions[] | select(.contractName=="MockEnv") | select(.function==null).contractAddress' "$BROADCAST/DeployMock.sol/$CHAINID/run-latest.json" | cast to-check-sum-address) || echo WARNING no MockEnv detected
 export MOCKENV
-MIRRORENV=$(jq -r '.transactions[] | select(.contractName=="MirrorEnv") | select(.function==null).contractAddress' "$BROADCAST/DeployMirror.sol/$CHAINID/run-latest.json") || echo WARNING no MirrorEnv detected
+MIRRORENV=$(jq -r '.transactions[] | select(.contractName=="MirrorEnv") | select(.function==null).contractAddress' "$BROADCAST/DeployMirror.sol/$CHAINID/run-latest.json" | cast to-check-sum-address) || echo WARNING no MirrorEnv detected
 export MIRRORENV
-FACTORY=$(jq -r '.transactions[] | select(.contractName=="VaultFactory") | select(.function==null).contractAddress' "$BROADCAST/Deploy.sol/$CHAINID/run-latest.json") || exit 1
+FACTORY=$(jq -r '.transactions[] | select(.contractName=="VaultFactory") | select(.function==null).contractAddress' "$BROADCAST/Deploy.sol/$CHAINID/run-latest.json" | cast to-check-sum-address) || exit 1
 export FACTORY
-HELPER=$(jq -r '.transactions[] | select(.contractName=="QueryHelper") | select(.function==null).contractAddress' "$BROADCAST/Deploy.sol/$CHAINID/run-latest.json") || exit 1
+HELPER=$(jq -r '.transactions[] | select(.contractName=="QueryHelper") | select(.function==null).contractAddress' "$BROADCAST/Deploy.sol/$CHAINID/run-latest.json" | cast to-check-sum-address) || exit 1
 export HELPER
 
 VAULT_INIT_CODE_HASH=$(cast keccak $(jq -r .bytecode.object < $DIR/out/Vault.sol/Vault.json)) || exit 1
@@ -70,4 +70,5 @@ echo "\$MOCKENV    $MOCKENV"
 echo "\$MIRRORENV  $MIRRORENV"
 echo "\$MEH        $MEH"
 echo "\$USXD       $USXD"
+echo "\$INVERTED   $INVERTED"
 echo "\$POOL       $POOL"

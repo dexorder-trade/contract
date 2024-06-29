@@ -16,10 +16,9 @@ contract TestOrder is MockEnv, Test {
     IVault public vault;
 
     // vault gets 100,000 COIN and 100,000 USD
-    function setUp() public {
+    function setUp() public virtual {
         initNoFees();
         vault = IVault(factory.deployVault(address(this)));
-        vm.deal(payable(address(vault)), 1 ether); // native for fees
         uint256 coinAmount = 100_000 * 10 ** COIN.decimals();
         COIN.mint(address(vault), coinAmount);
         uint256 usdAmount = 100_000 * 10 ** USD.decimals();
@@ -28,6 +27,11 @@ contract TestOrder is MockEnv, Test {
 
 
     function testPlaceOrder() public {
+        placeOrder();
+    }
+
+
+    function placeOrder() public {
         OrderLib.Tranche[] memory tranches = new OrderLib.Tranche[](3);
         tranches[0].fraction = 21845;
         tranches[0].startTimeIsRelative = true;
@@ -51,74 +55,99 @@ contract TestOrder is MockEnv, Test {
         // console2.log("testPlaceOrder: Placing order");
         vault.placeDexorder(order);
     }
+}
 
-    function testExecuteOrderExactOutput() public {
+contract TestExecute is TestOrder {
+
+    uint256 public coinInitialBalance;
+    uint256 public usdInitialBalance;
+    uint64 public exactOutputOrderIndex;
+    uint64 public exactInputOrderIndex;
+    uint64 public limitOrderIndex;
+
+    function setUp() public override {
+        TestOrder.setUp();
+
+        coinInitialBalance = 1_000_000 * 10**COIN.decimals();
+        usdInitialBalance = 1_000_000 * 10**USD.decimals();
+        COIN.mint(address(vault), coinInitialBalance);
+        USD.mint(address(vault), usdInitialBalance);
+
+        // #0: Exact Output Order
         OrderLib.Tranche[] memory tranches = new OrderLib.Tranche[](1);
         tranches[0].fraction = OrderLib.MAX_FRACTION;
         tranches[0].endTime = OrderLib.DISTANT_FUTURE;
         tranches[0].marketOrder = true;
-        uint256 amount = 3*10**USD.decimals() / 10; // 0.3 USD
-        COIN.mint(address(vault), amount); // create COIN to sell
+        uint256 amount = 3 * 10**USD.decimals() / 10; // 0.3 USD
         OrderLib.SwapOrder memory order  = OrderLib.SwapOrder(
             address(COIN), address(USD), // sell COIN for USD
             OrderLib.Route(OrderLib.Exchange.UniswapV3, 500), amount, amount/100, false, false,
             OrderLib.NO_CONDITIONAL_ORDER, tranches
         );
-        uint64 orderIndex = vault.numSwapOrders();
+        exactOutputOrderIndex = vault.numSwapOrders();
         vault.placeDexorder(order);
-        console2.log('placed order');
-        console2.log(uint(orderIndex));
-        vault.execute(orderIndex, 0, OrderLib.PriceProof(0));
-        console2.log('executed');
-    }
 
-
-    function testExecuteOrderExactInput() public {
-        OrderLib.Tranche[] memory tranches = new OrderLib.Tranche[](1);
+        // #1: Exact Input Order
+        tranches = new OrderLib.Tranche[](1);
         tranches[0].fraction = OrderLib.MAX_FRACTION;
         tranches[0].endTime = OrderLib.DISTANT_FUTURE;
         tranches[0].marketOrder = true;
-        uint256 amount = 3*10**COIN.decimals() / 10; // 0.3 COIN
-        COIN.mint(address(vault), amount); // create COIN to sell
-        OrderLib.SwapOrder memory order  = OrderLib.SwapOrder(
+        amount = 3 * 10**COIN.decimals() / 10; // 0.3 COIN
+        order  = OrderLib.SwapOrder(
             address(COIN), address(USD), // sell COIN for USD
             OrderLib.Route(OrderLib.Exchange.UniswapV3, fee), amount, amount/100, true, false,
             OrderLib.NO_CONDITIONAL_ORDER, tranches
         );
-        uint64 orderIndex = vault.numSwapOrders();
+        exactInputOrderIndex = vault.numSwapOrders();
         vault.placeDexorder(order);
-        console2.log('placed order');
-        console2.log(uint(orderIndex));
-        vault.execute(orderIndex, 0, OrderLib.PriceProof(0));
-        console2.log('executed');
+
+        buildLimitOrder();
+
+    }
+
+    function testExecuteOrderExactOutput() public {
+        vault.execute(exactOutputOrderIndex, 0, OrderLib.PriceProof(0));
     }
 
 
-    function testExecuteLimitOrder() public {
+    function testExecuteOrderExactInput() public {
+        vault.execute(exactInputOrderIndex, 0, OrderLib.PriceProof(0));
+    }
+
+
+    function buildLimitOrder() private {
+        // #2: Limit Order
         // test selling token0 above a certain price
         OrderLib.Tranche[] memory tranches = new OrderLib.Tranche[](1);
         tranches[0].fraction = OrderLib.MAX_FRACTION;
         tranches[0].endTime = OrderLib.DISTANT_FUTURE;
-        tranches[0].maxIntercept = float.wrap(0x3f800347); // float 1.0001
+        tranches[0].minIntercept = inverted ? float.wrap(0x5368da9b) : float.wrap(0x2b8cc066); // float 1.0001e±12
         MockERC20 token = MockERC20(token0);
         uint256 amount = 3*10**token.decimals() / 10; // selling 0.3 token0
-        token.mint(address(vault), amount);
         OrderLib.SwapOrder memory order  = OrderLib.SwapOrder(
             token0, token1, // sell
             OrderLib.Route(OrderLib.Exchange.UniswapV3, fee), amount, amount/100, true, false,
             OrderLib.NO_CONDITIONAL_ORDER, tranches
         );
-        uint64 orderIndex = vault.numSwapOrders();
+        limitOrderIndex = vault.numSwapOrders();
         vault.placeDexorder(order);
-        console2.log('placed order');
-        console2.log(uint(orderIndex));
+    }
 
-        vm.expectRevert(bytes('LU'));
-        vault.execute(orderIndex, 0, OrderLib.PriceProof(0)); // should revert with code 'L'
-        console2.log('successfully failed to execute below limit price');
-
-        swapToPrice(price()*10002/10000); // move price to be above our limit
-        console2.log('successfully executed at limit price');
+    function testExecuteLimitOrder() public {
+        swapTo1();
+        vm.expectRevert(bytes('LL'));
+        // should revert with code 'LL' because the initial limit is above the current price
+        vault.execute(limitOrderIndex, 0, OrderLib.PriceProof(0));
+        console2.log('inverted');
+        console2.log(inverted);
+        console2.log('original price');
+        console2.log(price());
+        // better price for token0
+        uint160 newPrice = oneSqrtX96()*10002/10000;
+        swapToPrice(newPrice); // move price to be above our limit
+        console2.log('new price');
+        console2.log(newPrice);
+        vault.execute(limitOrderIndex, 0, OrderLib.PriceProof(0)); // should work now
     }
 
 }

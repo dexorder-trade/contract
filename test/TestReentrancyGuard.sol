@@ -42,7 +42,7 @@ contract EvilCoin is ERC20, Script {
 
 contract TestReentrancyGuard is Test, MockEnv {
 
-    Vault public vault;
+    IVault public vault;
     address payable owner = payable(address(this)); // this contract owns vault
 
     receive() external payable {} // this is owner and needs to be able to receive native
@@ -50,6 +50,7 @@ contract TestReentrancyGuard is Test, MockEnv {
     uint256 constant runnerGib = 2**96-1; // Test runner gives Test{} some native to start;
 
     function setUp() public {
+        initNoFees();
         console2.log("setUp()");
         console2.log("msg.sender, balance  ", msg.sender, payable(msg.sender).balance);
         console2.log("owner, balance       ", owner, owner.balance);
@@ -58,7 +59,7 @@ contract TestReentrancyGuard is Test, MockEnv {
 
         console2.log("factory, balance     ", address(factory), address(factory).balance);
 
-        vault = Vault(factory.deployVault(owner));
+        vault = factory.deployVault(owner);
         assert (vault.owner() == owner);
         console2.log("vault, balance       ", address(vault), address(vault).balance);
     }

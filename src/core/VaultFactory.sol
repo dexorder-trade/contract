@@ -9,7 +9,19 @@ import "../more/Dexorder.sol";
 
 contract VaultFactory is IVaultFactory {
 
-    address public override upgrader;
+    // The upgrader account may propose upgrades to the VaultLogic delegate contract used by the Vaults created by this
+    // VaultFactory. These upgrade proposals take effect only after a long delay, during which time the community can
+    // openly review the upgrade for security before it takes effect. Furthermore, each Vault owner must individually
+    // approve the upgrade on their Vault for it to take effect.
+    address public immutable override upgrader;
+
+    // "Killing" is an extreme countermeasure against either unforeen, unsolvable bugs or a compromising of the upgrader
+    // account. Killing causes Vaults to stop forwarding method calls to their VaultLogic proxies, leaving vaults
+    // in a deposit/withdraw-only mode, with all executions and order-related operations halted. Killing is
+    // irreversible, and a hacker cannot stop the original upgrader account from shutting everything down in such an
+    // emergency.
+    bool public killed;
+    event Killed();
 
     // This is the common implementation contract, which is the delegate of the vault proxies.  Each created vault
     // keeps its own delegate pointer, and the owner of each vault must explicity opt-in to upgrades (changes) of
@@ -26,8 +38,7 @@ contract VaultFactory is IVaultFactory {
     address private _vaultLogic;
 
     // Upgrades
-    // uint32 UPGRADE_NOTICE_DURATION = 30 * 24 * 60 * 60; // 30 days
-    uint32 public constant UPGRADE_NOTICE_DURATION = 2 * 60; // todo remove debug duration
+    uint32 public immutable upgradeNoticeDuration;
 
 
     // 0 if no upgrade is pending, otherwise the timestamp when proposedLogic becomes the default for new vaults
@@ -35,11 +46,14 @@ contract VaultFactory is IVaultFactory {
     address public override proposedLogic;  // the contract address of a proposed upgrade to the default vault logic.
 
 
-    constructor ( address upgrader_, address vaultLogic_ ) {
+    constructor ( address upgrader_, address vaultLogic_, uint32 upgradeNoticeDuration_ ) {
         upgrader = upgrader_;
         _vaultLogic = vaultLogic_;
-        proposedLogic = address(0);
-        proposedLogicActivationTimestamp = 0;
+        upgradeNoticeDuration = upgradeNoticeDuration_;
+        // these are all defaults
+        // killed = false;
+        // proposedLogic = address(0);
+        // proposedLogicActivationTimestamp = 0;
     }
 
     struct Parameters {
@@ -50,26 +64,30 @@ contract VaultFactory is IVaultFactory {
 
     Parameters public override parameters;
 
-    function deployVault() public override returns (address payable vault) {
+    function deployVault() public override returns (IVault vault) {
         return _deployVault(msg.sender, 0);
     }
 
-    function deployVault(uint8 num) public override returns (address payable vault) {
+    function deployVault(uint8 num) public override returns (IVault vault) {
         return _deployVault(msg.sender, num);
     }
 
-    function deployVault(address owner) public override returns (address payable vault) {
+    function deployVault(address owner) public override returns (IVault vault) {
         return _deployVault(owner, 0);
     }
 
-    function deployVault(address owner, uint8 num) public override returns (address payable vault) {
+    function deployVault(address owner, uint8 num) public override returns (IVault vault) {
         return _deployVault(owner, num);
     }
 
-    function _deployVault(address owner, uint8 num) internal returns (address payable vault) {
+    function _deployVault(address owner, uint8 num) internal returns (IVault vault) {
+        // We still allow Vault creation even if the factory has been killed. These vaults will simply be in withdraw
+        // only mode. If someone accidentally sends money to their designated vault address but no contract has
+        // been created there yet, being able to still deploy a vault will let the owner recover those funds.
+
         parameters = Parameters(owner, num, _logic());
-        // console2.log("new Vault owner:", owner);
-        vault = payable(address(new Vault{salt: keccak256(abi.encodePacked(owner,num))}()));
+        // Vault addresses are salted with the owner address and vault number
+        vault = IVault(payable(new Vault{salt: keccak256(abi.encodePacked(owner,num))}()));
         delete parameters;
     }
 
@@ -98,8 +116,19 @@ contract VaultFactory is IVaultFactory {
 
     function upgradeLogic( address newLogic ) external onlyUpgrader {
         proposedLogic = newLogic;
-        proposedLogicActivationTimestamp = uint32(block.timestamp + UPGRADE_NOTICE_DURATION);
+        proposedLogicActivationTimestamp = uint32(block.timestamp + upgradeNoticeDuration);
         emit IVaultProxy.VaultLogicProposed( newLogic, proposedLogicActivationTimestamp);
+    }
+
+    // If the upgrader ever calls kill(), VaultProxys will stop forwarding calls to the logic contract. The withdrawl()
+    // methods directly implemented on VaultProxy will continue to work.
+    // This is intended as a last-ditch safety measure in case the upgrader account was leaked, and a malicious
+    // VaultLogic has been proposed and cannot be stopped. In such a case, the entire factory
+    // and all of its Vaults executions will be shut down to protect funds. Vault deposit/withdrawl will continue to
+    // work normally.
+    function kill() external onlyUpgrader {
+        killed = true;
+        emit Killed();
     }
 
 }

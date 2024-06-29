@@ -2,16 +2,18 @@
 pragma solidity 0.8.22;
 
 import {IVaultLogic} from "./IVault.sol";
+import "./IVault.sol";
 
 pragma abicoder v2;
 
 interface IVaultFactory {
+    function killed() external view returns (bool);
 
     // Only vault number 0 is currently supported by the backend.
-    function deployVault() external returns (address payable vault);
-    function deployVault(uint8 num) external returns (address payable vault);
-    function deployVault(address owner) external returns (address payable vault);
-    function deployVault(address owner, uint8 num) external returns (address payable vault);
+    function deployVault() external returns (IVault vault);
+    function deployVault(uint8 num) external returns (IVault vault);
+    function deployVault(address owner) external returns (IVault vault);
+    function deployVault(address owner, uint8 num) external returns (IVault vault);
 
     function logic() external view returns (address);  // current implementation of the vault methods
     function upgrader() external view returns (address);

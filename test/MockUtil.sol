@@ -8,8 +8,8 @@ import {IUniswapV3Pool} from "../lib_uniswap/v3-core/contracts/interfaces/IUnisw
 import {MockERC20} from "../src/more/MockERC20.sol";
 import "../lib_uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "../lib_uniswap/v3-periphery/contracts/interfaces/INonfungiblePositionManager.sol";
-import "../src/core/Constants.sol";
 import "../src/core/Util.sol";
+import "../src/core/UniswapV3.sol";
 
 
 library MockUtil {
@@ -26,7 +26,7 @@ library MockUtil {
     function swap(IUniswapV3Pool pool, MockERC20 inToken, MockERC20 outToken,
                   uint256 amountIn, uint160 sqrtPriceLimitX96) internal
     returns (uint256 amountOut) {
-        ISwapRouter swapper = Constants.uniswapV3SwapRouter;
+        ISwapRouter swapper = UniswapV3Arbitrum.swapRouter;
         inToken.approve(address(swapper), amountIn);
         //     struct ExactInputSingleParams {
         //        address tokenIn;
@@ -52,9 +52,9 @@ library MockUtil {
         console2.log('swapToPrice');
         console2.log(sqrtPriceLimitX96);
         uint160 curPrice = price(pool);
-        console2.log(curPrice);
+//        console2.log(curPrice);
         if( curPrice == sqrtPriceLimitX96 ) {
-            console2.log('no swap needed');
+//            console2.log('no swap needed');
             return;
         }
         MockERC20 token0 = MockERC20(pool.token0());
@@ -95,18 +95,18 @@ library MockUtil {
     function _stake(IUniswapV3Pool pool, uint256 token0Amount, uint256 token1Amount, int24 lower, int24 upper) private
     returns (uint256 tokenId, uint128 liquidity, uint256 amount0, uint256 amount1)
     {
-        INonfungiblePositionManager nfpm = Constants.uniswapV3NonfungiblePositionManager;
-        console2.log('stake amounts');
-        console2.log(token0Amount);
-        console2.log(token1Amount);
+        INonfungiblePositionManager nfpm = UniswapV3Arbitrum.nfpm;
+//        console2.log('stake amounts');
+//        console2.log(token0Amount);
+//        console2.log(token1Amount);
         MockERC20 token0 = MockERC20(pool.token0());
         MockERC20 token1 = MockERC20(pool.token1());
         token0.mint(address(this), token0Amount);
         token0.approve(address(nfpm), token0Amount);
-        console2.log('token0 minted');
+//        console2.log('token0 minted');
         token1.mint(address(this), token1Amount);
         token1.approve(address(nfpm), token1Amount);
-        console2.log('token1 minted');
+//        console2.log('token1 minted');
         //   struct MintParams {
         //        address token0;
         //        address token1;
@@ -123,9 +123,9 @@ library MockUtil {
         int24 ts = pool.tickSpacing();
         lower = Util.roundTick(lower, ts);
         upper = Util.roundTick(upper, ts);
-        console2.log('lower / upper');
-        console2.log(lower);
-        console2.log(upper);
+//        console2.log('lower / upper');
+//        console2.log(lower);
+//        console2.log(upper);
         address recipient = msg.sender;
         if (recipient == address(0) ) // anvil will set msg.sender=0x0 this if there is no specific account and this breaks the NFT mint, so we assign the position to ourselves instead
             recipient = address(this);
@@ -135,9 +135,9 @@ library MockUtil {
         );
         (tokenId, liquidity, amount0, amount1) = nfpm.mint(params);
         console2.log('minted liquidity');
-        console2.log(liquidity);
-        console2.log(amount0);
-        console2.log(amount1);
+//        console2.log(liquidity);
+//        console2.log(amount0);
+//        console2.log(amount1);
     }
 
 }

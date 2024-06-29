@@ -13,34 +13,40 @@ interface IVaultLogic {
     function version() external pure returns (uint256);
 
     function feeManager() external view returns (IFeeManager);
-
-    function numSwapOrders() external view returns (uint64 num);
+    function placementFee(OrderLib.SwapOrder memory order, IFeeManager.FeeSchedule memory sched) external pure returns (uint256 orderFee, uint256 gasFee);
+    function placementFee(OrderLib.SwapOrder[] memory orders, IFeeManager.FeeSchedule memory sched) external pure returns (uint256 orderFee, uint256 gasFee);
 
     function placeDexorder(OrderLib.SwapOrder memory order) external payable;
-
     function placeDexorders(OrderLib.SwapOrder[] memory orders, OrderLib.OcoMode ocoMode) external payable;
 
+    function numSwapOrders() external view returns (uint64 num);
     function swapOrderStatus(uint64 orderIndex) external view returns (OrderLib.SwapOrderStatus memory status);
 
     function execute(uint64 orderIndex, uint8 tranche_index, OrderLib.PriceProof memory proof) external;
 
     function cancelDexorder(uint64 orderIndex) external;
-
     function cancelAllDexorders() external;
-
     function orderCanceled(uint64 orderIndex) external view returns (bool);
 
 }
 
 interface IVaultProxy {
 
-    // we emit this event for native deposits and withdrawls
-    event VaultCreated( address indexed owner, uint8 num );
-    event Transfer(address, address, uint256);
+    event VaultCreated(address indexed owner, uint8 num);
+    event Killed();
+
+    // Deposit and Withdrawl are for native coin transfers.  ERC20 tokens emit Transfer events on their own.
+    event Deposit(address indexed sender, uint256 amount);
+    event Withdrawl(address indexed receiver, uint256 amount);
+
+    // Logic upgrade events
     event VaultLogicProposed(address logic, uint32 activationTime);
     event VaultLogicChanged(address logic);
 
     function factory() external view returns (IVaultFactory);
+
+    function kill() external;
+    function killed() external view returns (bool);
 
     function owner() external view returns (address);
 

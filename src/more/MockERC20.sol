@@ -1,9 +1,10 @@
 pragma solidity 0.8.22;
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "forge-std/console2.sol";
+import {IERC20Metadata} from "../../lib_uniswap/v3-periphery/contracts/interfaces/IERC20Metadata.sol";
 
 
-contract MockERC20 is IERC20 {
+contract MockERC20 is IERC20Metadata {
 
     // This token allows anyone to mint as much as they desire
 
@@ -17,6 +18,7 @@ contract MockERC20 is IERC20 {
 
     constructor(string memory name_, string memory symbol_, uint8 decimals_)
     {
+//        console2.log('MockERC20 constructor');
         name = name_;
         symbol = symbol_;
         decimals = decimals_;
@@ -24,17 +26,20 @@ contract MockERC20 is IERC20 {
     }
 
     function mint(address account, uint256 amount) public {
+//        console2.log('MockERC20 mint');
         _balances[account] += amount;
         emit Transfer(address(this),account,amount);
     }
 
     function burn(uint256 amount) public {
+//        console2.log('MockERC20 burn');
         require(_balances[msg.sender] >= amount);
         _balances[msg.sender] -= amount;
         emit Transfer(msg.sender,address(this),amount);
     }
 
     function balanceOf(address account) public view returns (uint256) {
+//        console2.log('MockERC20 balance');
         return _balances[account];
     }
 
@@ -47,6 +52,7 @@ contract MockERC20 is IERC20 {
     }
 
     function allowance(address owner, address spender) public view returns (uint256) {
+//        console2.log('MockERC20 allowance');
         return _allowances[owner][spender];
     }
 

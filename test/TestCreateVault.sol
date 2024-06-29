@@ -19,7 +19,7 @@ contract TestCreateVault is Test, MockEnv {
     }
 
     function testCreateVault() public {
-        Vault(factory.deployVault(address(this)));
+        factory.deployVault(address(this));
     }
 
 }

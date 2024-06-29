@@ -13,3 +13,4 @@
 | Too little received | Too little received       | Uniswap v3 error when min output amount is not filled. Can happen when a limit price is very near the current price. |
 | OVR                 | Overfilled                | Order amount is already filled above spec. (This should never happen)                                                |
 | UV                  | Upgrade Version           | The implementation contract address passed to upgrade() does not match the logic in VaultFactory.                    |
+| K                   | Killed                    | The Vault or its VaultFactory has been killed. No delegate logic methods are available. (Withdraw only mode)         |
