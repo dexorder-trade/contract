@@ -5,7 +5,7 @@ tests: build
 	forge test $(TEST_ARGS) --fork-url arbitrum_test #"$@"
 
 build:
-	bin/build.sh
+	bin/build
 
 dependencies:
 	# foundry

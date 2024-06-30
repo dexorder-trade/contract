@@ -2,7 +2,7 @@
 
 if [ -z "$1" ]; then
   # mockchain price
-  source ./bin/shmockenv.sh
+  source ./bin/shmockenv
   SQRTX96=$(cast call $MOCKENV "price()" | cast to-dec)
   D0=$T0DEC
   D1=$T1DEC

@@ -14,7 +14,7 @@ contract TestMirror is Test {
     MirrorEnv.TokenInfo public tokenInfo1;
 
     function setUp() public virtual {
-        mirror = new MirrorEnv(UniswapV3Arbitrum.nfpm);
+        mirror = new MirrorEnv(UniswapV3Arbitrum.nfpm, UniswapV3Arbitrum.swapRouter);
         tokenInfo0 = MirrorEnv.TokenInfo(IERC20Metadata(address(0x1234)), 'Test', 'TST', 18);
         tokenInfo1 = MirrorEnv.TokenInfo(IERC20Metadata(address(0x12345)), 'Testy', 'TSTY', 8);
     }

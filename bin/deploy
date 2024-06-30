@@ -17,7 +17,7 @@ cpbroadcast() {
 }
 
 rm -rf out/ broadcast/ cache/
-./bin/build.sh || exit 1
+./bin/build || exit 1
 
 rm -rf deployment/"$TAG"
 mkdir -p deployment/"$TAG"

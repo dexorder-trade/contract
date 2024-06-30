@@ -64,11 +64,11 @@ contract TestFees is MockEnv, Test {
 
         uint256 trancheAmount = 1 * 10**COIN.decimals() / 10; // 0.3 COIN
         uint256 amount = trancheAmount * nTranches;
-        // console2.log("COIN.decimals():", COIN.decimals());
-        // console2.log("USD.decimals():", USD.decimals());
-        // console2.log("amount * nOrders:", amount * nOrders);
+        console2.log("COIN.decimals():", COIN.decimals());
+        console2.log("USD.decimals():", USD.decimals());
+        console2.log("amount * nOrders:", amount * nOrders);
         COIN.mint(address(vault), amount * nOrders); // create COIN to sell
-        // console2.log("Mint: COIN.balanceOf:", COIN.balanceOf(address(vault)));
+        console2.log("Mint: COIN.balanceOf:", COIN.balanceOf(address(vault)));
 
         // Swap order
 
@@ -123,7 +123,7 @@ contract TestFees is MockEnv, Test {
                     COIN.balanceOf(address(vault)) == expectedCOINbalance,
                     "testFees: Bad COIN balance"
                     );
-                // console2.log("vault balances: COIN, USD:", COIN.balanceOf(address(vault)), USD.balanceOf(address(vault)));
+                console2.log("vault balances: COIN, USD:", COIN.balanceOf(address(vault)), USD.balanceOf(address(vault)));
                 // logPrice();
 
                 // expectedUSDbalance using beforePrice

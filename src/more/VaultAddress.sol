@@ -7,7 +7,7 @@ import "forge-std/console2.sol";
 
 library VaultAddress {
     // keccak-256 hash of the Vault's bytecode (not the deployed bytecode but the initialization bytecode)
-    bytes32 public constant VAULT_INIT_CODE_HASH = 0xb6691ad4ed94134c8c58214a6e606abdbf79d1df3e1341894a991d57757cd3a3;
+    bytes32 public constant VAULT_INIT_CODE_HASH = 0xf77a00cde05d8d556f97a23a8f9cca44a4777061e981d6d21300f2b1249b89fa;
 
     // the contract being constructed must not have any constructor arguments or the determinism will be broken.
     // instead, use a callback to get construction arguments

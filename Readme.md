@@ -27,12 +27,12 @@ in `doc/errors.md`.
 
 ## Mock Environment
 
-run `./bin/mock.sh` to spin up an Anvil node which forks Arbitrum in order to have the Uniswap v3 contracts available,
+run `./bin/mock` to spin up an Anvil node which forks Arbitrum in order to have the Uniswap v3 contracts available,
 deploys the essential Dexorder init contracts, and also deploys the `MockEnv` class, which contains two mock tokens 
 MEH and USXD along with a mock pool to trade that pair. See `test/MockEnv.sol`.
 
 ### Mock Shell
-run `. ./bin/shmockenv.sh` to populate these environment variables:
+run `. ./bin/shmockenv` to populate these environment variables:
 
 `MOCK`     address of the MockEnv  
 `MEH`      address of MEH token  
@@ -43,11 +43,11 @@ run `. ./bin/shmockenv.sh` to populate these environment variables:
 
 There are also a few scripts available to manipulate the MockEnv:
 
-`./bin/price.sh` shows the price of the mock MEH/USXD pool. NOTE: this price is always
+`./bin/price` shows the price of the mock MEH/USXD pool. NOTE: this price is always
 expressed as MEH/USXD regardless of the order of those two tokens in the mock
 pool.
 
-`./bin/setprice.sh <number>` adjusts the price of the mock pool by minting new tokens and swapping them. NOTE: this sets the price of MEH in terms of USXD
+`./bin/setprice <number>` adjusts the price of the mock pool by minting new tokens and swapping them. NOTE: this sets the price of MEH in terms of USXD
 regardless of whether the pool is inverted.
 
 
@@ -74,7 +74,7 @@ until multi-vault support is added to the activation backend.
 Any account may deploy the Vault associated with any given owner. That is, the owner of the vault does not need to be
 its deployer. Vault addresses are deterministic and salted with the owner's address, so an account's associated Vault 
 address may be computed off-chain, or by using the `VaultAddress` class. The `VaultAddress.sol` file is generated using 
-the `bin/build.sh` script for local builds, or use the deployed code from `deployments/.../VaultAddress.json`.
+the `bin/build` script for local builds, or use the deployed code from `deployments/.../VaultAddress.json`.
 
 ## Place an Order
 

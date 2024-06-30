@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. ./bin/shmockenv.sh
+. ./bin/shmockenv
 
 #echo inverted $INVERTED
 if [ "$INVERTED" == "1" ]; then

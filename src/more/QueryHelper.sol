@@ -56,9 +56,9 @@ contract QueryHelper {
     function getRoutes( address tokenA, address tokenB ) public view
     returns(RoutesResult[] memory routes) {
         // todo discover all supported pools
-        console2.log('getRoutes');
-        console2.log(tokenA);
-        console2.log(tokenB);
+        // console2.log('getRoutes');
+        // console2.log(tokenA);
+        // console2.log(tokenB);
         // here we find the highest liquidity pool for v2 and for v3
         uint24[4] memory fees = [uint24(100),500,3000,10000];
         uint24 uniswapV2Fee = 0;
@@ -69,20 +69,20 @@ contract QueryHelper {
         address uniswapV3Pool = address(0);
         IERC20 ercA = IERC20(tokenA);
         for( uint8 f=0; f<4; f++ ) {
-            console2.log('getPool...');
+            // console2.log('getPool...');
             uint24 fee = fees[f];
             IUniswapV3Pool pool = IUniswapV3Pool(PoolAddress.computeAddress(
                 address(UniswapV3Arbitrum.factory), PoolAddress.PoolKey(tokenA, tokenB, fee)));
             if( address(pool) == address(0) ) {
-                console2.log('no pool');
+                // console2.log('no pool');
                 continue;
             }
-            console2.log('got pool');
-            console2.log(address(pool));
+            // console2.log('got pool');
+            // console2.log(address(pool));
             // NOTE: pool.liquidity() is only the current tick's liquidity, so we look at the pool's balance
             // of one of the tokens as a measure of liquidity
             uint256 liquidity = ercA.balanceOf(address(pool));
-            console2.log(liquidity);
+            // console2.log(liquidity);
             if( liquidity > uniswapV3Liquidity ) {
                 uniswapV3Fee = fee;
                 uniswapV3Liquidity = liquidity;
@@ -90,8 +90,8 @@ contract QueryHelper {
             }
         }
         uint8 routesCount = uniswapV3Fee > 0 ? 1 : 0 + uniswapV2Fee > 0 ? 1 : 0;
-        console2.log(uniswapV3Pool);
-        console2.log(uint(routesCount));
+        // console2.log(uniswapV3Pool);
+        // console2.log(uint(routesCount));
         routes = new QueryHelper.RoutesResult[](routesCount);
         uint8 i = 0;
         // todo v2

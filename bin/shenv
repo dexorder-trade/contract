@@ -9,4 +9,4 @@ export USDC=0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8
 # WETH/USDC Pool address
 export WETHUSDC=0xc31e54c7a869b9fcbecc14363cf510d1c41fa443
 
-source ./bin/shmockenv.sh
+source ./bin/shmockenv

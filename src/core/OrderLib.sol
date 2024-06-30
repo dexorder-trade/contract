@@ -123,14 +123,14 @@ library OrderLib {
 
     function _placementFee(SwapOrder memory order, IFeeManager.FeeSchedule memory sched) internal pure
     returns (uint256 orderFee, uint256 executionFee) {
-        console2.log('computing fee');
-        console2.log(sched.orderFee);
-        console2.log(sched.orderExp);
-        console2.log(sched.gasFee);
-        console2.log(sched.gasExp);
-        console2.log(sched.fillFeeHalfBps);
+        // console2.log('computing fee');
+        // console2.log(sched.orderFee);
+        // console2.log(sched.orderExp);
+        // console2.log(sched.gasFee);
+        // console2.log(sched.gasExp);
+        // console2.log(sched.fillFeeHalfBps);
         orderFee = uint256(sched.orderFee) << sched.orderExp;
-        console2.log(orderFee);
+        // console2.log(orderFee);
         uint256 numExecutions = 0;
         for( uint i=0; i<order.tranches.length; i++ ) {
             uint16 rate = order.tranches[i].rateLimitFraction;
@@ -143,13 +143,13 @@ library OrderLib {
                 if( exes * rate < MAX_FRACTION)
                     exes += 1;
             }
-            console2.log(exes);
+            // console2.log(exes);
             numExecutions += exes;
         }
         executionFee = numExecutions * (uint256(sched.gasFee) << sched.gasExp);
-        console2.log(executionFee);
-        console2.log('total fee');
-        console2.log(orderFee+executionFee);
+        // console2.log(executionFee);
+        // console2.log('total fee');
+        // console2.log(orderFee+executionFee);
     }
 
     function _placeOrder(OrdersInfo storage self, SwapOrder memory order, uint8 fillFeeHalfBps) internal {
@@ -172,7 +172,7 @@ library OrderLib {
         else
             revert('OCOM');
         // todo get fee structure
-        console2.log('copying orders');
+        // console2.log('copying orders');
         // solc can't automatically generate the code to copy from memory to storage :( so we explicitly code it here
         for( uint8 o = 0; o < orders.length; o++ ) {
             SwapOrder memory order = orders[o];
@@ -181,11 +181,11 @@ library OrderLib {
                 order.conditionalOrder == NO_CONDITIONAL_ORDER ||
                 order.conditionalOrder < startIndex+o
             );
-            console2.log('exchange ok');
+            // console2.log('exchange ok');
             // todo more order validation
             uint orderIndex = self.orders.length;
             self.orders.push();
-            console2.log('pushed');
+            // console2.log('pushed');
             SwapOrderStatus storage status = self.orders[orderIndex];
             status.order.tokenIn = order.tokenIn;
             status.order.tokenOut = order.tokenOut;
@@ -195,19 +195,19 @@ library OrderLib {
             status.order.amountIsInput = order.amountIsInput;
             status.order.outputDirectlyToOwner = order.outputDirectlyToOwner;
             status.order.conditionalOrder = order.conditionalOrder;
-            console2.log('setting tranches');
+            // console2.log('setting tranches');
             for( uint t=0; t<order.tranches.length; t++ ) {
                 status.order.tranches.push(order.tranches[t]);
                 status.trancheFilled.push(0);
                 status.trancheActivationTime.push(0);
             }
-            console2.log('fee/oco');
+            // console2.log('fee/oco');
             status.fillFeeHalfBps = fillFeeHalfBps;
             status.start = uint32(block.timestamp);
             // todo start price?
             status.ocoGroup = ocoGroup;
         }
-        console2.log('orders placed');
+        // console2.log('orders placed');
         emit DexorderSwapPlaced(startIndex,uint8(orders.length));
     }
 
@@ -216,10 +216,10 @@ library OrderLib {
         OrdersInfo storage self, address owner, uint64 orderIndex, uint8 trancheIndex,
         PriceProof memory, IRouter router, IFeeManager feeManager ) internal
     returns(uint256 amountOut) {
-        console2.log('execute');
-        console2.log(address(this));
-        console2.log(uint(orderIndex));
-        console2.log(uint(trancheIndex));
+        // console2.log('execute');
+        // console2.log(address(this));
+        // console2.log(uint(orderIndex));
+        // console2.log(uint(trancheIndex));
         SwapOrderStatus storage status = self.orders[orderIndex];
         if (_isCanceled(self, orderIndex))
             revert('NO'); // Not Open
@@ -256,18 +256,18 @@ library OrderLib {
             uint256 delta = (price * slippage) >> 96;
             limit = status.order.tokenIn > status.order.tokenOut ? price + delta : price - delta; // todo is this correct?
             */
-            console2.log('market order');
+            // console2.log('market order');
         }
         else {
             // check min line
             if( float.unwrap(tranche.minIntercept) != 0 || float.unwrap(tranche.minSlope) != 0 ) {
                 price = router.price(status.order.route.exchange, status.order.tokenIn,
                     status.order.tokenOut, status.order.route.fee);
-                console2.log('price');
-                console2.log(price);
+                // console2.log('price');
+                // console2.log(price);
                 limit = _linePrice(tranche.minIntercept, tranche.minSlope);
-                console2.log('min line limit');
-                console2.log(limit);
+                // console2.log('min line limit');
+                // console2.log(limit);
                 require( price > limit, 'LL' );
             }
             // check max line
@@ -276,12 +276,12 @@ library OrderLib {
                 if( price == 0 ) {
                     price = router.price(status.order.route.exchange, status.order.tokenIn,
                         status.order.tokenOut, status.order.route.fee);
-                    console2.log('price');
-                    console2.log(price);
+                    // console2.log('price');
+                    // console2.log(price);
                 }
                 uint256 maxPrice = _linePrice(tranche.maxIntercept, tranche.maxSlope);
-                console2.log('max line limit');
-                console2.log(limit);
+                // console2.log('max line limit');
+                // console2.log(limit);
                 require( price < maxPrice, 'LU' );
             }
         }
@@ -294,23 +294,23 @@ library OrderLib {
 //        console2.log(status.trancheFilled[trancheIndex]);
         uint256 amount = status.order.amount * tranche.fraction / MAX_FRACTION // the most this tranche could do
                          - status.trancheFilled[trancheIndex]; // minus tranche fills
-        console2.log('amount');
-        console2.log(amount);
-        console2.log('price');
-        console2.log(price);
-        console2.log('limit');
-        console2.log(limit);
+        // console2.log('amount');
+        // console2.log(amount);
+        // console2.log('price');
+        // console2.log(price);
+        // console2.log('limit');
+        // console2.log(limit);
         // order amount remaining
         require( status.filled <= status.order.amount, 'OVR' );
         uint256 remaining = status.order.amount - status.filled;
-        console2.log('remaining');
-        console2.log(remaining);
+        // console2.log('remaining');
+        // console2.log(remaining);
         if (amount > remaining)  // not more than the order's overall remaining amount
             amount = remaining;
         require( amount >= status.order.minFillAmount, 'TF' );
-        console2.log(amount);
+        // console2.log(amount);
         address recipient = status.order.outputDirectlyToOwner ? owner : address(this);
-        console2.log(recipient);
+        // console2.log(recipient);
         uint256 amountIn;
 
         // Order has been approved. Send to router for swap execution.
@@ -346,9 +346,9 @@ library OrderLib {
         IERC20(status.order.tokenOut).transfer(feeManager.fillFeeAccount(), fillFee);
 
         emit DexorderSwapFilled(orderIndex, trancheIndex, amountIn, amountOut, fillFee);
-        console2.log('emitted DexorderSwapFilled event');
+        // console2.log('emitted DexorderSwapFilled event');
         _checkCompleted(self, status);
-        console2.log('orderlib execute completed');
+        // console2.log('orderlib execute completed');
     }
 
 

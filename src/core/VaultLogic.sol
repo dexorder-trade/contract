@@ -50,23 +50,23 @@ contract VaultLogic is IVaultLogic, VaultState {
     }
 
     function placeDexorder(OrderLib.SwapOrder memory order) external payable onlyOwner nonReentrant {
-        console2.log('placing order');
+        // console2.log('placing order');
         IFeeManager.FeeSchedule memory sched = feeManager.fees();
         (uint256 orderFee, uint256 gasFee) = OrderLib._placementFee(order, sched);
         // We force the value to be sent with the message so that the user can see the fee immediately in their wallet
         // software before they confirm the transaction.  If the user overpays, the extra amount is refunded.
         _takeFee(payable(msg.sender), orderFee, gasFee);
         OrderLib._placeOrder(_ordersInfo, order, sched.fillFeeHalfBps);
-        console2.log('order placed');
+        // console2.log('order placed');
     }
 
     function placeDexorders(OrderLib.SwapOrder[] memory orders, OrderLib.OcoMode ocoMode) external payable onlyOwner nonReentrant {
-        console2.log('placing orders');
+        // console2.log('placing orders');
         IFeeManager.FeeSchedule memory sched = feeManager.fees();
         (uint256 orderFee, uint256 gasFee) = placementFee(orders, sched);
         _takeFee(payable(msg.sender), orderFee, gasFee);
         OrderLib._placeOrders(_ordersInfo, orders, sched.fillFeeHalfBps, ocoMode);
-        console2.log('orders placed');
+        // console2.log('orders placed');
     }
 
     function _takeFee( address payable sender, uint256 orderFee, uint256 gasFee ) internal {
@@ -78,8 +78,8 @@ contract VaultLogic is IVaultLogic, VaultState {
         uint256 totalFee = orderFee + gasFee;
         if (totalFee < msg.value) {
             uint256 refund = msg.value - totalFee;
-            console2.log('refunding fee');
-            console2.log(refund);
+            // console2.log('refunding fee');
+            // console2.log(refund);
             sender.transfer(refund);
         }
     }

@@ -49,10 +49,10 @@ contract TestOrder is MockEnv, Test {
             OrderLib.NO_CONDITIONAL_ORDER, tranches
         );
         console2.logBytes(abi.encode(order));
-        // console2.log("testPlaceOrder: calling vault.numSwapOrders");
-        // console2.log(vault.numSwapOrders());
+        console2.log("testPlaceOrder: calling vault.numSwapOrders");
+        console2.log(vault.numSwapOrders());
         
-        // console2.log("testPlaceOrder: Placing order");
+        console2.log("testPlaceOrder: Placing order");
         vault.placeDexorder(order);
     }
 }

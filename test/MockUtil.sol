@@ -2,8 +2,8 @@
 pragma solidity 0.8.22;
 pragma abicoder v2;
 
-import "forge-std/console2.sol";
-import "@uniswap/v3-core/contracts/libraries/TickMath.sol";
+//import "forge-std/console2.sol";
+import "../lib_uniswap/v3-core/contracts/libraries/TickMath.sol";
 import {IUniswapV3Pool} from "../lib_uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import {MockERC20} from "../src/more/MockERC20.sol";
 import "../lib_uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
@@ -17,16 +17,30 @@ library MockUtil {
     int24 constant public FAR_LOWER_TICK = TickMath.MIN_TICK + 200;
     int24 constant public FAR_UPPER_TICK = TickMath.MAX_TICK - 200;
 
-    function swap(IUniswapV3Pool pool, MockERC20 inToken, MockERC20 outToken, uint256 amountIn) internal
+    function swap(IUniswapV3Pool pool,
+        MockERC20 inToken, MockERC20 outToken, uint256 amountIn) internal
+    returns (uint256 amountOut) {
+        return swap(UniswapV3Arbitrum.swapRouter, pool, inToken, outToken, amountIn);
+    }
+
+
+    function swap(ISwapRouter swapper, IUniswapV3Pool pool,
+        MockERC20 inToken, MockERC20 outToken, uint256 amountIn) internal
     returns (uint256 amountOut) {
         uint160 limit = address(inToken) == pool.token0() ? TickMath.MIN_SQRT_RATIO + 1 : TickMath.MAX_SQRT_RATIO - 1;
-        return swap(pool, inToken, outToken, amountIn, limit);
+        return swap(swapper, pool, inToken, outToken, amountIn, limit);
     }
 
     function swap(IUniswapV3Pool pool, MockERC20 inToken, MockERC20 outToken,
                   uint256 amountIn, uint160 sqrtPriceLimitX96) internal
     returns (uint256 amountOut) {
-        ISwapRouter swapper = UniswapV3Arbitrum.swapRouter;
+        return swap(UniswapV3Arbitrum.swapRouter, pool, inToken, outToken, amountIn, sqrtPriceLimitX96);
+    }
+
+
+    function swap(ISwapRouter swapper, IUniswapV3Pool pool, MockERC20 inToken, MockERC20 outToken,
+                  uint256 amountIn, uint160 sqrtPriceLimitX96) internal
+    returns (uint256 amountOut) {
         inToken.approve(address(swapper), amountIn);
         //     struct ExactInputSingleParams {
         //        address tokenIn;
@@ -48,9 +62,15 @@ library MockUtil {
         (sqrtPriceX96,,,,,,) = pool.slot0();
     }
 
+
     function swapToPrice(IUniswapV3Pool pool, uint160 sqrtPriceLimitX96) internal {
-        console2.log('swapToPrice');
-        console2.log(sqrtPriceLimitX96);
+        return swapToPrice(UniswapV3Arbitrum.swapRouter, pool, sqrtPriceLimitX96);
+    }
+
+
+    function swapToPrice(ISwapRouter swapper, IUniswapV3Pool pool, uint160 sqrtPriceLimitX96) internal {
+//        console2.log('swapToPrice');
+//        console2.log(sqrtPriceLimitX96);
         uint160 curPrice = price(pool);
 //        console2.log(curPrice);
         if( curPrice == sqrtPriceLimitX96 ) {
@@ -64,38 +84,50 @@ library MockUtil {
         // instead of calculating how much we need, we just mint an absurd amount
         uint256 aLot = 2**100;
         inToken.mint(address(this), aLot);
-        swap(pool, inToken, outToken, aLot, sqrtPriceLimitX96);
+        swap(swapper, pool, inToken, outToken, aLot, sqrtPriceLimitX96);
     }
 
 
     function stakeWide(IUniswapV3Pool pool, uint256 amount) internal
     returns (uint256 tokenId, uint128 liquidity, uint256 amount0, uint256 amount1) {
-        return stake(pool, amount/2, amount/2, FAR_LOWER_TICK, FAR_UPPER_TICK);
+        return stake(UniswapV3Arbitrum.nfpm, pool, amount/2, amount/2, FAR_LOWER_TICK, FAR_UPPER_TICK);
     }
 
-    function stakeWide(IUniswapV3Pool pool, uint256 amount0, uint256 amount1) internal
+    function stakeWide(INonfungiblePositionManager nfpm, IUniswapV3Pool pool, uint256 amount0, uint256 amount1) internal
     returns (uint256 tokenId, uint128 liquidity, uint256 stakedAmount0, uint256 stakedAmount1) {
-        return stake(pool, amount0, amount1, FAR_LOWER_TICK, FAR_UPPER_TICK);
+        return stake(nfpm, pool, amount0, amount1, FAR_LOWER_TICK, FAR_UPPER_TICK);
     }
 
     function stake(IUniswapV3Pool pool, uint256 amount, int24 width) internal
     returns (uint256 tokenId, uint128 liquidity, uint256 amount0, uint256 amount1) {
+        return stake(UniswapV3Arbitrum.nfpm, pool, amount, width);
+    }
+
+
+    function stake(INonfungiblePositionManager nfpm, IUniswapV3Pool pool, uint256 amount, int24 width) internal
+    returns (uint256 tokenId, uint128 liquidity, uint256 amount0, uint256 amount1) {
         require(width>0);
         (, int24 tick, , , , ,) = pool.slot0();
-        return stake(pool, amount/2, amount/2, tick-width, tick+width);
+        return stake(nfpm, pool, amount/2, amount/2, tick-width, tick+width);
     }
 
 
     function stake(IUniswapV3Pool pool, uint256 token0Amount, uint256 token1Amount, int24 lower, int24 upper) internal
-    returns (uint256 tokenId, uint128 liquidity, uint256 amount0, uint256 amount1)
-    {
-        return _stake(pool, token0Amount, token1Amount, lower, upper);
+    returns (uint256 tokenId, uint128 liquidity, uint256 amount0, uint256 amount1) {
+        return stake(UniswapV3Arbitrum.nfpm, pool, token0Amount, token1Amount, lower, upper);
     }
 
-    function _stake(IUniswapV3Pool pool, uint256 token0Amount, uint256 token1Amount, int24 lower, int24 upper) private
+
+    function stake(INonfungiblePositionManager nfpm, IUniswapV3Pool pool, uint256 token0Amount, uint256 token1Amount, int24 lower, int24 upper) internal
     returns (uint256 tokenId, uint128 liquidity, uint256 amount0, uint256 amount1)
     {
-        INonfungiblePositionManager nfpm = UniswapV3Arbitrum.nfpm;
+        return _stake(nfpm, pool, token0Amount, token1Amount, lower, upper);
+    }
+
+    function _stake(INonfungiblePositionManager nfpm, IUniswapV3Pool pool,
+        uint256 token0Amount, uint256 token1Amount, int24 lower, int24 upper) private
+    returns (uint256 tokenId, uint128 liquidity, uint256 amount0, uint256 amount1)
+    {
 //        console2.log('stake amounts');
 //        console2.log(token0Amount);
 //        console2.log(token1Amount);
@@ -134,7 +166,7 @@ library MockUtil {
             token0Amount, token1Amount, 0, 0, recipient, block.timestamp
         );
         (tokenId, liquidity, amount0, amount1) = nfpm.mint(params);
-        console2.log('minted liquidity');
+//        console2.log('minted liquidity');
 //        console2.log(liquidity);
 //        console2.log(amount0);
 //        console2.log(amount1);

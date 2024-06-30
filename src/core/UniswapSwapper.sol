@@ -35,8 +35,8 @@ contract UniswapV3Swapper {
         (uint160 sqrtPriceX96,,,,,,) = pool.slot0();
         uint256 price256 = uint256(sqrtPriceX96);
         price = inverted ? 2**96 / price256 / price256 : price256 * price256 / 2**96;
-        console2.log('univ3 price');
-        console2.log(price);
+        // console2.log('univ3 price');
+        // console2.log(price);
     }
 
     // Returns the stabilized (oracle) price
@@ -77,12 +77,12 @@ contract UniswapV3Swapper {
         if( params.limitPriceX96 != 0 ) {
             bool inverted = params.tokenIn > params.tokenOut;
             if (inverted) {
-                console2.log('inverting params.limitPriceX96');
-                console2.log(params.limitPriceX96);
+                // console2.log('inverting params.limitPriceX96');
+                // console2.log(params.limitPriceX96);
                 params.limitPriceX96 = 2**96 / params.limitPriceX96;
             }
-            console2.log('params.limitPriceX96');
-            console2.log(params.limitPriceX96);
+            // console2.log('params.limitPriceX96');
+            // console2.log(params.limitPriceX96);
         }
         if (params.amountIsInput)
             (amountIn, amountOut) = _univ3_swapExactInput(params);
@@ -104,21 +104,21 @@ contract UniswapV3Swapper {
         //        uint256 amountOutMinimum;
         //        uint160 sqrtPriceLimitX96;
         //    }
-        console2.log('swapExactInput approve...');
-        console2.log(address(this));
-        console2.log(params.tokenIn);
-        console2.log(params.tokenOut);
-        console2.log(uint(params.maxFee));
-        console2.log(address(params.recipient));
-        console2.log(params.amount);
-        console2.log(params.amountIsInput);
-        console2.log(uint(params.limitPriceX96));
-        console2.log(address(swapRouter));
+        // console2.log('swapExactInput approve...');
+        // console2.log(address(this));
+        // console2.log(params.tokenIn);
+        // console2.log(params.tokenOut);
+        // console2.log(uint(params.maxFee));
+        // console2.log(address(params.recipient));
+        // console2.log(params.amount);
+        // console2.log(params.amountIsInput);
+        // console2.log(uint(params.limitPriceX96));
+        // console2.log(address(swapRouter));
 
         amountIn = params.amount;
         uint256 balance = IERC20(params.tokenIn).balanceOf(address(this));
-        console2.log('amountIn balance');
-        console2.log(balance);
+        // console2.log('amountIn balance');
+        // console2.log(balance);
         if( balance == 0 || balance < params.minAmount ) // minAmount is units of input token
             revert('IIA');
         if( balance < amountIn )
@@ -129,18 +129,18 @@ contract UniswapV3Swapper {
 //            params.sqrtPriceLimitX96 = params.tokenIn < params.tokenOut ? TickMath.MIN_SQRT_RATIO+1 : TickMath.MAX_SQRT_RATIO-1;
 
         uint160 sqrtPriceLimitX96 = uint160(Util.sqrt(uint256(params.limitPriceX96)<<96));
-        console2.log('sqrt price limit x96');
-        console2.log(uint(sqrtPriceLimitX96));
+        // console2.log('sqrt price limit x96');
+        // console2.log(uint(sqrtPriceLimitX96));
 
-        console2.log('swapping...');
+        // console2.log('swapping...');
         amountOut = swapRouter.exactInputSingle(ISwapRouter.ExactInputSingleParams({
             tokenIn: params.tokenIn, tokenOut: params.tokenOut, fee: params.maxFee, recipient: params.recipient,
             deadline: block.timestamp, amountIn: amountIn, amountOutMinimum: 1, sqrtPriceLimitX96: sqrtPriceLimitX96
         }));
-        console2.log('swapped');
-        console2.log(amountOut);
+        // console2.log('swapped');
+        // console2.log(amountOut);
         TransferHelper.safeApprove(params.tokenIn, address(swapRouter), 0);
-        console2.log('revoked approval');
+        // console2.log('revoked approval');
     }
 
     function _univ3_swapExactOutput(IRouter.SwapParams memory params) internal
@@ -161,25 +161,25 @@ contract UniswapV3Swapper {
             revert('IIA');
         uint256 maxAmountIn = balance;
 
-        console2.log('swapExactOutput approve...');
-        console2.log(address(this));
-        console2.log(params.tokenIn);
-        console2.log(params.tokenOut);
-        console2.log(uint(params.maxFee));
-        console2.log(address(params.recipient));
-        console2.log(params.amount);
-        console2.log(uint(params.limitPriceX96));
-        console2.log(address(swapRouter));
-        console2.log('approve');
-        console2.log(maxAmountIn);
+        // console2.log('swapExactOutput approve...');
+        // console2.log(address(this));
+        // console2.log(params.tokenIn);
+        // console2.log(params.tokenOut);
+        // console2.log(uint(params.maxFee));
+        // console2.log(address(params.recipient));
+        // console2.log(params.amount);
+        // console2.log(uint(params.limitPriceX96));
+        // console2.log(address(swapRouter));
+        // console2.log('approve');
+        // console2.log(maxAmountIn);
 
         TransferHelper.safeApprove(params.tokenIn, address(swapRouter), maxAmountIn);
 
         uint160 sqrtPriceLimitX96 = uint160(Util.sqrt(uint256(params.limitPriceX96)<<96));
-        console2.log('sqrt price limit x96');
-        console2.log(uint(sqrtPriceLimitX96));
+        // console2.log('sqrt price limit x96');
+        // console2.log(uint(sqrtPriceLimitX96));
 
-        console2.log('swapping...');
+        // console2.log('swapping...');
         try swapRouter.exactOutputSingle(ISwapRouter.ExactOutputSingleParams({
             tokenIn: params.tokenIn, tokenOut: params.tokenOut, fee: params.maxFee, recipient: params.recipient,
             deadline: block.timestamp, amountOut: params.amount, amountInMaximum: maxAmountIn,
@@ -205,9 +205,9 @@ contract UniswapV3Swapper {
         // Why should we short-circuit output amounts that are below the minAmount?  We have already paid the gas to
         // get this far. Might as well accept any amount.
         // require( amountOut >= params.minAmount, 'IIA' );
-        console2.log('swapped');
-        console2.log(amountIn);
-        console2.log(amountOut);
+        // console2.log('swapped');
+        // console2.log(amountIn);
+        // console2.log(amountOut);
 
         // revoke approval
         TransferHelper.safeApprove(params.tokenIn, address(swapRouter), 0);
