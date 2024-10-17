@@ -1,0 +1,33 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+  # mockchain price
+  source bin/shmockenv
+  SQRTX96=$(cast call $MOCKENV "price()" | cast to-dec)
+  D0=$T0DEC
+  D1=$T1DEC
+  T0INT=$(cast to-dec $TOKEN0)
+  T1INT=$(cast to-dec $TOKEN1)
+  #echo $T0INT $T1INT
+  INVERTED=$(echo $T0INT '>' $T1INT | bc)
+else
+    # pool price
+    SQRTX96=$(cast call "$1" "slot0()(uint160,int24,uint16,uint16,uint16,uint8,bool)" | head -1 | cut -d ' ' -f 1)
+    T0=$(cast call "$1" "token0()" | cast parse-bytes32-address)
+    D0=$(cast call "$T0" "decimals()" | cast to-dec)
+    T1=$(cast call "$1" "token1()" | cast parse-bytes32-address)
+    D1=$(cast call "$T1" "decimals()" | cast to-dec)
+    echo sqrtX96 $SQRTX96
+    echo decimals $D0 $D1
+    INVERTED=0
+fi
+#echo sqrtX96 $SQRTX96
+echo inverted $INVERTED
+if [ "$INVERTED" == "0" ]; then
+  echo inverted
+  FORMULA='scale=18; '"$SQRTX96"'^2 * 10^('"$D0"-"$D1"') / 2^(96*2)'
+else
+  FORMULA='scale=18; 2^(96*2) * 10^('"$D1"-"$D0"') / '"$SQRTX96"'^2'
+fi
+#echo "$FORMULA"
+echo "$FORMULA" | bc

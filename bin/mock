@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+# 0xac097 is dev account #0 used for Deploy scripts
+DEFAULT_KEY='0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
+FORK_URL=http://localhost:8545
+
+./bin/build
+
+anvil -f arbitrum_mock --chain-id 31337 &
+ANVIL_PID=$!
+sleep 2
+
+forge script script/Deploy.sol --skip Test --fork-url $FORK_URL --broadcast \
+--private-key ${PRIVATE_KEY:-$DEFAULT_KEY} || err deploy
+
+forge script script/DeployMock.sol --skip Test --fork-url $FORK_URL --broadcast \
+--private-key ${PRIVATE_KEY:-$DEFAULT_KEY} || err deploymock
+
+forge script script/DeployMirror.sol --skip Test --fork-url $FORK_URL --broadcast \
+--private-key ${PRIVATE_KEY:-$DEFAULT_KEY} || err deploymirror
+
+trap_ctrlc() {
+  echo exiting anvil
+  kill $ANVIL_PID
+}
+
+trap trap_ctrlc INT
+
+# wait for all background processes to terminate
+wait

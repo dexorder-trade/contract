@@ -1,0 +1,12 @@
+SPDX-License-Identifier: UNLICENSED
+
+The following directories of this repository contain third party code under separate licenses:
+
+ * lib_forge_std
+ * lib_openzeppelin_contracts
+ * lib_uniswap
+
+See the LICENSE file under each of the above directories.
+
+All other material not distributed under the third-party directories is
+Copyright ©2024 Dexorder LLC. All Rights Reserved.

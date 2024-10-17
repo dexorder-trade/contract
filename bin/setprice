@@ -1,0 +1,18 @@
+#!/bin/bash
+
+. bin/shmockenv
+
+#echo inverted $INVERTED
+if [ "$INVERTED" == "1" ]; then
+  INV='1/'
+else
+  INV=
+fi
+echo INV $INVERTED
+FORMULA='scale=100; big='"$INV""$1"'*10^('"$T1DEC"'-'"$T0DEC"')*2^(96*2); scale=0; sqrt(big)'
+#echo $FORMULA
+#echo "$FORMULA" | bc
+SQRTX96=$(echo "$FORMULA" | bc | head -1 | cut -d '.' -f 1)
+#echo sqrtX96 $SQRTX96
+TMP=$(mktemp)
+cast send --private-key 0x2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6 "$MOCKENV" 'swapToPrice(uint160)' "$SQRTX96" > "$TMP" || cat "$TMP"

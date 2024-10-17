@@ -1,0 +1,2 @@
+#!/bin/bash
+cast rpc evm_mine &> /dev/null && echo mined a block || echo FAILED >&2

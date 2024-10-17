@@ -1,0 +1,76 @@
+#!/bin/bash
+
+RPC=${RPC_URL:-http://localhost:8545}
+
+c() {
+#  echo cast "$1" --rpc-url $RPC "${@:2}" >&2
+  cast "$1" --rpc-url "$RPC" "${@:2}"
+}
+
+CHAINID=$(c chain-id)
+
+FILE_TAG=${TAG:-mock}
+
+# find script directory
+SOURCE=${BASH_SOURCE[0]}
+while [ -L "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+  DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+  SOURCE=$(readlink "$SOURCE")
+  [[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+done
+DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )/..
+
+
+if [ "$FILE_TAG" == "mock" ]; then
+  BROADCAST=$DIR/broadcast
+  FILE_TAG=latest
+else
+  BROADCAST=$DIR/deployment/$TAG/broadcast
+fi
+
+MOCKENV=$(jq -r '.transactions[] | select(.contractName=="MockEnv") | select(.function==null).contractAddress' "$BROADCAST/DeployMock.sol/$CHAINID/run-latest.json" | cast to-check-sum-address) || echo WARNING no MockEnv detected
+export MOCKENV
+MIRRORENV=$(jq -r '.transactions[] | select(.contractName=="MirrorEnv") | select(.function==null).contractAddress' "$BROADCAST/DeployMirror.sol/$CHAINID/run-latest.json" | cast to-check-sum-address) || echo WARNING no MirrorEnv detected
+export MIRRORENV
+FACTORY=$(jq -r '.transactions[] | select(.contractName=="VaultFactory") | select(.function==null).contractAddress' "$BROADCAST/Deploy.sol/$CHAINID/run-latest.json" | cast to-check-sum-address) || exit 1
+export FACTORY
+HELPER=$(jq -r '.transactions[] | select(.contractName=="QueryHelper") | select(.function==null).contractAddress' "$BROADCAST/Deploy.sol/$CHAINID/run-latest.json" | cast to-check-sum-address) || exit 1
+export HELPER
+DEXORDER=$(jq -r '.transactions[] | select(.contractName=="Dexorder") | select(.function==null).contractAddress' "$BROADCAST/Deploy.sol/$CHAINID/run-latest.json" | cast to-check-sum-address) || exit 1
+export DEXORDER
+
+VAULT_INIT_CODE_HASH=$("$DIR/bin/vault-init-code-hash") || exit 1
+export VAULT_INIT_CODE_HASH
+
+POOL=$(c call $MOCKENV "pool()" | cast parse-bytes32-address) || exit 1
+export POOL
+MEH=$(c call $MOCKENV "COIN()" | cast parse-bytes32-address) || exit 1
+export MEH
+USXD=$(c call $MOCKENV "USD()" | cast parse-bytes32-address) || exit 1
+export USXD
+MOCK=$MEH
+export MOCK
+USD=$USDX
+export USD
+TOKEN0=$(c call $MOCKENV "token0()" | cast parse-bytes32-address) || exit 1
+export TOKEN0
+TOKEN1=$(c call $MOCKENV "token1()" | cast parse-bytes32-address) || exit 1
+export TOKEN1
+T0DEC=$(c call $TOKEN0 "decimals()" | cast to-dec) || exit 1
+export T0DEC
+T1DEC=$(c call $TOKEN1 "decimals()" | cast to-dec) || exit 1
+export T1DEC
+POOLDEC=$(echo $T1DEC - $T0DEC | bc)
+export POOLDEC
+MEH_INT=$(cast to-dec $MEH)
+USXD_INT=$(cast to-dec $USXD)
+#echo $MEH_INT $USXD_INT
+INVERTED=$(echo $MEH_INT '>' $USXD_INT | bc)
+export INVERTED
+
+echo "\$MOCKENV    $MOCKENV"
+echo "\$MIRRORENV  $MIRRORENV"
+echo "\$MEH        $MEH"
+echo "\$USXD       $USXD"
+echo "\$INVERTED   $INVERTED"
+echo "\$POOL       $POOL"

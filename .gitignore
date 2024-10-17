@@ -1,0 +1,9 @@
+/cache
+/out
+/.idea
+/.vscode
+/.env
+/gen
+/foundry.toml
+/broadcast
+/version.json
