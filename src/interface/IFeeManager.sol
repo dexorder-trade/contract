@@ -43,19 +43,23 @@ interface IFeeManager {
     // The admin account may change the fees, limits, and fee account addresses.
     function admin() external view returns (address);
 
+    // The adjuster account may change the fees.
+    function adjuster() external view returns (address);
+
     // The three fee types are each sent to a separate address for accounting.
     function orderFeeAccount() external view returns (address payable);
     function gasFeeAccount() external view returns (address payable);
     function fillFeeAccount() external view returns (address payable);
 
-    // The admin may change the fees within the limits after only a short delay
+    // The admin or the adjuster may change the fees within the limits after only a short delay
     function setFees(FeeSchedule calldata sched) external;
 
-    // The admin may change the fee limits themselves after a long delay
+    // Only the admin may change the fee limits themselves after a long delay
     function setLimits(FeeSchedule calldata sched) external;
 
     // The admin may adjust the destination of fees at any time
     function setFeeAccounts(
+        address adjuster,
         address payable fillFeeAccount,
         address payable orderFeeAccount,
         address payable gasFeeAccount

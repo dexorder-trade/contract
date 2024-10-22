@@ -13,6 +13,7 @@ import "../src/core/Router.sol";
 contract DeployArbitrum is Script {
     function run() external {
         address admin = address(0x12DB90820DAFed100E40E21128E40Dcd4fF6B331);
+        address adjuster = address(0x822e57D95444f9Bf373827950068A877F7C7F5FC);
         address payable orderFeeAccount = payable(0x078E0C1112262433375b9aaa987BfF09a08e863C);
         address payable gasFeeAccount = payable(0x411c418C005EBDefB551e5E6B734520Ef2591f51);
         address payable fillFeeAccount = payable(0x152a3a04cE063dC77497aA06b6A09FeFD271E716);
@@ -22,7 +23,7 @@ contract DeployArbitrum is Script {
 
         Dexorder dexorder = new Dexorder();
         IRouter router = new ArbitrumRouter();
-        FeeManager feeManager = FeeManagerLib.defaultFeeManager(admin, orderFeeAccount, gasFeeAccount, fillFeeAccount);
+        FeeManager feeManager = FeeManagerLib.defaultFeeManager(admin, adjuster, orderFeeAccount, gasFeeAccount, fillFeeAccount);
         VaultImpl impl = new VaultImpl(router, feeManager, WETH);
         VaultFactory factory = new VaultFactory(admin, address(impl), 24 * 60 * 60); // 24-hour upgrade notice
         QueryHelper query = new QueryHelper(UniswapV3Arbitrum.factory);

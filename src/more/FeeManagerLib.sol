@@ -12,12 +12,13 @@ library FeeManagerLib {
 
 
     function defaultFeeManager(address payable owner) internal returns (FeeManager) {
-        return FeeManagerLib.defaultFeeManager(owner, owner, owner, owner);
+        return FeeManagerLib.defaultFeeManager(owner, owner, owner, owner, owner);
     }
 
 
     function defaultFeeManager(
         address admin,
+        address adjuster,
         address payable orderFeeAccount,
         address payable gasFeeAccount,
         address payable fillFeeAccount
@@ -47,7 +48,7 @@ library FeeManagerLib {
         );
         FeeManager.ConstructorArgs memory args = FeeManager.ConstructorArgs(
             limitChangeNoticeDuration, feeChangeNoticeDuration, maxIncreaseOrderFeePct, maxIncreaseTrancheFeePct,
-            fees, limits, admin, orderFeeAccount, gasFeeAccount, fillFeeAccount
+            fees, limits, admin, adjuster, orderFeeAccount, gasFeeAccount, fillFeeAccount
         );
         return new FeeManager(args);
     }
@@ -60,12 +61,13 @@ library FeeManagerLib {
 
 
     function freeFeeManager(address payable owner) internal returns (FeeManager) {
-        return FeeManagerLib.freeFeeManager(owner, owner, owner, owner);
+        return FeeManagerLib.freeFeeManager(owner, owner, owner, owner, owner);
     }
 
 
     function freeFeeManager(
         address admin,
+        address adjuster,
         address payable orderFeeAccount,
         address payable gasFeeAccount,
         address payable fillFeeAccount
@@ -94,7 +96,7 @@ library FeeManagerLib {
         );
         FeeManager.ConstructorArgs memory args = FeeManager.ConstructorArgs(
             limitChangeNoticeDuration, feeChangeNoticeDuration, maxIncreaseOrderFeePct, maxIncreaseTrancheFeePct,
-            fees, limits, admin, orderFeeAccount, gasFeeAccount, fillFeeAccount
+            fees, limits, admin, adjuster, orderFeeAccount, gasFeeAccount, fillFeeAccount
         );
         return new FeeManager(args);
     }
@@ -106,12 +108,13 @@ library FeeManagerLib {
 
 
     function debugFeeManager(address payable owner) internal returns (FeeManager) {
-        return FeeManagerLib.debugFeeManager(owner, owner, owner, owner);
+        return FeeManagerLib.debugFeeManager(owner, owner, owner, owner, owner);
     }
 
 
     function debugFeeManager(
         address admin,
+        address adjuster,
         address payable orderFeeAccount,
         address payable gasFeeAccount,
         address payable fillFeeAccount
@@ -143,7 +146,7 @@ library FeeManagerLib {
         );
         FeeManager.ConstructorArgs memory args = FeeManager.ConstructorArgs(
             limitChangeNoticeDuration, feeChangeNoticeDuration, maxIncreaseOrderFeePct, maxIncreaseTrancheFeePct,
-            fees, limits, admin, orderFeeAccount, gasFeeAccount, fillFeeAccount
+            fees, limits, admin, adjuster, orderFeeAccount, gasFeeAccount, fillFeeAccount
         );
         return new FeeManager(args);
     }

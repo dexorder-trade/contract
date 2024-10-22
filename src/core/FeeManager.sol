@@ -68,6 +68,7 @@ contract FeeManager is IFeeManager {
 
 
     address public immutable override admin;
+    address public override adjuster;
 
     address payable public override orderFeeAccount;
     address payable public override gasFeeAccount;
@@ -83,6 +84,7 @@ contract FeeManager is IFeeManager {
         FeeSchedule limits;
 
         address admin;
+        address adjuster;
         address payable orderFeeAccount;
         address payable gasFeeAccount;
         address payable fillFeeAccount;
@@ -127,6 +129,12 @@ contract FeeManager is IFeeManager {
     }
 
 
+    modifier onlyAdminOrAdjuster() {
+        require(msg.sender == admin || msg.sender == adjuster, "not admin or adjuster");
+        _;
+    }
+
+
     function _push() internal {
         // if existing proposals have become active, set them as the main schedules.
         if (proposedLimitActivationTime != 0 && proposedLimitActivationTime <= block.timestamp) {
@@ -155,7 +163,7 @@ contract FeeManager is IFeeManager {
     }
 
 
-    function setFees(FeeSchedule calldata sched) public override onlyAdmin {
+    function setFees(FeeSchedule calldata sched) public override onlyAdminOrAdjuster {
         _push();
 
         // check limits
@@ -187,10 +195,12 @@ contract FeeManager is IFeeManager {
 
 
     function setFeeAccounts(
+        address adjuster_,
         address payable fillFeeAccount_,
         address payable orderFeeAccount_,
         address payable gasFeeAccount_
     ) public override onlyAdmin {
+        adjuster = adjuster_;
         fillFeeAccount = fillFeeAccount_;
         orderFeeAccount = orderFeeAccount_;
         gasFeeAccount = gasFeeAccount_;
