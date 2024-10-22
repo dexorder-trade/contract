@@ -1,14 +1,13 @@
 {
   "version": "arb1",
-  "revision": "5c70ba387a215f55736b01f0c1ef8f523eb16232",
   "chainInfo": {
     "42161": {
       "id": 42161,
       "name": "Arbitrum One",
-      "vaultInitCodeHash": "0xada4cd6b4cbd10f5eb48a27bde34a08fc1427562cff58ab798def9b1883d3f8a",
-      "dexorder": "0xcc5465A5f87dd3EE7908610E742159FfaA22a7c3",
-      "factory": "0xC2D51971aEe76E7498C7FD6D3EBF261f373B622f",
-      "helper": "0x97b3C3Af43c8d3e7bCCB398C1237a511a8DC42Db"
+      "vaultInitCodeHash": "0x8b1347850b0b1f2e05548c065af07c78f2c0617f70a2915b3cb7e0ba1bd20630",
+      "dexorder": "0x7a6a4774A5b447bD5A376B6E3a3DDCb647948d99",
+      "factory": "0x7fb08EAE59e6260B6d62fC1bC199F6B8a9993246",
+      "helper": "0xC31774FDE0BB4718f6cE9A36f178717C71bE09Fa"
     }
   }
 }
