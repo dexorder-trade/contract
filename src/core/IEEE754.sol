@@ -63,11 +63,13 @@ library IEEE754 {
     }}
 
     function isPositive(float f) internal pure returns (bool) {
-        return float.unwrap(f) & SIGN_MASK == 0;
+        uint32 raw = float.unwrap(f);
+        return raw != 0 && raw & SIGN_MASK == 0;
     }
 
     function isNegative(float f) internal pure returns (bool) {
-        return float.unwrap(f) & SIGN_MASK != 0;
+        uint32 raw = float.unwrap(f);
+        return raw != 0 && raw & SIGN_MASK != 0;
     }
 
     function isZero(float f) internal pure returns (bool) {
