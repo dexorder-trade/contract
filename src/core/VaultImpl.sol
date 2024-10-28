@@ -21,7 +21,7 @@ import {UniswapV3Arbitrum} from "./UniswapV3.sol";
 
 contract VaultImpl is IVaultImpl, VaultStorage {
 
-    uint256 constant public version = 1;
+    uint256 constant public version = 2;
 
     IFeeManager public immutable feeManager;
     IRouter private immutable router;

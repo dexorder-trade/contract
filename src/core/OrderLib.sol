@@ -189,11 +189,11 @@ library OrderLib {
             _prepTrancheStatus(tranche,status.trancheStatus[t],startTime);
             if (tranche.minIsRatio || tranche.maxIsRatio)
                 needStartPrice = true;
-//            require(!tranche.marketOrder || !tranche.minIntercept.isNegative(), 'NSL');  // negative slippage
+            require(!tranche.marketOrder || !tranche.minLine.intercept.isNegative(), 'NSL');  // negative slippage
         }
         // console2.log('fee/oco');
         if (needStartPrice)
-            status.startPrice = router.protectedPrice(order.route.exchange, order.tokenIn, order.tokenOut, order.route.fee);
+            status.startPrice = router.protectedPrice(order.route.exchange, order.tokenIn, order.tokenOut, order.route.fee, order.inverted);
     }
 
 
@@ -219,6 +219,7 @@ library OrderLib {
         SwapOrderStatus storage status = self.orders[orderIndex];
         if (_isCanceled(self, orderIndex))
             revert('NO'); // Not Open
+        SwapOrder storage order = status.order;
         Tranche storage tranche = status.order.tranches[trancheIndex];
         TrancheStatus storage tStatus = status.trancheStatus[trancheIndex];
 
@@ -236,8 +237,8 @@ library OrderLib {
         // market order slippage control: we overload minLine.intercept to store slippage value
         if( tranche.marketOrder && !tranche.minLine.intercept.isZero() ) {
             // console2.log('slippage');
-            uint256 protectedPrice = router.protectedPrice(status.order.route.exchange, status.order.tokenIn,
-                status.order.tokenOut, status.order.route.fee);
+            uint256 protectedPrice = router.protectedPrice(order.route.exchange, order.tokenIn,
+                order.tokenOut, order.route.fee, order.inverted);
             // minIntercept is interpreted as the slippage ratio
             uint256 slippage = uint256(tranche.minLine.intercept.toFixed(96));
             v.limit = protectedPrice * 2**96 / (2**96+slippage);
@@ -247,27 +248,29 @@ library OrderLib {
         }
 
         // line constraints
+        // price math is done in the linspace determined by order.inverted.
         else {
             v.price = 0;
             // check min line
             if( tranche.minLine.isEnabled() ) {
-                v.price = router.rawPrice(status.order.route.exchange, status.order.tokenIn,
-                    status.order.tokenOut, status.order.route.fee);
-                // console2.log('price');
-                // console2.log(v.price);
-                v.limit = tranche.minIsRatio ?
+                v.price = router.rawPrice(order.route.exchange, order.tokenIn,
+                    order.tokenOut, order.route.fee, order.inverted);
+                // console2.log('price', v.price);
+                uint256 minPrice = tranche.minIsRatio ?
                     tranche.minLine.ratioPrice(status.startTime, status.startPrice) :
                     tranche.minLine.priceNow();
                 // console2.log('min line limit', v.limit);
                 // console2.log('price', v.price);
-                require( v.price > v.limit, 'LL' );
+                require( v.price > minPrice, 'LL' );
+                if ((order.tokenIn < order.tokenOut) != order.inverted)
+                    v.limit = minPrice;
             }
             // check max line
             if( tranche.maxLine.isEnabled()) {
                 // price may have been already initialized by the min line
                 if( v.price == 0 ) {  // don't look it up a second time if we already have it.
-                    v.price = router.rawPrice(status.order.route.exchange, status.order.tokenIn,
-                        status.order.tokenOut, status.order.route.fee);
+                    v.price = router.rawPrice(order.route.exchange, order.tokenIn,
+                        order.tokenOut, order.route.fee, order.inverted);
                     // console2.log('price');
                     // console2.log(v.price);
                 }
@@ -277,11 +280,13 @@ library OrderLib {
                 // console2.log('max line limit');
                 // console2.log(maxPrice);
                 require( v.price <= maxPrice, 'LU' );
+                if ((order.tokenIn > order.tokenOut) != order.inverted)
+                    v.limit = maxPrice;
             }
         }
 
         // compute size
-        v.trancheAmount = status.order.amount * tranche.fraction / MAX_FRACTION; // the most this tranche could do
+        v.trancheAmount = order.amount * tranche.fraction / MAX_FRACTION; // the most this tranche could do
         v.amount = v.trancheAmount - tStatus.filled; // minus tranche fills
         if (tranche.rateLimitFraction != 0) {
             // rate limit sizing
@@ -290,36 +295,35 @@ library OrderLib {
                 v.amount = v.limitedAmount;
         }
         // order amount remaining
-        v.remaining = status.order.amount - status.filled;
+        v.remaining = order.amount - status.filled;
         if (v.amount > v.remaining)  // not more than the order's overall remaining amount
             v.amount = v.remaining;
-        require( v.amount >= status.order.minFillAmount, 'TF' );
-        address recipient = status.order.outputDirectlyToOwner ? owner : address(this);
-        IERC20 outToken = IERC20(status.order.tokenOut);
+        require( v.amount >= order.minFillAmount, 'TF' );
+        address recipient = order.outputDirectlyToOwner ? owner : address(this);
+        IERC20 outToken = IERC20(order.tokenOut);
         // this variable is only needed for calculating the amount to forward to a conditional order, so we set it to 0 otherwise
-        uint256 startingTokenOutBalance = status.order.conditionalOrder == NO_CONDITIONAL_ORDER ? 0 : outToken.balanceOf(address(this));
+        uint256 startingTokenOutBalance = order.conditionalOrder == NO_CONDITIONAL_ORDER ? 0 : outToken.balanceOf(address(this));
 
         //
         // Order has been approved. Send to router for swap execution.
         //
 
         // console2.log('router request:');
-        // console2.log(status.order.tokenIn);
-        // console2.log(status.order.tokenOut);
+        // console2.log(order.tokenIn);
+        // console2.log(order.tokenOut);
         // console2.log(recipient);
         // console2.log(v.amount);
-        // console2.log(status.order.minFillAmount);
-        // console2.log(status.order.amountIsInput);
+        // console2.log(order.minFillAmount);
+        // console2.log(order.amountIsInput);
         // console2.log(v.limit);
-        // console2.log(status.order.route.fee);
+        // console2.log(order.route.fee);
         IRouter.SwapParams memory swapParams = IRouter.SwapParams(
-            status.order.tokenIn, status.order.tokenOut, recipient,
-            v.amount, status.order.minFillAmount, status.order.amountIsInput,
-            v.limit, status.order.route.fee);
+            order.route.exchange, order.tokenIn, order.tokenOut, recipient,
+            v.amount, order.minFillAmount, order.amountIsInput,
+            order.inverted, v.limit, order.route.fee);
         // DELEGATECALL
         (bool success, bytes memory result) = address(router).delegatecall(
-            abi.encodeWithSelector(IRouter.swap.selector, status.order.route.exchange, swapParams)
-        );
+            abi.encodeWithSelector(IRouter.swap.selector, swapParams));
         if (!success) {
             if (result.length > 0) { // if there was a reason given, forward it
                 assembly ("memory-safe") {
@@ -333,8 +337,10 @@ library OrderLib {
         // delegatecall succeeded
         (v.amountIn, amountOut) = abi.decode(result, (uint256, uint256));
 
+        // console2.log('swapped');
+
         // Update filled amounts
-        v.amount = status.order.amountIsInput ? v.amountIn : amountOut;
+        v.amount = order.amountIsInput ? v.amountIn : amountOut;
         status.filled += v.amount;
         tStatus.filled += v.amount;
 
@@ -348,24 +354,25 @@ library OrderLib {
         v.fillFee = amountOut * status.fillFeeHalfBps / 20_000;
         outToken.transfer(feeManager.fillFeeAccount(), v.fillFee);
 
-        emit DexorderSwapFilled(orderIndex, trancheIndex, v.amountIn, amountOut, v.fillFee,
-            tStatus.activationTime);
+        emit DexorderSwapFilled(orderIndex, trancheIndex, v.amountIn, amountOut, v.fillFee, tStatus.activationTime);
 
         // Conditional order placement
         // Fees for conditional orders are taken up-front by the VaultImpl and are not charged here.
-        if (status.order.conditionalOrder != NO_CONDITIONAL_ORDER) {
+        if (order.conditionalOrder != NO_CONDITIONAL_ORDER) {
             // the conditional order index will have been converted to an absolute index during placement
-            SwapOrder memory condi = self.orders[status.order.conditionalOrder].order;
+            SwapOrder memory condi = self.orders[order.conditionalOrder].order;
             // the amount forwarded will be different than amountOut due to our fee and possible token transfer taxes
             condi.amount = outToken.balanceOf(address(this)) - startingTokenOutBalance;
             // fillFee is preserved
-            uint64 condiOrderIndex = _createOrder(self, condi, status.fillFeeHalfBps, NO_OCO_INDEX, router, status.order.conditionalOrder);
+            uint64 condiOrderIndex = _createOrder(
+                self, condi, status.fillFeeHalfBps,
+                NO_OCO_INDEX, router, order.conditionalOrder);
             emit DexorderSwapPlaced(condiOrderIndex, 1, 0, 0); // zero fees
         }
 
         // Check order completion and OCO canceling
-        uint256 remaining = status.order.amount - status.filled;
-        if( remaining < status.order.minFillAmount )  {
+        uint256 remaining = order.amount - status.filled;
+        if( remaining < order.minFillAmount )  {
             // we already get fill events so completion may be inferred without an extra Completion event
             if( status.ocoGroup != NO_OCO_INDEX)
                 _cancelOco(self, status.ocoGroup);

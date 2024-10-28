@@ -10,10 +10,9 @@ import {IWETH9} from "../../lib_uniswap/v3-periphery/contracts/interfaces/extern
 
 library UniswapV3 {
     function getPool( IUniswapV3Factory factory, address tokenA, address tokenB, uint24 fee) internal pure
-    returns (IUniswapV3Pool pool, bool inverted) {
+    returns (IUniswapV3Pool) {
         PoolAddress.PoolKey memory key = PoolAddress.getPoolKey(tokenA, tokenB, fee);
-        pool = IUniswapV3Pool(PoolAddress.computeAddress(address(factory), key));
-        inverted = tokenA > tokenB;
+        return IUniswapV3Pool(PoolAddress.computeAddress(address(factory), key));
     }
 }
 

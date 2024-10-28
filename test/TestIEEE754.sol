@@ -67,17 +67,18 @@ contract TestIEEE754 is Test {
             Item(float.wrap(0x80200000), 128, int256(uint256(int256(-0x1)))), // smallest negative is subnormal
             Item(float.wrap(0x7effffff), 128, int256(uint256(0x7fffff8000000000000000000000000000000000000000000000000000000000))), // largest positive
             Item(float.wrap(0xff7fffff), 128, -int256(uint256(0xffffff0000000000000000000000000000000000000000000000000000000000))), // largest negative
-            Item(float.wrap(0x7f7fffff), 120, int256(uint256(0xffffff0000000000000000000000000000000000000000000000000000000000)))
+            Item(float.wrap(0x7f7fffff), 128, int256(uint256(0xffffff0000000000000000000000000000000000000000000000000000000000)))
         ];
 
         for (uint i=0; i<items.length; i++) {
+            console2.log("index", i);
             console2.log("exp: %x", uint256(items[i].fixedPoint));
             int256 fixedPoint = IEEE754.toFixed(
                 items[i].floatingPoint, items[i].fixedBits
                 );
             console2.log("got: %x", uint256(fixedPoint));
             console2.log(IEEE754.isPositive(items[i].floatingPoint)?'     positive':'     negative');
-            require(items[i].fixedPoint == fixedPoint);
+            require(items[i].fixedPoint == fixedPoint, 'conversion mismatch!');
         }
 
     }

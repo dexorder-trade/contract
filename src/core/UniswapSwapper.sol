@@ -28,21 +28,22 @@ contract UniswapV3Swapper {
         oracleSeconds = oracleSeconds_;
     }
 
-    function _univ3_rawPrice(address tokenIn, address tokenOut, uint24 maxFee) internal view
+    function _univ3_rawPrice(address tokenIn, address tokenOut, uint24 maxFee, bool inverted) internal view
     returns (uint256 price) {
-        (IUniswapV3Pool pool, bool inverted) = UniswapV3.getPool(factory, tokenIn, tokenOut, maxFee);
+        IUniswapV3Pool pool = UniswapV3.getPool(factory, tokenIn, tokenOut, maxFee);
         (uint160 sqrtPriceX96,,,,,,) = pool.slot0();
         return Util.sqrtToPrice(sqrtPriceX96, inverted);
     }
 
     // Returns the stabilized (oracle) price
-    function _univ3_protectedPrice(address tokenIn, address tokenOut, uint24 maxFee) internal view
+    function _univ3_protectedPrice(address tokenIn, address tokenOut, uint24 maxFee, bool inverted) internal view
     returns (uint256)
     {
         // console2.log('oracle');
         // console2.log(oracleSeconds);
+        IUniswapV3Pool pool = UniswapV3.getPool(factory, tokenIn, tokenOut, maxFee);
+        uint160 sqrtPriceX96;
         if (oracleSeconds!=0){
-            (IUniswapV3Pool pool, bool inverted) = UniswapV3.getPool(factory, tokenIn, tokenOut, maxFee);
             uint32[] memory secondsAgos = new uint32[](2);
             secondsAgos[0] = oracleSeconds;
             secondsAgos[1] = 0;
@@ -53,7 +54,7 @@ contract UniswapV3Swapper {
                 if (delta < 0 && (delta % secsI != 0))
                     mean--;
                 // use Uniswap's tick-to-sqrt-price because it's verified
-                uint160 sqrtPriceX96 = TickMath.getSqrtRatioAtTick(mean);
+                sqrtPriceX96 = TickMath.getSqrtRatioAtTick(mean);
                 return Util.sqrtToPrice(sqrtPriceX96, inverted);
             }
             catch Error( string memory /*reason*/ ) {
@@ -61,20 +62,22 @@ contract UniswapV3Swapper {
                 // console2.log('oracle broken');
             }
         }
-        return _univ3_rawPrice(tokenIn, tokenOut, maxFee);
+        // no oracle available. use the raw pool price.
+        (sqrtPriceX96,,,,,,) = pool.slot0();
+        return Util.sqrtToPrice(sqrtPriceX96, inverted);
     }
 
     function _univ3_swap(IRouter.SwapParams memory params) internal
     returns (uint256 amountIn, uint256 amountOut) {
         if( params.limitPriceX96 != 0 ) {
-            bool inverted = params.tokenIn > params.tokenOut;
-            if (inverted) {
+            // convert to output/input which is what the _univ3_* methods expect
+            bool inputInverted = params.tokenIn > params.tokenOut;
+            if (params.inverted!=inputInverted) {
                 // console2.log('inverting params.limitPriceX96');
                 // console2.log(params.limitPriceX96);
-                params.limitPriceX96 = 2**96 * 2**96 / params.limitPriceX96;
+                params.limitPriceX96 = Util.invertX96(params.limitPriceX96);
             }
-            // console2.log('params.limitPriceX96');
-            // console2.log(params.limitPriceX96);
+            // console2.log('params.limitPriceX96', params.limitPriceX96);
         }
         if (params.amountIsInput)
             (amountIn, amountOut) = _univ3_swapExactInput(params);

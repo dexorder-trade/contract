@@ -44,7 +44,7 @@ contract TestOrder is MockEnv, Test {
         uint256 amount = 100000000000000000000;
         SwapOrder memory order  = SwapOrder(
             0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9, 0x82aF49447D8a07e3bd95BD0d56f35241523fBab1,
-            Route(Exchange.UniswapV3, 500), amount, amount/100, true, false,
+            Route(Exchange.UniswapV3, 500), amount, amount/100, true, false, false,
             NO_CONDITIONAL_ORDER, tranches
         );
         console2.logBytes(abi.encode(order));
@@ -81,7 +81,7 @@ contract TestExecute is TestOrder {
         SwapOrder memory order  = SwapOrder(
             address(COIN), address(USD), // sell COIN for USD
             Route(Exchange.UniswapV3, 500), amount, amount/100, false, false,
-            NO_CONDITIONAL_ORDER, tranches
+            false, NO_CONDITIONAL_ORDER, tranches
         );
         exactOutputOrderIndex = vault.numSwapOrders();
         vault.placeDexorder(order);
@@ -95,7 +95,7 @@ contract TestExecute is TestOrder {
         order  = SwapOrder(
             address(COIN), address(USD), // sell COIN for USD
             Route(Exchange.UniswapV3, fee), amount, amount/100, true, false,
-            NO_CONDITIONAL_ORDER, tranches
+            false, NO_CONDITIONAL_ORDER, tranches
         );
         exactInputOrderIndex = vault.numSwapOrders();
         vault.placeDexorder(order);
@@ -126,7 +126,7 @@ contract TestExecute is TestOrder {
         SwapOrder memory order  = SwapOrder(
             token0, token1, // sell
             Route(Exchange.UniswapV3, fee), amount, amount/100, true, false,
-            NO_CONDITIONAL_ORDER, tranches
+            false, NO_CONDITIONAL_ORDER, tranches
         );
         limitOrderIndex = vault.numSwapOrders();
         vault.placeDexorder(order);

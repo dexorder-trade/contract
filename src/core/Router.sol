@@ -16,25 +16,25 @@ contract Router is IRouter, UniswapV3Swapper {
     }
 
 
-    function rawPrice(Exchange exchange, address tokenIn, address tokenOut, uint24 maxFee) external view
+    function rawPrice(Exchange exchange, address tokenIn, address tokenOut, uint24 maxFee, bool inverted) external view
     returns (uint256) {
         if (exchange == Exchange.UniswapV3)
-            return _univ3_rawPrice(tokenIn, tokenOut, maxFee);
-        revert('UR');
+            return _univ3_rawPrice(tokenIn, tokenOut, maxFee, inverted);
+        revert('UR'); // Unknown Route
     }
 
-    function protectedPrice(Exchange exchange, address tokenIn, address tokenOut, uint24 maxFee) external view
+    function protectedPrice(Exchange exchange, address tokenIn, address tokenOut, uint24 maxFee, bool inverted) external view
     returns (uint256) {
         if (exchange == Exchange.UniswapV3)
-            return _univ3_protectedPrice(tokenIn, tokenOut, maxFee);
-        revert('UR');
+            return _univ3_protectedPrice(tokenIn, tokenOut, maxFee, inverted);
+        revert('UR'); // Unknown Route
     }
 
-    function swap( Exchange exchange, SwapParams memory params ) external
+    function swap( SwapParams memory params ) external
     returns (uint256 amountIn, uint256 amountOut) {
-        if (exchange == Exchange.UniswapV3)
+        if (params.exchange == Exchange.UniswapV3)
             return _univ3_swap(params);
-        revert('UR');
+        revert('UR'); // Unknown Route
     }
 
 }

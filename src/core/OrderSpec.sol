@@ -49,6 +49,13 @@ struct SwapOrder {
     uint256 minFillAmount;  // if a tranche has less than this amount available to fill, it is considered completed
     bool amountIsInput; // whether amount is an in or out amount
     bool outputDirectlyToOwner; // whether the swap proceeds should go to the vault, or directly to the vault owner
+
+    // Tranche prices are expressed as either inToken/outToken or outToken/inToken depending on this `inverted` flag.
+    // A line in one space is a curve in the other, so the specification of e.g. WETH/USDC or USDC/WETH is essential.
+    // The "natural" ordering of inverted=false follows Uniswap: the lower-address token is the base currency and the
+    // higher-address token is the quote.
+    bool inverted;
+
     uint64 conditionalOrder; // use NO_CONDITIONAL_ORDER for normal orders.  If the high bit is set, the order number is relative to the currently placed group of orders. e.g. `CONDITIONAL_ORDER_IN_CURRENT_GROUP & 2` refers to the third item in the order group currently being placed.
     Tranche[] tranches; // see Tranche below
 }
@@ -87,8 +94,9 @@ struct Tranche {
     uint32 endTime;    // use DISTANT_FUTURE to effectively disable
 
     // If intercept and slope are both 0, the line is disabled
-    // Prices are always in terms of outputToken as the quote currency: the output amount per input amount. This is
-    // equivalent to saying all orders are viewed as sells relative to the price.
+    // Prices are expressed as either inToken/outToken or outToken/inToken depending on the order `inverted` flag.
+    // A line in one space is a curve in the other, so the specification of e.g. WETH/USDC or USDC/WETH is critical
+
     // The minLine is equivalent to a traditional limit order constraint, except this limit line can be diagonal.
     Line minLine;
     // The maxLine will be relatively unused, since it represents a boundry on TOO GOOD of a price.
