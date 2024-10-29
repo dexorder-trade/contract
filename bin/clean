@@ -1,2 +1,2 @@
 #!/bin/bash
-rm -r out/ cache/
+rm -rf out/ broadcast/ cache/

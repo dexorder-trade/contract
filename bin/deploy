@@ -22,7 +22,7 @@ cpbroadcast() {
   cp broadcast/"$CONTRACT"/"$CHAINID"/run-latest.json deployment/"$TAG"/broadcast/"$CONTRACT"/"$CHAINID"/run-latest.json
 }
 
-rm -rf out/ broadcast/ cache/
+./bin/clean
 ./bin/build || exit 1
 
 rm -rf deployment/"$TAG"
