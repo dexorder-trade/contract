@@ -70,9 +70,8 @@ contract UniswapV3Swapper {
     function _univ3_swap(IRouter.SwapParams memory params) internal
     returns (uint256 amountIn, uint256 amountOut) {
         if( params.limitPriceX96 != 0 ) {
-            // convert to output/input which is what the _univ3_* methods expect
-            bool inputInverted = params.tokenIn > params.tokenOut;
-            if (params.inverted!=inputInverted) {
+            // convert to the standard tokenOut/tokenIn which is what the _univ3_* methods expect
+            if (params.inverted) {
                 // console2.log('inverting params.limitPriceX96');
                 // console2.log(params.limitPriceX96);
                 params.limitPriceX96 = Util.invertX96(params.limitPriceX96);
@@ -111,13 +110,13 @@ contract UniswapV3Swapper {
         // console2.log(address(swapRouter));
 
         amountIn = params.amount;
-        uint256 balance = IERC20(params.tokenIn).balanceOf(address(this));
+        uint256 startingBalanceIn = IERC20(params.tokenIn).balanceOf(address(this));
         // console2.log('amountIn balance');
         // console2.log(balance);
-        if( balance == 0 || balance < params.minAmount ) // minAmount is units of input token
+        if( startingBalanceIn == 0 || startingBalanceIn < params.minAmount ) // minAmount is units of input token
             revert('IIA');
-        if( balance < amountIn )
-            amountIn = balance;
+        if( startingBalanceIn < amountIn )
+            amountIn = startingBalanceIn;
 
         TransferHelper.safeApprove(params.tokenIn, address(swapRouter), amountIn);
 //        if (params.sqrtPriceLimitX96 == 0)
@@ -132,6 +131,8 @@ contract UniswapV3Swapper {
             tokenIn: params.tokenIn, tokenOut: params.tokenOut, fee: params.maxFee, recipient: params.recipient,
             deadline: block.timestamp, amountIn: amountIn, amountOutMinimum: 1, sqrtPriceLimitX96: sqrtPriceLimitX96
         }));
+        uint256 endingBalanceIn = IERC20(params.tokenIn).balanceOf(address(this));
+        amountIn = startingBalanceIn - endingBalanceIn;
         // console2.log('swapped');
         // console2.log(amountOut);
         TransferHelper.safeApprove(params.tokenIn, address(swapRouter), 0);
@@ -151,10 +152,11 @@ contract UniswapV3Swapper {
         //        uint256 amountInMaximum;
         //        uint160 sqrtPriceLimitX96;
         //    }
-        uint256 balance = IERC20(params.tokenIn).balanceOf(address(this));
-        if( balance == 0 )
+        uint256 startingBalanceIn = IERC20(params.tokenIn).balanceOf(address(this));
+        if( startingBalanceIn == 0 )
             revert('IIA');
-        uint256 maxAmountIn = balance;
+        uint256 maxAmountIn = startingBalanceIn;
+        uint256 startingBalanceOut = IERC20(params.tokenOut).balanceOf(address(this));
 
         // console2.log('swapExactOutput');
         // console2.log(address(this));
@@ -181,7 +183,8 @@ contract UniswapV3Swapper {
             sqrtPriceLimitX96: sqrtPriceLimitX96
         })) returns (uint256 amtIn) {
             amountIn = amtIn;
-            amountOut = params.amount;
+            uint256 endingBalanceOut = IERC20(params.tokenOut).balanceOf(address(this));
+            amountOut = endingBalanceOut - startingBalanceOut;
         }
         catch Error( string memory reason ) {
             // todo check reason before trying exactinput
@@ -190,7 +193,8 @@ contract UniswapV3Swapper {
                 tokenIn: params.tokenIn, tokenOut: params.tokenOut, fee: params.maxFee, recipient: params.recipient,
                 deadline: block.timestamp, amountIn: maxAmountIn, amountOutMinimum: 1, sqrtPriceLimitX96: sqrtPriceLimitX96
             })) returns (uint256 amtOut) {
-                amountIn = maxAmountIn;
+                uint256 endingBalanceIn = IERC20(params.tokenIn).balanceOf(address(this));
+                amountIn = startingBalanceIn - endingBalanceIn;
                 amountOut = amtOut;
             }
             catch Error( string memory ) {

@@ -3,6 +3,7 @@ pragma solidity 0.8.26;
 
 import "@forge-std/console2.sol";
 import {IUniswapV3Pool} from "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
+import {FullMath} from "@uniswap/v3-core/contracts/libraries/FullMath.sol";
 import {Util} from "./Util.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IEEE754, float} from "./IEEE754.sol";
@@ -239,11 +240,15 @@ library OrderLib {
             // console2.log('slippage');
             uint256 protectedPrice = router.protectedPrice(order.route.exchange, order.tokenIn,
                 order.tokenOut, order.route.fee, order.inverted);
-            // minIntercept is interpreted as the slippage ratio
+            // minLine.intercept is interpreted as the slippage ratio
             uint256 slippage = uint256(tranche.minLine.intercept.toFixed(96));
-            v.limit = protectedPrice * 2**96 / (2**96+slippage);
+            bool buy = (order.tokenIn > order.tokenOut) != order.inverted;
+            v.limit = buy ?
+                FullMath.mulDiv( protectedPrice, 2**96+slippage, 2**96) :
+                FullMath.mulDiv( protectedPrice, 2**96, 2**96+slippage);
             // console2.log(protectedPrice);
             // console2.log(slippage);
+            // console2.log(buy);
             // console2.log(v.limit);
         }
 
