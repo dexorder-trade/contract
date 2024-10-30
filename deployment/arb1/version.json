@@ -1,0 +1,13 @@
+{
+  "version": "arb1",
+  "chainInfo": {
+    "42161": {
+      "id": 42161,
+      "name": "Arbitrum One",
+      "vaultInitCodeHash": "0xda672cdca096de00f3fed8150430564c059a59ad30cb2c824902097e25cd8b3a",
+      "dexorder": "0x93bc17B48289093f763893647f98ECBB0ba02a2c",
+      "factory": "0xA9DEe3537EE42Cb4717C017a07e9C20c43B1EBEd",
+      "helper": "0xfFfA495fFCFa45806AEAAC20Db92a8a83D5aF7C4"
+    }
+  }
+}
