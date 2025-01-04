@@ -5,6 +5,7 @@ These contracts power [⬆dexorder](https://dexorder.trade).
 The heart of the system is contained in `OrderLib.sol`, particularly the `OrderLib.execute()` method. `Vaults` are 
 basically thin wrappers around the `OrderLib`.
 
+
 # Quickstart
 
 The development environment is based on [Foundry](https://book.getfoundry.sh) toolset.
@@ -16,12 +17,12 @@ cp foundry-default.toml foundry.toml  # edit to include your own RPC URLs
 bin/build
 ```
 
+
 # Development
 
 ## Error Codes
 
 All Dexorder error codes, along with a few error codes from Uniswap, are described in `doc/errors.md`.
-
 
 ## Mock Environment
 
@@ -29,26 +30,29 @@ run `bin/mock` to spin up an Anvil node which forks Arbitrum in order to have th
 deploys the essential Dexorder init contracts, and also deploys the `MockEnv` class, which contains two mock tokens 
 MEH and USXD along with a mock pool to trade that pair. See `test/MockEnv.sol`.
 
+
 ### Mock Shell
+
 Source `. bin/shmockenv` to populate these environment variables:
 
-`MOCK`       address of the MockEnv
-`MEH`        address of MEH token  
-`USXD`       address of the USXD token
-`POOL`       address of the MEH/USXD pool
-`T0`         address of token0 in the mock pool  
-`T1`         address of token1 in the mock pool
-`INVERTED`   true iff USXD is token 0 and MEH is token 1 (USXD/MEH) instead of the other way (MEH/USXD)
-`MIRRORENV`  address of the MirrorEnv (if deployed)
+| Variable    | Description                                                                                |
+|-------------|--------------------------------------------------------------------------------------------|
+| `MOCK`      | Address of the MockEnv                                                                     |
+| `MEH`       | Address of MEH token                                                                       |
+| `USXD`      | Address of the USXD token                                                                  |
+| `POOL`      | Address of the MEH/USXD pool                                                               |
+| `T0`        | Address of token0 in the mock pool                                                         |
+| `T1`        | Address of token1 in the mock pool                                                         |
+| `INVERTED`  | True iff USXD is token 0 and MEH is token 1 (USXD/MEH) instead of the other way (MEH/USXD) |
+| `MIRRORENV` | Address of the MirrorEnv (if deployed)                                                     |
 
 There are also a few scripts available to manipulate the MockEnv:
 
-`bin/price` shows the price of the mock MEH/USXD pool.
+`bin/price` shows the price of the mock MEH/USXD pool.  
 NOTE: this price is always expressed as MEH/USXD regardless of the order of those two tokens in the mock pool.
 
-`bin/setprice <number>` adjusts the price of the mock pool by minting new tokens and swapping them.
+`bin/setprice <number>` adjusts the price of the mock pool by minting new tokens and swapping them.  
 NOTE: this sets the price of MEH in terms of USXD regardless of whether the pool is inverted.
-
 
 ## Deployments
 
@@ -91,6 +95,7 @@ Dexorder website to place orders. However, only the owner of a vault may place o
 Standard `withdraw()` and `withdrawTo()` methods for both native coin and ERC20 tokens are available on the `IVault`
 interface. Withdrawal transactions must be signed by the vault's owner.
 
+
 # Security Notes
 
 The Vault itself is a proxy contract that points its external methods to a shared VaultImpl contract, which is
@@ -110,9 +115,13 @@ are always avaiable even after a kill switch.
 
 The `execute()` method is intentionally public. It is expected to revert if any test of the order conditions fails. 
 
-See `review.md` for more detail.
+
+# Detailed Technical Overview
+
+The [review.md](https://github.com/dexorder/contract/blob/main/review.md) file describes the architecture, motivation,
+security issues, implementation details, and more.
+
 
 # Support
 
-Create a new issue in this project using the `Question` tag, or join our [Discord](https://discord.gg/fqp9JXXQyt) for a
-more interactive experience.
+Create a new issue in this project using the `Question` tag, or join our [Discord](https://discord.gg/fqp9JXXQyt).
