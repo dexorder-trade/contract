@@ -10,6 +10,9 @@ interface IVaultImpl {
 
     function version() external view returns (uint256);
 
+    function withdrawTo(address payable recipient, uint256 amount) external;
+    function withdrawTo(IERC20 token, address recipient, uint256 amount) external;
+
     function feeManager() external view returns (IFeeManager);
     function placementFee(SwapOrder memory order, IFeeManager.FeeSchedule memory sched) external view returns (uint256 orderFee, uint256 gasFee);
     function placementFee(SwapOrder[] memory orders, IFeeManager.FeeSchedule memory sched) external view returns (uint256 orderFee, uint256 gasFee);
@@ -65,11 +68,8 @@ interface IVaultProxy {
 
     function withdraw(uint256 amount) external;
 
-    function withdrawTo(address payable recipient, uint256 amount) external;
-
     function withdraw(IERC20 token, uint256 amount) external;
 
-    function withdrawTo(IERC20 token, address recipient, uint256 amount) external;
 }
 
 interface IVault is IVaultProxy, IVaultImpl {}

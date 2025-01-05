@@ -5,7 +5,7 @@ import {console2} from "@forge-std/console2.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IFeeManager} from "../interface/IFeeManager.sol";
 import {IVaultProxy, IVaultImpl} from "../interface/IVault.sol";
-import {VaultStorage} from "./Vault.sol";
+import {VaultBase} from "./Vault.sol";
 import {Dexorder} from "../more/Dexorder.sol";
 import "./OrderSpec.sol";
 import {OrderLib} from "./OrderLib.sol";
@@ -19,9 +19,9 @@ import {UniswapV3Arbitrum} from "./UniswapV3.sol";
 // the implementation contract, the original Vault's state is used. So here the VaultImpl inherits the vault state but in
 // usage, this state will be the state of the calling Vault, not of the deployed VaultImpl contract instance.
 
-contract VaultImpl is IVaultImpl, VaultStorage {
+contract VaultImpl is IVaultImpl, VaultBase {
 
-    uint256 constant public version = 2;
+    uint256 constant public version = 1;
 
     IFeeManager public immutable feeManager;
     IRouter private immutable router;
@@ -31,6 +31,16 @@ contract VaultImpl is IVaultImpl, VaultStorage {
         router = router_;
         feeManager = feeManager_;
         weth9 = IWETH9(weth9_);
+    }
+
+    // withdrawals to addresses other than the owner are only allowed if the Vault is not killed
+
+    function withdrawTo(address payable recipient, uint256 amount) external override {
+        _withdrawNative(recipient, amount);
+    }
+
+    function withdrawTo(IERC20 token, address recipient, uint256 amount) external override {
+        _withdraw(token, recipient, amount);
     }
 
     function numSwapOrders() external view returns (uint64 num) {
@@ -140,11 +150,6 @@ contract VaultImpl is IVaultImpl, VaultStorage {
     function unwrap(uint256 amount) external onlyOwner nonReentrant {
         require(address(weth9)!=address(0),'WU');
         weth9.withdraw(amount);
-    }
-
-    modifier onlyOwner() {
-        require(msg.sender == _owner, "not owner");
-        _;
     }
 
 }

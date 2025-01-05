@@ -18,6 +18,28 @@ contract VaultStorage is ReentrancyGuard { // The re-entrancy lock is part of th
     OrdersInfo internal _ordersInfo;
 }
 
+
+contract VaultBase is VaultStorage {
+
+    function _withdrawNative(address payable recipient, uint256 amount) internal onlyOwner {
+        recipient.transfer(amount);
+        emit IVaultProxy.Withdrawal(recipient, msg.value);
+    }
+
+
+    function _withdraw(IERC20 token, address recipient, uint256 amount) internal onlyOwner nonReentrant {
+        token.transfer(recipient, amount);
+    }
+
+
+    modifier onlyOwner() {
+        require(msg.sender == _owner, "not owner");
+        _;
+    }
+
+}
+
+
 // Vault is implemented in three parts:
 // 1. VaultStorage contains the data members, which cannot be upgraded.  The number of data slots is fixed upon
 //    construction of the Vault contract.
@@ -28,7 +50,7 @@ contract VaultStorage is ReentrancyGuard { // The re-entrancy lock is part of th
 //    OrderLib, implementing the common order manipulation methods.  Each Vault may be independently upgraded to point
 //    to a new VaultImpl contract by the owner calling their vault's `upgrade()` method with the correct argument.
 
-contract Vault is IVaultProxy, VaultStorage, Proxy {
+contract Vault is IVaultProxy, VaultBase, Proxy {
     //REV putting all variable decls together so we can more easily see visibility and immutability errors
     IVaultFactory immutable private _factory;
     uint8 immutable private _num;
@@ -87,30 +109,11 @@ contract Vault is IVaultProxy, VaultStorage, Proxy {
         _withdrawNative(payable(_owner), amount);
     }
 
-    function withdrawTo(address payable recipient, uint256 amount) external override {
-        _withdrawNative(recipient, amount);
-    }
-
-    function _withdrawNative(address payable recipient, uint256 amount) internal onlyOwner {
-        recipient.transfer(amount);
-        emit Withdrawal(recipient, msg.value);
-    }
-
     function withdraw(IERC20 token, uint256 amount) external override {
         _withdraw(token, _owner, amount);
     }
 
-    function withdrawTo(IERC20 token, address recipient, uint256 amount) external override {
-        _withdraw(token, recipient, amount);
-    }
-
-    function _withdraw(IERC20 token, address recipient, uint256 amount) internal onlyOwner nonReentrant {
-        token.transfer(recipient, amount);
-    }
-
-    modifier onlyOwner() {
-        require(msg.sender == _owner, "not owner");
-        _;
-    }
+    // withdrawTo(...) methods are in the VaultImpl. If the Vault is killed, withdrawals are only allowed to the
+    // owner of this Vault.
 
 }
