@@ -118,7 +118,7 @@ The `execute()` method is intentionally public. It is expected to revert if any 
 
 # Detailed Technical Overview
 
-The [review.md](https://github.com/dexorder/contract/blob/main/review.md) file describes the architecture, motivation,
+The [review.md](https://github.com/dexorder-trade/contract/blob/master/doc/review.md) file describes the architecture, motivation,
 security issues, implementation details, and more.
 
 
