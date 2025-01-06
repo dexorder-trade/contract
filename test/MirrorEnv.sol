@@ -21,10 +21,16 @@ contract MirrorEnv {
     // map original token addresses to their mock counterparts
     mapping(IERC20Metadata=>MockERC20) public tokens;
     IERC20Metadata[] public tokenKeys;
+    function numTokens() external view returns (uint256) {
+        return tokenKeys.length;
+    }
 
     // map original pool addresses to their mock counterparts
     mapping(IUniswapV3Pool=>MockPool) public pools;
     IUniswapV3Pool[] public poolKeys;
+    function numPools() external view returns (uint256) {
+        return poolKeys.length;
+    }
 
     INonfungiblePositionManager immutable public nfpm;
     ISwapRouter immutable public swapRouter;
