@@ -20,8 +20,11 @@ contract MirrorEnv {
 
     // map original token addresses to their mock counterparts
     mapping(IERC20Metadata=>MockERC20) public tokens;
+    IERC20Metadata[] public tokenKeys;
+
     // map original pool addresses to their mock counterparts
     mapping(IUniswapV3Pool=>MockPool) public pools;
+    IUniswapV3Pool[] public poolKeys;
 
     INonfungiblePositionManager immutable public nfpm;
     ISwapRouter immutable public swapRouter;
@@ -50,6 +53,7 @@ contract MirrorEnv {
             mock = new MockERC20(info.name, info.symbol, info.decimals);
 //            console2.log('setting tokens[]');
             tokens[info.addr] = mock;
+            tokenKeys.push() = info.addr;
 //            console2.log('set tokens[]');
         }
 //        console2.log(address(mock));
@@ -106,6 +110,7 @@ contract MirrorEnv {
 //            console2.log(address(mockPool));
 //            console2.log(inverted);
             pools[info.pool] = mock;
+            poolKeys.push() = info.pool;
 //            console2.log('staking');
             MockUtil.stakeWide( nfpm, mockPool, amount0, amount1);
 //            console2.log('staked');
