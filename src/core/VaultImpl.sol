@@ -59,7 +59,6 @@ contract VaultImpl is IVaultImpl, VaultBase {
         uint64 condiIndex = OrderLib._conditionalOrderIndex(uint64(_ordersInfo.orders.length), order.conditionalOrder);
         SwapOrder memory condi = _ordersInfo.orders[condiIndex].order;
         return OrderLib._placementFee(order, sched, condi);
-
     }
 
     function placementFee(SwapOrder[] memory orders, IFeeManager.FeeSchedule memory sched) public view

@@ -23,7 +23,7 @@ event DexorderSwapPlaced (uint64 indexed startOrderIndex, uint8 numOrders, uint2
 event DexorderSwapFilled (
     uint64 indexed orderIndex, uint8 indexed trancheIndex,
     uint256 amountIn, uint256 amountOut, uint256 fillFee,
-    uint32 nextExecutionTime
+    uint32 nextExecutionTime // for rate-limited orders
 );
 
 event DexorderSwapCanceled (uint64 orderIndex);

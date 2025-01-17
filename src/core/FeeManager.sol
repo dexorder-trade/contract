@@ -163,7 +163,7 @@ contract FeeManager is IFeeManager {
     }
 
 
-    function setFees(FeeSchedule calldata sched) public override onlyAdminOrAdjuster {
+    function setFees(FeeSchedule calldata sched) external override onlyAdminOrAdjuster {
         _push();
 
         // check limits
@@ -185,7 +185,7 @@ contract FeeManager is IFeeManager {
     }
 
 
-    function setLimits(FeeSchedule calldata sched) public override onlyAdmin {
+    function setLimits(FeeSchedule calldata sched) external override onlyAdmin {
         _push();
         // Fee Limits may be changed with a much longer notice period.
         _proposedLimits = sched;
@@ -194,16 +194,19 @@ contract FeeManager is IFeeManager {
     }
 
 
-    function setFeeAccounts(
-        address adjuster_,
-        address payable fillFeeAccount_,
-        address payable orderFeeAccount_,
-        address payable gasFeeAccount_
-    ) public override onlyAdmin {
+    function setAdjuster (address adjuster_) external override onlyAdmin {
         adjuster = adjuster_;
-        fillFeeAccount = fillFeeAccount_;
+    }
+
+    function setFeeAccounts(
+        address payable orderFeeAccount_,
+        address payable gasFeeAccount_,
+        address payable fillFeeAccount_
+    ) external override onlyAdmin {
         orderFeeAccount = orderFeeAccount_;
         gasFeeAccount = gasFeeAccount_;
+        fillFeeAccount = fillFeeAccount_;
+        emit FeeAccountsChanged(orderFeeAccount_, gasFeeAccount_, fillFeeAccount_);
     }
 
 }

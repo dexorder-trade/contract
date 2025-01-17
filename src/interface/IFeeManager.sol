@@ -23,6 +23,12 @@ interface IFeeManager {
     // Emitted when a new fee limit schedule has fulfilled its waiting period and become the new fee limits
     event FeeLimitsChanged(FeeSchedule indexed limits);
 
+    event FeeAccountsChanged(
+        address payable orderFeeAccount,
+        address payable gasFeeAccount,
+        address payable fillFeeAccount
+    );
+
     // Currently active fee schedule. Orders follow the FeeSchedule in effect at placement time.
     function fees() external view returns (FeeSchedule memory);
 
@@ -57,12 +63,14 @@ interface IFeeManager {
     // Only the admin may change the fee limits themselves after a long delay
     function setLimits(FeeSchedule calldata sched) external;
 
+    // Only the admin may change the adjuster account.
+    function setAdjuster(address adjuster) external;
+
     // The admin may adjust the destination of fees at any time
     function setFeeAccounts(
-        address adjuster,
-        address payable fillFeeAccount,
         address payable orderFeeAccount,
-        address payable gasFeeAccount
+        address payable gasFeeAccount,
+        address payable fillFeeAccount
     ) external;
 
 }

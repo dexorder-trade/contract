@@ -19,13 +19,13 @@ library OrderLib {
 
     function _placementFee(SwapOrder memory order, IFeeManager.FeeSchedule memory sched, SwapOrder memory conditionalOrder) internal pure
     returns (uint256 orderFee, uint256 executionFee) {
-        // Conditional orders are charged for execution but not placement.
+        // Conditional orders with zero amounts are not charged any fees until they are used
         if (order.amount==0)
             return (0,0);
-        orderFee = _orderFee(sched);
-        executionFee = _executionFee(order, sched, conditionalOrder);  // special execution fee
+        uint256 orderExecs = _numExecutions(order);
+        orderFee = orderExecs * _orderFee(sched);  // one placement fee for each conditional created
+        executionFee = orderExecs * _numExecutions(conditionalOrder) * _gasFee(sched);
     }
-
 
     function _placementFee(SwapOrder memory order, IFeeManager.FeeSchedule memory sched) internal pure
     returns (uint256 orderFee, uint256 executionFee) {
@@ -39,29 +39,21 @@ library OrderLib {
         // console2.log(sched.gasFee);
         // console2.log(sched.gasExp);
         // console2.log(sched.fillFeeHalfBps);
-        orderFee = _orderFee(sched);
+        orderFee = 0;
         // console2.log(orderFee);
-        executionFee = _executionFee(order, sched);
+        executionFee = _numExecutions(order) * _gasFee(sched);
         // console2.log('total fee');
         // console2.log(orderFee+executionFee);
     }
-
 
     function _orderFee(IFeeManager.FeeSchedule memory sched) internal pure
     returns (uint256 orderFee) {
         orderFee = uint256(sched.orderFee) << sched.orderExp;
     }
 
-    function _executionFee(SwapOrder memory order, IFeeManager.FeeSchedule memory sched) internal pure
-    returns (uint256 executionFee) {
-        executionFee = _numExecutions(order) * (uint256(sched.gasFee) << sched.gasExp);
-    }
-
-    function _executionFee(SwapOrder memory order, IFeeManager.FeeSchedule memory sched, SwapOrder memory conditionalOrder) internal pure
-    returns (uint256 executionFee) {
-        (uint256 orderFee, uint256 gasFee) =  _placementFee(conditionalOrder, sched);
-        uint256 placementFee = orderFee + gasFee;
-        executionFee = _numExecutions(order) * placementFee;
+    function _gasFee(IFeeManager.FeeSchedule memory sched) internal pure
+    returns (uint256 gasFee) {
+        gasFee = uint256(sched.gasFee) << sched.gasExp;
     }
 
     function _numExecutions(SwapOrder memory order) internal pure
