@@ -69,4 +69,14 @@ contract Dexorder {
             error = reason;
         }
     }
+    
+    
+    function multisend( address[] memory recipients, uint256[] memory amounts ) external {
+        require(recipients.length == amounts.length, "recipients[] and amounts[] must have the same length");
+        for (uint256 i = 0; i < recipients.length; i++) {
+            require(recipients[i] != address(0), "recipient cannot be zero address");
+            (bool success,) = recipients[i].call{value: amounts[i]}("");
+            require(success, "transfer failed");
+        }
+    }
 }
