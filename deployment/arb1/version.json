@@ -4,10 +4,10 @@
     "42161": {
       "id": 42161,
       "name": "Arbitrum One",
-      "vaultInitCodeHash": "0xda672cdca096de00f3fed8150430564c059a59ad30cb2c824902097e25cd8b3a",
-      "dexorder": "0x93bc17B48289093f763893647f98ECBB0ba02a2c",
-      "factory": "0xA9DEe3537EE42Cb4717C017a07e9C20c43B1EBEd",
-      "helper": "0xfFfA495fFCFa45806AEAAC20Db92a8a83D5aF7C4"
+      "vaultInitCodeHash": "0x2cde184609759ff3dc1a1792ab737a6764a414d24c4c9a04c3dcc442ce41da3d",
+      "dexorder": "0xE767bc5C2691F3ff49CE8E91A38469697A52d4cd",
+      "factory": "0x765f0141138ae542759e693c557C720A5B1d01E4",
+      "helper": "0x6acbF46f485fC7aE35e819b641998381A53a93B0"
     }
   }
 }
