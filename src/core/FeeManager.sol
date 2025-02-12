@@ -33,6 +33,8 @@ import {IFeeManager} from "../interface/IFeeManager.sol";
 // Any orders which were created with a promised fill fee will remember that fee and apply it to all fills
 // for that order, even if Dexorder changes the fee schedule while the order is open and not yet complete.
 
+// The fill fee is capped to be no higher than the pool fee.
+
 
 contract FeeManager is IFeeManager {
 

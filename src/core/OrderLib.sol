@@ -165,7 +165,9 @@ library OrderLib {
         // console2.log('pushed');
         SwapOrderStatus storage status = self.orders[orderIndex];
         status.order = order;
-        status.fillFeeHalfBps = fillFeeHalfBps;
+        // limit the fill fee to be no higher than the pool fee
+        uint8 poolFeeHalfBps = uint8(order.route.fee / 50);  // convert from hundredths of a bp to half-bps
+        status.fillFeeHalfBps = poolFeeHalfBps < fillFeeHalfBps ? poolFeeHalfBps : fillFeeHalfBps;
         status.startTime = startTime;
         status.ocoGroup = ocoGroup;
         status.originalOrder = origIndex;
