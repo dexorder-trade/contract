@@ -8,7 +8,7 @@ import {IFeeManager} from "../interface/IFeeManager.sol";
 // The FeeManager contract is the authoritative source and mediator for what fees Dexorder charges for orders.
 //
 // It implements three fees:
-//   * a per-order fee, payable upon order placement in native token
+//   * an order-placement fee for conditional orders, payable upon order placement in native token
 //   * a per-execution fee, meant to cover future gas costs, payable upon order placement in native token
 //   * a fill fee which is a fraction of the amount received from a swap
 //
@@ -22,7 +22,7 @@ import {IFeeManager} from "../interface/IFeeManager.sol";
 // the market price of native token changes, while preventing a malicious fee manager to suddenly charge exhorbitant
 // fees without customers noticing it. The up-front fees in native coin must be sent along with the order placement
 // transaction, which means any wallet user will clearly see the fee amounts in their wallet software. The fill fee
-// has less up-front transparency, but it is also hard-limited to never be more than 1.27%, by virtue of being
+// has less up-front transparency, but it is also hard-limited to never be more than 1.275%, by virtue of being
 // represented as a uint8 value divided by 200.
 //
 // The fee administrator at Dexorder may propose changes to the fees at any time, but the proposed fees do not take
@@ -33,7 +33,7 @@ import {IFeeManager} from "../interface/IFeeManager.sol";
 // Any orders which were created with a promised fill fee will remember that fee and apply it to all fills
 // for that order, even if Dexorder changes the fee schedule while the order is open and not yet complete.
 
-// The fill fee is capped to be no higher than the pool fee.
+// The fill fee is capped to be no higher than the pool fee. See OrderLib._placementFee()
 
 
 contract FeeManager is IFeeManager {
