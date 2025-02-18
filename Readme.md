@@ -121,6 +121,11 @@ The `execute()` method is intentionally public. It is expected to revert if any 
 The [review.md](https://github.com/dexorder-trade/contract/blob/master/doc/review.md) file describes the architecture, motivation,
 security issues, implementation details, and more.
 
+# Contracts Verification
+
+The contracts are verified with [sourcify](https://sourcify.dev/#/lookup). You may confirm verification by
+running `bin/verify`, which uses `forge verify-check` to verify the contract registration with sourcify.
+
 
 # Support
 
