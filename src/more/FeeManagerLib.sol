@@ -27,13 +27,19 @@ library FeeManagerLib {
         uint32 limitChangeNoticeDuration = 7 * 24 * 60 * 60; // 7 days
         uint32 feeChangeNoticeDuration = 1 * 60 * 60; // 1 hour
         uint8 maxIncreaseOrderFeePct = 10; // 10% per hour (within the limits)
-        uint8 maxIncreaseTrancheFeePct = 100; // 100% per hour (within the limits) gas prices can change quickly
+        uint8 maxIncreaseTrancheFeePct = 10; // 10% per hour (within the limits) gas prices can change quickly
 
-        uint8 orderFee = 0;
-        uint8 orderExp = 0;
-        // about 2.5¢ at $4000 ETH
-        uint8 gasFee = 181;
-        uint8 gasExp = 35;
+        // Arbitrum gas price is typically 65_000_000 when block space is competitive
+        // gasPrice = 65_000_000;
+        // orderGas = 425_000;
+        // executeGas = 275_000;
+        //
+        // This leads to the following values:
+
+        uint8 orderFee = 201;
+        uint8 orderExp = 37;
+        uint8 gasFee = 130;
+        uint8 gasExp = 37;
         uint8 fillFeeHalfBps = 30; // 15 bps fill fee
 
         IFeeManager.FeeSchedule memory fees = IFeeManager.FeeSchedule(
@@ -41,9 +47,11 @@ library FeeManagerLib {
             gasFee, gasExp,
             fillFeeHalfBps
         );
+        // we set the limits to 16x the baseline by adding 4 to the exponent
+        uint8 expShift = 4;
         IFeeManager.FeeSchedule memory limits = IFeeManager.FeeSchedule(
-            orderFee, orderExp,
-            gasFee, gasExp,
+            orderFee, orderExp + expShift,
+            gasFee, gasExp + expShift,
             fillFeeHalfBps
         );
         FeeManager.ConstructorArgs memory args = FeeManager.ConstructorArgs(
