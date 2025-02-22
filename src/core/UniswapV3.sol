@@ -1,5 +1,5 @@
 
-pragma solidity 0.8.26;
+pragma solidity 0.8.28;
 
 import "../../lib_uniswap/v3-core/contracts/interfaces/IUniswapV3Factory.sol";
 import "../../lib_uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";

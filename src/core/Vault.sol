@@ -1,5 +1,5 @@
 
-pragma solidity 0.8.26;
+pragma solidity 0.8.28;
 
 import {IVaultFactory} from "../interface/IVaultFactory.sol";
 import {IVaultProxy,IVaultImpl} from "../interface/IVault.sol";

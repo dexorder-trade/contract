@@ -1,5 +1,5 @@
 
-pragma solidity 0.8.26;
+pragma solidity 0.8.28;
 
 import "@forge-std/console2.sol";
 import {IUniswapV3Pool} from "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";

@@ -1,5 +1,5 @@
 
-pragma solidity 0.8.26;
+pragma solidity 0.8.28;
 
 import {float} from "./IEEE754.sol";
 import {Line} from "./LineLib.sol";

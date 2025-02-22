@@ -1,5 +1,5 @@
 
-pragma solidity 0.8.26;
+pragma solidity 0.8.28;
 
 import "@forge-std/Test.sol";
 import {IEEE754, float} from "../src/core/IEEE754.sol";

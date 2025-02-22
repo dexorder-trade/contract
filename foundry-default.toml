@@ -1,5 +1,5 @@
 [profile.default]
-solc_version = '0.8.26'
+solc_version = '0.8.28'
 libs = ['lib']
 remappings = [
     '@openzeppelin/contracts/=lib_openzeppelin_contracts/contracts/',
@@ -11,7 +11,8 @@ gas_reports = ['*']
 gas_reports_ignore = []
 via_ir = true
 optimizer = true
-optimizer_runs = 999999999
+#optimizer_runs = 999999999
+optimizer_runs = 100000000 # maximum value allowed by etherscan's verifier XD. The max value is formally 2^32-1
 
 [profile.default.optimizer_details]
 constantOptimizer = true

@@ -1,5 +1,5 @@
 
-pragma solidity 0.8.26;
+pragma solidity 0.8.28;
 
 type float is uint32; // https://docs.soliditylang.org/en/latest/types.html#user-defined-value-types
 
