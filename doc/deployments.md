@@ -2,16 +2,13 @@
 
 | Contract         | Address                                        |
 |------------------|------------------------------------------------|
-| ArbitrumRouter   | 0xa748988c4186f4610A3114A6Fb13400eED88A457     |
-| Dexorder         | 0xE767bc5C2691F3ff49CE8E91A38469697A52d4cd     |
-| FeeManager       | 0x75301391Bfc9e1eB2173009e02992bEa332e310D     |
-| QueryHelper      | 0x6acbF46f485fC7aE35e819b641998381A53a93B0     |
-| **VaultFactory** | **0x765f0141138ae542759e693c557C720A5B1d01E4** |
-| VaultImpl        | 0x1423c988A08E7cD4a0F554d0686f103CEe42e966     |
+| ArbitrumRouter   | 0xa695a07b7c586Fa0f2800c1FEfa055c40487Bfe3     |
+| Dexorder         | 0x5754523E86d37fE83565F8a63e4883CC971e626A     |
+| FeeManager       | 0xF611915096F4CC4D74e85Eaae185c197317ebC1a     |
+| QueryHelper      | 0xF008C17d8C3Bdf52996a4d7caD91e5CC6EFD5DB4     |
+| **VaultFactory** | **0x149F2023E04523BF4C2F7dB9a2e8A467AFD2135D** |
+| VaultImpl        | 0x4Bd8221Ec6DBfD3F0aaE29dBfe52FA5B27bcD45C     |
 
 
-Vault Init Code Hash
-`0xda672cdca096de00f3fed8150430564c059a59ad30cb2c824902097e25cd8b3a`
-
-Sourcify Repository
-https://repo.sourcify.dev/contracts/full_match/42161/0x765f0141138ae542759e693c557C720A5B1d01E4/
+Vault Init Code Hash  
+`0x9e656332e87d8c15e216c0041d06b9de56d05ed4b329dac0f4b578e6bff53619`
