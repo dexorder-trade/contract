@@ -1,6 +1,6 @@
 # Overview
 
-These contracts power [⬆dexorder](https://dexorder.trade).
+These contracts power [⬆dexorder](https://dexorder.com).
 
 The heart of the system is contained in `OrderLib.sol`, particularly the `OrderLib.execute()` method. `Vaults` are 
 basically thin wrappers around the `OrderLib`.

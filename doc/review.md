@@ -11,7 +11,7 @@ financial protocols, such as oracles.
 After reviewing this document the reader should have a good grasp of the
 operating principles of Dexorder, and feel able to directly utilize the public
 Dexorder contract functions. However, Dexorder is intended as a system primarily
-used by end-users via the [Dexorder Web3 UX](https://dexorder.trade).
+used by end-users via the [Dexorder Web3 UX](https://dexorder.com).
 
 Instead, the purpose of this document is to foster understanding of the system
 so that the community and auditors may evaluate the Dexorder contracts for
