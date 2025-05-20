@@ -102,6 +102,7 @@ contract FeeManager is IFeeManager {
         _limits = args.limits;
 
         admin = args.admin;
+        adjuster = args.adjuster;
         orderFeeAccount = args.orderFeeAccount;
         gasFeeAccount = args.gasFeeAccount;
         fillFeeAccount = args.fillFeeAccount;

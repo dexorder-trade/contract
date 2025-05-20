@@ -12,3 +12,6 @@
 
 Vault Init Code Hash  
 `0x9e656332e87d8c15e216c0041d06b9de56d05ed4b329dac0f4b578e6bff53619`
+
+git revision
+`aef1be2ba96e2b996aa4915b65efcd391737ef7a`
