@@ -21,6 +21,6 @@ yul = true
 [profile.default.optimizer_details.yulDetails]
 stackAllocation = true
 
-[profile.default.rpc_endpoints]
+[rpc_endpoints]
 arbitrum_mock = 'https://arbitrum-one.publicnode.com'
 arbitrum_test = 'https://arbitrum-one.publicnode.com'
